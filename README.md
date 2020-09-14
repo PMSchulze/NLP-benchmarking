@@ -62,7 +62,7 @@ export TASK_NAME=MNLI
 export MODEL=bert
 export VARIANT=bert_half
 export TOKENIZER=tokenizer_bert
-export SEED=2050
+export SEED=2020
 
 python ./examples/text-classification/run_glue.py \
     --model_name_or_path ~/models/$MODEL \
