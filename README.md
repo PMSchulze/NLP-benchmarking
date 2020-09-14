@@ -1,3 +1,13 @@
+
+## Installation
+
+```
+git clone https://github.com/huggingface/transformers
+cd transformers
+pip install .
+pip install -r ./examples/requirements.txt
+```
+
 ## Generation of Token Vocabulary
 
 ```
@@ -90,6 +100,7 @@ QNLI                          | 83.12
 RTE                           | 55.23
 CoLA                          | 12.59
 WNLI                          | 39.44
-hidden_dropout_prob           | 0.1
-block_size                    | 128
-learning_rate                 | 1e-4
+QQP                           | 
+MRPC                          | 
+SST-2                         | 
+MNLI                          | 
