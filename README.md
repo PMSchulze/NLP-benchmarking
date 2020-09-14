@@ -41,6 +41,18 @@ python ~/python_files/pretrain_bert.py \
     --token_vocab /home/ubuntu/data/token_vocab/bert/
 ```
 
+### Bert with three-quarter-sized architecture components
+```
+python ~/python_files/pretrain_bert.py \
+    --hidden_size 576 \
+    --num_hidden_layers 9 \
+    --num_attention_heads 9 \
+    --intermediate_size 2304 \
+    --num_train_epochs 10 \
+    --output_dir /home/ubuntu/models/bert/bert_threequarter \
+    --corpus_pretrain /home/ubuntu/data/pretrain_data/wiki_train.txt \
+    --token_vocab /home/ubuntu/data/token_vocab/bert/
+```
 
 Hyperparameters               | bert_half
 ------------------------------| -----------------
