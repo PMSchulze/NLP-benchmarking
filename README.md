@@ -53,8 +53,8 @@ save_total_limit              | 2
 
 ### GLUE
 
-DATA DOWNLOAD: `python utils/download_glue_data.py --data_dir ~/data/glue --tasks all`
-RUN SCRIPT IN TRANSFORMERS REPO!
+- DATA DOWNLOAD: `python utils/download_glue_data.py --data_dir ~/data/glue --tasks all`
+- RUN SCRIPT IN TRANSFORMERS REPO!
 
 ```
 export GLUE_DIR=~/data/glue
