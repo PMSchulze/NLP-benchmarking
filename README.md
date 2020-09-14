@@ -50,3 +50,33 @@ save_total_limit              | 2
  
 
 ## Fine-tuning
+
+### GLUE
+
+DATA DOWNLOAD: `python utils/download_glue_data.py --data_dir ~/data/glue --tasks all`
+RUN SCRIPT IN TRANSFORMERS REPO!
+
+```
+export GLUE_DIR=~/data/glue
+export TASK_NAME=MNLI
+export MODEL=bert
+export VARIANT=bert_half
+export TOKENIZER=tokenizer_bert
+export SEED=2050
+
+python ./examples/text-classification/run_glue.py \
+    --model_name_or_path ~/models/$MODEL \
+    --tokenizer_name ~/models/$TOKENIZER \
+    --task_name $TASK_NAME \
+    --save_total_limit 1\
+    --do_train \
+    --do_eval \
+    --data_dir $GLUE_DIR/$TASK_NAME \
+    --max_seq_length 128 \
+    --per_device_train_batch_size=32   \
+    --learning_rate 2e-5 \
+    --num_train_epochs 3.0 \
+    --output_dir ~/fine_tuned/$MODEL/$VARIANT/glue/$TASK_NAME/ \
+    --overwrite_output_dir \
+    --seed $SEED
+```
