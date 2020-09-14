@@ -34,7 +34,7 @@ python ~/python_files/pretrain_bert.py \
 
 Hyperparameter                | Specification
 ------------------------------| -----------------
-num_hidden_layers             :|: 6
+num_hidden_layers             | 6
 num_attention_heads           | 6
 intermediate_size             | 1536
 num_train_epochs              | 10
