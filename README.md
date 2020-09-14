@@ -33,11 +33,11 @@ python ~/python_files/pretrain_bert.py \
 
 Colons can be used to align columns.
 
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+| Tables        | Are   |       | Cool  |       |       |       |       |       |       |       |
+|------ |-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
+|       |       | $1600 |       |       |       |       |       |       |       |       |       |
+|       |       |   $12 |       |       |       |       |       |       |       |       |       |
+|       |       |    $1 |       |       |       |       |       |       |       |       |       |
 
 
 ## Fine-tuning
