@@ -42,7 +42,7 @@ python ~/python_files/pretrain_bert.py \
 ```
 
 
-Hyperparameter                | Specification
+                              | bert_half
 ------------------------------| -----------------
 num_hidden_layers             | 6
 num_attention_heads           | 6
@@ -93,7 +93,7 @@ do
 done
 ```
 
-System                        | bert_half        
+                              | bert_half        
 ------------------------------| -----------------
 SST-2                         | 86.24            
 QNLI                          | 83.12
