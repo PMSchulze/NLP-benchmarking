@@ -74,7 +74,7 @@ export SEED=2020
 
 cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/$VARIANT/vocab.txt
 
-for TASK in QQP MRPC SST-2
+for TASK in STS-B MNLI
 do
     python ./examples/text-classification/run_glue.py \
         --model_name_or_path /home/ubuntu/models/$MODEL/$VARIANT \
@@ -100,7 +100,7 @@ QNLI                          | 83.12
 RTE                           | 55.23
 CoLA                          | 12.59
 WNLI                          | 39.44
-QQP                           | 
-MRPC                          | 
-SST-2                         | 
+QQP                           | 82.08
+MRPC                          | 81.25
+STS-B                         | 69.40
 MNLI                          | 
