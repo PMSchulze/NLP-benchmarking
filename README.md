@@ -58,25 +58,38 @@ save_total_limit              | 2
 
 ```
 export GLUE_DIR=~/data/glue
-export TASK_NAME=MNLI
 export MODEL=bert
 export VARIANT=bert_half
-export TOKENIZER=tokenizer_bert
 export SEED=2020
 
-python ./examples/text-classification/run_glue.py \
-    --model_name_or_path ~/models/$MODEL \
-    --tokenizer_name ~/models/$TOKENIZER \
-    --task_name $TASK_NAME \
-    --save_total_limit 1\
-    --do_train \
-    --do_eval \
-    --data_dir $GLUE_DIR/$TASK_NAME \
-    --max_seq_length 128 \
-    --per_device_train_batch_size=32   \
-    --learning_rate 2e-5 \
-    --num_train_epochs 3.0 \
-    --output_dir ~/fine_tuned/$MODEL/$VARIANT/glue/$TASK_NAME/ \
-    --overwrite_output_dir \
-    --seed $SEED
+cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/$VARIANT/vocab.txt
+
+for TASK in QQP MRPC SST-2
+do
+    python ./examples/text-classification/run_glue.py \
+        --model_name_or_path /home/ubuntu/models/$MODEL/$VARIANT \
+        --task_name ${TASK} \
+        --save_total_limit 1\
+        --do_train \
+        --do_eval \
+        --data_dir $GLUE_DIR/${TASK} \
+        --max_seq_length 128 \
+        --per_device_train_batch_size=32   \
+        --learning_rate 2e-5 \
+        --num_train_epochs 3.0 \
+        --output_dir /home/ubuntu/fine_tuned/$MODEL/$VARIANT/glue/${TASK}/ \
+        --overwrite_output_dir \
+        --seed $SEED
+done
 ```
+
+System                        | bert_half        
+------------------------------| -----------------
+SST-2                         | 86.24            
+QNLI                          | 83.12
+RTE                           | 55.23
+CoLA                          | 12.59
+WNLI                          | 39.44
+hidden_dropout_prob           | 0.1
+block_size                    | 128
+learning_rate                 | 1e-4
