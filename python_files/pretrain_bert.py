@@ -39,10 +39,11 @@ training_args = TrainingArguments(
     output_dir=args.output_dir,
     overwrite_output_dir=True,
     learning_rate = 1e-4,
+    adam_epsilon = 1e-06,
     weight_decay = 0.01,
     warmup_steps = 1820,
     num_train_epochs=args.num_train_epochs,
-    per_gpu_train_batch_size=64,
+    per_device_train_batch_size=64,
     save_steps=10_000,
     save_total_limit=2,
 )
