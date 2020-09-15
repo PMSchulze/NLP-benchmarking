@@ -10,6 +10,7 @@ pip install -r ./examples/requirements.txt
 
 ## Generation of Token Vocabulary
 
+### BERT
 ```
 from tokenizers import BertWordPieceTokenizer
 
@@ -28,7 +29,11 @@ tokenizer.save_model("/home/ubuntu/data/token_vocab/bert/")
 
 ## Pre-training
 
-### Bert with half-sized architecture components
+### BERT
+
+For pre-training details check `pretrain_bert.py` in this repository.
+
+#### BERT with half-sized architecture components
 ```
 python ~/python_files/pretrain_bert.py \
     --hidden_size 384 \
@@ -41,7 +46,7 @@ python ~/python_files/pretrain_bert.py \
     --token_vocab /home/ubuntu/data/token_vocab/bert/
 ```
 
-### Bert with three-quarter-sized architecture components
+#### BERT with three-quarter-sized architecture components
 ```
 python ~/python_files/pretrain_bert.py \
     --hidden_size 576 \
