@@ -1,5 +1,5 @@
 
-## Installation
+## 0. Installation
 
 ```
 git clone https://github.com/huggingface/transformers
@@ -8,7 +8,7 @@ pip install .
 pip install -r ./examples/requirements.txt
 ```
 
-## Generation of Token Vocabulary
+## 1. Generation of Token Vocabulary
 
 ### BERT
 ```
@@ -27,7 +27,7 @@ tokenizer.train(vocab_path)
 tokenizer.save_model("/home/ubuntu/data/token_vocab/bert/")
 ```
 
-## Pre-training
+## 2. Pre-training
 
 ### BERT
 
@@ -78,7 +78,7 @@ adam_epsilon                  | 1e-6
 per_device_train_batch_size   | 64
  
 
-## Fine-tuning
+## 3. Fine-tuning
 
 ### GLUE
 
