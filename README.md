@@ -59,23 +59,23 @@ python ~/python_files/pretrain_bert.py \
     --token_vocab /home/ubuntu/data/token_vocab/bert/
 ```
 
-Hyperparameters               | bert_half
-------------------------------| -----------------
-hidden_size                   | 384
-num_hidden_layers             | 6
-num_attention_heads           | 6
-intermediate_size             | 1536
-num_train_epochs              | 10
-attention_probs_dropout_prob  | 0.1
-hidden_dropout_prob           | 0.1
-block_size                    | 128
-learning_rate                 | 1e-4
-weight_decay                  | 0.01
-warmup_steps                  | 1820
-adam_beta1                    | 0.9
-adam_beta2                    | 0.999
-adam_epsilon                  | 1e-6
-per_device_train_batch_size   | 64
+Hyperparameters               | bert_half | bert_threequarter 
+------------------------------| ----------|------------------
+hidden_size                   | 384       |     576
+num_hidden_layers             | 6         |       9
+num_attention_heads           | 6         |       9
+intermediate_size             | 1536      |    2304
+num_train_epochs              | 10        |      10
+attention_probs_dropout_prob  | 0.1       |      0.1
+hidden_dropout_prob           | 0.1       |      0.1
+block_size                    | 128       |      128
+learning_rate                 | 1e-4      |     1e-4
+weight_decay                  | 0.01      |     0.01
+warmup_steps                  | 1820      |     3640
+adam_beta1                    | 0.9       |      0.9
+adam_beta2                    | 0.999     |    0.999
+adam_epsilon                  | 1e-6      |     1e-6
+per_device_train_batch_size   | 64        |       32
  
 
 ## 3. Fine-tuning
