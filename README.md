@@ -66,7 +66,10 @@ block_size                    | 128
 learning_rate                 | 1e-4
 weight_decay                  | 0.01
 warmup_steps                  | 1820
-per_gpu_train_batch_size      | 64
+adam_beta1                    | 0.9
+adam_beta2                    | 0.999
+adam_epsilon                  | 1e-6
+per_device_train_batch_size   | 64
 save_steps                    | 10_000
 save_total_limit              | 2
  
@@ -86,7 +89,7 @@ export SEED=2020
 
 cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/$VARIANT/vocab.txt
 
-for TASK in STS-B MNLI
+for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
 do
     python ./examples/text-classification/run_glue.py \
         --model_name_or_path /home/ubuntu/models/$MODEL/$VARIANT \
