@@ -61,6 +61,7 @@ python ~/python_files/pretrain_bert.py \
 
 Hyperparameters               | bert_half
 ------------------------------| -----------------
+hidden_size                   | 384
 num_hidden_layers             | 6
 num_attention_heads           | 6
 intermediate_size             | 1536
@@ -75,8 +76,6 @@ adam_beta1                    | 0.9
 adam_beta2                    | 0.999
 adam_epsilon                  | 1e-6
 per_device_train_batch_size   | 64
-save_steps                    | 10_000
-save_total_limit              | 2
  
 
 ## Fine-tuning
