@@ -33,7 +33,7 @@ tokenizer.save_model("/home/ubuntu/data/token_vocab/bert/")
 
 For pre-training details check `pretrain_bert.py` in this repository.
 
-#### BERT with half-sized architecture components
+#### BERT with halfed architecture components
 ```
 python ~/python_files/pretrain_bert.py \
     --hidden_size 384 \
@@ -46,32 +46,32 @@ python ~/python_files/pretrain_bert.py \
     --token_vocab /home/ubuntu/data/token_vocab/bert/
 ```
 
-#### BERT with three-quarter-sized architecture components
+#### BERT with quartered architecture components
 ```
 python ~/python_files/pretrain_bert.py \
-    --hidden_size 576 \
-    --num_hidden_layers 9 \
-    --num_attention_heads 9 \
-    --intermediate_size 2304 \
+    --hidden_size 192 \
+    --num_hidden_layers 3 \
+    --num_attention_heads 3 \
+    --intermediate_size 786 \
     --num_train_epochs 10 \
-    --output_dir /home/ubuntu/models/bert/bert_threequarter \
+    --output_dir /home/ubuntu/models/bert/bert_onequarter \
     --corpus_pretrain /home/ubuntu/data/pretrain_data/wiki_train.txt \
     --token_vocab /home/ubuntu/data/token_vocab/bert/
 ```
 
-Hyperparameters               | bert_half | bert_threequarter 
+Hyperparameters               | bert_half | bert_onequarter 
 ------------------------------| ----------|------------------
-hidden_size                   | 384       |     576
-num_hidden_layers             | 6         |       9
-num_attention_heads           | 6         |       9
-intermediate_size             | 1536      |    2304
-num_train_epochs              | 10        |      10
+hidden_size                   | 384       |      192
+num_hidden_layers             | 6         |        3
+num_attention_heads           | 6         |        3
+intermediate_size             | 1536      |      786
+num_train_epochs              | 10        |       10
 attention_probs_dropout_prob  | 0.1       |      0.1
 hidden_dropout_prob           | 0.1       |      0.1
 block_size                    | 128       |      128
 learning_rate                 | 1e-4      |     1e-4
 weight_decay                  | 0.01      |     0.01
-warmup_steps                  | 1820      |     3640
+warmup_steps                  | 1820      |     1820
 adam_beta1                    | 0.9       |      0.9
 adam_beta2                    | 0.999     |    0.999
 adam_epsilon                  | 1e-6      |     1e-6
@@ -88,7 +88,7 @@ per_device_train_batch_size   | 64        |       32
 ```
 export GLUE_DIR=~/data/glue
 export MODEL=bert
-export VARIANT=bert_half
+export VARIANT=bert_onequarter
 export SEED=2020
 
 cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/$VARIANT/vocab.txt
@@ -112,14 +112,14 @@ do
 done
 ```
 
-GLUE tasks                    | bert_half        
-------------------------------| -----------------
-SST-2                         | 86.24            
-QNLI                          | 83.12
-RTE                           | 55.23
-CoLA                          | 12.59
-WNLI                          | 39.44
-QQP                           | 82.08
-MRPC                          | 81.25
-STS-B                         | 69.40
-MNLI                          | 
+GLUE tasks                    | bert_half | bert_onequarter
+------------------------------|-----------|-----------------
+SST-2                         | 86.24     |       
+QNLI                          | 83.12     |
+RTE                           | 55.23     |
+CoLA                          | 12.59     |
+WNLI                          | 39.44     |
+QQP                           | 82.08     |
+MRPC                          | 81.25     |
+STS-B                         | 69.40     |
+MNLI                          |           |
