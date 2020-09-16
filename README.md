@@ -77,7 +77,7 @@ adam_beta2                    | 0.999     |    0.999        |0.999
 adam_epsilon                  | 1e-6      |     1e-6        | 1e-6
 per_device_train_batch_size   | 64        |       32        |   32
 ------------------------------| ----------|-----------------|---------------
-time (hh:mm:ss)               | 8:17:02   |  7:29:36        |
+time (hh:mm:ss)               | 08:17:02  |  07:29:36       | 03:13:07
 
 ## 3. Fine-tuning
 
@@ -113,14 +113,16 @@ do
 done
 ```
 
-GLUE tasks                    | bert_half | bert_onequarter
-------------------------------|-----------|-----------------
-SST-2                         | 86.24     | 80.73
-QNLI                          | 83.12     | 64.14
-RTE                           | 55.23     | 51.26
-CoLA                          | 12.59     | 0.0
-WNLI                          | 39.44     | 52.11
-QQP                           | 82.08     | 67.34
-MRPC                          | 81.25     | 81.61
-STS-B                         | 69.40     | 15.11
-MNLI                          |           |
+We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and STS-B (Spearman's Corr):
+
+GLUE tasks                    | bert_half | bert_onequarter | bert_onesixth
+------------------------------|-----------|-----------------|-----------------
+SST-2                         | 86.24     | 80.73           | 77.98
+QNLI                          | 83.12     | 64.14           | 61.12
+RTE                           | 55.23     | 51.26           | 50.54
+CoLA                          | 12.59     | 0.0             | 0.0
+WNLI                          | 39.44     | 52.11           | 57.75
+QQP                           | 82.08     | 67.34           | 63.94
+MRPC                          | 81.25     | 81.61           | 81.22
+STS-B                         | 69.40     | 15.11           | -9.52 
+MNLI                          |           |                 |
