@@ -59,7 +59,7 @@ python ~/python_files/pretrain_bert.py \
     --token_vocab /home/ubuntu/data/token_vocab/bert/
 ```
 
-Hyperparameters               | bert_half | bert_onequarter | bert_onesixth_e10 (10 Epochs) | bert_onesixth_e20 (20 Epochs)
+Hyperparameters               | bert_half_e10 | bert_onequarter_e10 | bert_onesixth_e10             | bert_onesixth_e20
 ------------------------------| ----------|-----------------|-------------------------------|---------------------------
 hidden_size                   | 384       |      192        |  128                          | 128
 num_hidden_layers             | 6         |        3        |    2                          |   2
