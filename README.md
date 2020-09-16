@@ -62,7 +62,6 @@ adam_beta1                    | 0.9       |      0.9        |  0.9              
 adam_beta2                    | 0.999     |    0.999        |0.999                          |0.999
 adam_epsilon                  | 1e-6      |     1e-6        | 1e-6                          |1e-6
 per_device_train_batch_size   | 64        |       64        |   64                          |64
-                              |           |                 |                               |
 time (hh:mm:ss)               | 08:17:02  |  07:29:36       | 03:13:07                      |
 
 ## 3. Fine-tuning
