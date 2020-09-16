@@ -59,25 +59,25 @@ python ~/python_files/pretrain_bert.py \
     --token_vocab /home/ubuntu/data/token_vocab/bert/
 ```
 
-Hyperparameters               | bert_half | bert_onequarter | bert_onesixth 
-------------------------------| ----------|-----------------|---------------
-hidden_size                   | 384       |      192        |  128
-num_hidden_layers             | 6         |        3        |    2
-num_attention_heads           | 6         |        3        |    2
-intermediate_size             | 1536      |      786        |  512
-num_train_epochs              | 10        |       10        |   10
-attention_probs_dropout_prob  | 0.1       |      0.1        |  0.1
-hidden_dropout_prob           | 0.1       |      0.1        |  0.1
-block_size                    | 128       |      128        |  128
-learning_rate                 | 1e-4      |     1e-4        | 1e-4
-weight_decay                  | 0.01      |     0.01        | 0.01
-warmup_steps                  | 1820      |     1820        | 1280
-adam_beta1                    | 0.9       |      0.9        |  0.9
-adam_beta2                    | 0.999     |    0.999        |0.999
-adam_epsilon                  | 1e-6      |     1e-6        | 1e-6
-per_device_train_batch_size   | 64        |       32        |   32
-------------------------------| ----------|-----------------|---------------
-time (hh:mm:ss)               | 08:17:02  |  07:29:36       | 03:13:07
+Hyperparameters               | bert_half | bert_onequarter | bert_onesixth_e10 (10 Epochs) | bert_onesixth_e20 (20 Epochs)
+------------------------------| ----------|-----------------|-------------------------------|---------------------------
+hidden_size                   | 384       |      192        |  128                          | 128
+num_hidden_layers             | 6         |        3        |    2                          |   2
+num_attention_heads           | 6         |        3        |    2                          |   2
+intermediate_size             | 1536      |      786        |  512                          | 512
+num_train_epochs              | 10        |       10        |   10                          |  20
+attention_probs_dropout_prob  | 0.1       |      0.1        |  0.1                          |  0.1
+hidden_dropout_prob           | 0.1       |      0.1        |  0.1                          |  0.1
+block_size                    | 128       |      128        |  128                          |  128
+learning_rate                 | 1e-4      |     1e-4        | 1e-4                          | 1e-4
+weight_decay                  | 0.01      |     0.01        | 0.01                          |0.01
+warmup_steps                  | 1820      |     1820        | 1280                          |1280
+adam_beta1                    | 0.9       |      0.9        |  0.9                          |0.9
+adam_beta2                    | 0.999     |    0.999        |0.999                          |0.999
+adam_epsilon                  | 1e-6      |     1e-6        | 1e-6                          |1e-6
+per_device_train_batch_size   | 64        |       32        |   32                          |32
+------------------------------| ----------|-----------------|------------------------------ |------------------------
+time (hh:mm:ss)               | 08:17:02  |  07:29:36       | 03:13:07                      |
 
 ## 3. Fine-tuning
 
