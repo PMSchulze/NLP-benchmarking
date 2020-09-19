@@ -39,9 +39,9 @@ python ~/python_files/pretrain_bert.py \
     --num_hidden_layers 6 \
     --num_attention_heads 6 \
     --intermediate_size 1536 \
-    --num_train_epochs 20 \
-    --warmup_steps 3640 \
-    --output_dir /home/ubuntu/models/bert/384_6_6_1536_20 \
+    --num_train_epochs 10 \
+    --warmup_steps 1820 \
+    --output_dir /home/ubuntu/models/bert/384_6_6_1536_10 \
     --corpus_pretrain /home/ubuntu/data/pretrain_data/wiki_train.txt \
     --token_vocab /home/ubuntu/data/token_vocab/bert/
 ```
