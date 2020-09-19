@@ -63,7 +63,7 @@ adam_beta1                    | 0.9       | 0.9    | 0.9         |  0.9         
 adam_beta2                    | 0.999     | 0.999  | 0.999       |0.999           | 0.999               | 0.999
 adam_epsilon                  | 1e-6      | 1e-6   | 1e-6        | 1e-6           | 1e-6                 | 1e-6
 per_device_train_batch_size   | 64        | 64     | 64          |   64           | 64                   | 64
-time (hh:mm:ss)               | 08:17:02  |        | 07:29:36    | 08:22:00       | 03:13:07             | 07:31:24
+time (hh:mm:ss)               | 08:17:02  |16:35:57| 07:29:36    | 08:22:00       | 03:13:07             | 07:31:24
 
 ## 3. Fine-tuning
 
@@ -75,7 +75,7 @@ time (hh:mm:ss)               | 08:17:02  |        | 07:29:36    | 08:22:00     
 ```
 export GLUE_DIR=~/data/glue
 export MODEL=bert
-export VARIANT=192_3_3_786_20
+export VARIANT=384_6_6_1536_20
 export SEED=2020
 
 cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/$VARIANT/vocab.txt
