@@ -46,6 +46,8 @@ python ~/python_files/pretrain_bert.py \
     --token_vocab /home/ubuntu/data/token_vocab/bert/
 ```
 
+#### Number of Training Epochs
+
 Hyperparameters               | 384_6_6_1536_10 | 384_6_6_1536_20 | 192_3_3_786_10 | 192_3_3_786_20 | 128_2_2_512_10 | 128_2_2_512_20
 ------------------------------| ----------|-----------------|----------------|---------------------|-----------------|----------
 hidden_size                   | 384       | 384    | 192         |  192           | 128                 | 128
@@ -65,23 +67,26 @@ adam_epsilon                  | 1e-6      | 1e-6   | 1e-6        | 1e-6         
 per_device_train_batch_size   | 64        | 64     | 64          |   64           | 64                   | 64
 time (hh:mm:ss)               | 08:17:47  |16:35:57| 07:29:36    | 08:22:00       | 03:13:07             | 07:31:24
 
-Hyperparameters               | 128_3_2_512_10 |
+
+#### Number of Hidden Layers
+
+Hyperparameters               | 128_3_2_512_10 | 128_6_2_512_10 |
 ------------------------------| ----------|
-hidden_size                   | 128       |
-num_hidden_layers             | 3         |
-num_attention_heads           | 2         |
-intermediate_size             | 512       |
-num_train_epochs              | 10        |
-attention_probs_dropout_prob  | 0.1       |
-hidden_dropout_prob           | 0.1       |
-block_size                    | 128       |
-learning_rate                 | 1e-4      |
-weight_decay                  | 0.01      |
-warmup_steps                  | 1820      |
-adam_beta1                    | 0.9       |
-adam_beta2                    | 0.999     |
-adam_epsilon                  | 1e-6      |
-per_device_train_batch_size   | 64        |
+hidden_size                   | 128       | 128      |
+num_hidden_layers             | 3         |6         |
+num_attention_heads           | 2         |2         |
+intermediate_size             | 512       |512       |
+num_train_epochs              | 10        |10        |
+attention_probs_dropout_prob  | 0.1       |0.1       |
+hidden_dropout_prob           | 0.1       |0.1       |
+block_size                    | 128       |128       |
+learning_rate                 | 1e-4      |1e-4      |
+weight_decay                  | 0.01      |0.01      |
+warmup_steps                  | 1820      |1820      |
+adam_beta1                    | 0.9       |0.9       |
+adam_beta2                    | 0.999     |0.999     |
+adam_epsilon                  | 1e-6      |1e-6      |
+per_device_train_batch_size   | 64        |64        |
 time (hh:mm:ss)               |           |
 
 ## 3. Fine-tuning
@@ -118,7 +123,9 @@ do
 done
 ```
 
-We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and STS-B (Spearman's Corr):
+NOTE: We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and STS-B (Spearman's Corr).
+
+#### Number of Training Epochs
 
 GLUE tasks                    | 384_6_6_1536_10 | 384_6_6_1536_20 | 192_3_3_786_10 | 192_3_3_786_20 | 128_2_2_512_10 | 128_2_2_512_20
 ------------------------------|-----------|-----------------|-----------------|-------------------|---------------|-----------------
@@ -131,3 +138,7 @@ QQP                           | 82.08     | 87.12           | 67.34           | 
 MRPC                          | 81.25     | 81.99           | 81.61           | 81.92           | 81.22           |81.22
 STS-B                         | 69.40     | 77.47           | 15.11           | 9.2             | -9.52           |-15.8
 MNLI                          |           |                 |                 |                 |
+
+
+#### Number of Hidden Layers
+
