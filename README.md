@@ -65,6 +65,25 @@ adam_epsilon                  | 1e-6      | 1e-6   | 1e-6        | 1e-6         
 per_device_train_batch_size   | 64        | 64     | 64          |   64           | 64                   | 64
 time (hh:mm:ss)               | 08:17:47  |16:35:57| 07:29:36    | 08:22:00       | 03:13:07             | 07:31:24
 
+Hyperparameters               | 128_3_2_512_10 |
+------------------------------| ----------|
+hidden_size                   | 128       |
+num_hidden_layers             | 3         |
+num_attention_heads           | 2         |
+intermediate_size             | 512       |
+num_train_epochs              | 10        |
+attention_probs_dropout_prob  | 0.1       |
+hidden_dropout_prob           | 0.1       |
+block_size                    | 128       |
+learning_rate                 | 1e-4      |
+weight_decay                  | 0.01      |
+warmup_steps                  | 1820      |
+adam_beta1                    | 0.9       |
+adam_beta2                    | 0.999     |
+adam_epsilon                  | 1e-6      |
+per_device_train_batch_size   | 64        |
+time (hh:mm:ss)               |           |
+
 ## 3. Fine-tuning
 
 ### GLUE
