@@ -95,6 +95,7 @@ time (hh:mm:ss)               |           |
 
 - DATA DOWNLOAD: `python utils/download_glue_data.py --data_dir ~/data/glue --tasks all`
 - RUN SCRIPT IN TRANSFORMERS REPO!
+- NOTE: We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and STS-B (Spearman's Corr).
 
 ```
 export GLUE_DIR=~/data/glue
@@ -122,8 +123,6 @@ do
         --seed $SEED
 done
 ```
-
-NOTE: We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and STS-B (Spearman's Corr).
 
 #### Number of Training Epochs
 
