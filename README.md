@@ -94,8 +94,8 @@ time (hh:mm:ss)               |           |
 Hyperparameters               | 128_2_2_512_10 | 128_2_4_512_10 | 128_2_8_512_10 |
 ------------------------------| ----------|----------|----------|
 hidden_size                   | 128       |128       | 128      |
-num_hidden_layers             | 2         |4         |8         |
-num_attention_heads           | 2         |2         |2         |
+num_hidden_layers             | 2         |2         |2         |
+num_attention_heads           | 2         |4         |8         |
 intermediate_size             | 512       |512       |512       |
 num_train_epochs              | 10        |10        |10        |
 attention_probs_dropout_prob  | 0.1       |0.1       |0.1       |
