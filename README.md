@@ -129,7 +129,7 @@ adam_beta1                    | 0.9       |0.9       |0.9       |0.9       |0.9 
 adam_beta2                    | 0.999     |0.999     |0.999     |0.999     |0.999     |
 adam_epsilon                  | 1e-6      |1e-6      |1e-6      |1e-6      |1e-6      |
 per_device_train_batch_size   | 64        |64        |64        |64        |64        |
-time (hh:mm:ss)               | 03:13:07  |3:35:53   |03:47:11  |04:41:14  |  |
+time (hh:mm:ss)               | 03:13:07  |3:35:53   |03:47:11  |04:41:14  |5:21:55   |
 
 
 ## 3. Fine-tuning
@@ -143,27 +143,28 @@ time (hh:mm:ss)               | 03:13:07  |3:35:53   |03:47:11  |04:41:14  |  |
 ```
 export GLUE_DIR=~/data/glue
 export MODEL=bert
-export VARIANT=384_6_6_1536_20
 export SEED=2020
 
-cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/$VARIANT/vocab.txt
+for VARIANT in 128_4_2_512_10 128_5_2_512_10
+    cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/${VARIANT}/vocab.txt
 
-for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
-do
-    python ./examples/text-classification/run_glue.py \
-        --model_name_or_path /home/ubuntu/models/$MODEL/$VARIANT \
-        --task_name ${TASK} \
-        --save_total_limit 1\
-        --do_train \
-        --do_eval \
-        --data_dir $GLUE_DIR/${TASK} \
-        --max_seq_length 128 \
-        --per_device_train_batch_size=32   \
-        --learning_rate 2e-5 \
-        --num_train_epochs 3.0 \
-        --output_dir /home/ubuntu/fine_tuned/$MODEL/$VARIANT/glue/${TASK}/ \
-        --overwrite_output_dir \
-        --seed $SEED
+    for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
+    do
+        python ./examples/text-classification/run_glue.py \
+            --model_name_or_path /home/ubuntu/models/$MODEL/${VARIANT} \
+            --task_name ${TASK} \
+            --save_total_limit 1\
+            --do_train \
+            --do_eval \
+            --data_dir $GLUE_DIR/${TASK} \
+            --max_seq_length 128 \
+            --per_device_train_batch_size=32   \
+            --learning_rate 2e-5 \
+            --num_train_epochs 3.0 \
+            --output_dir /home/ubuntu/fine_tuned/$MODEL/${VARIANT}/glue/${TASK}/ \
+            --overwrite_output_dir \
+            --seed $SEED
+    done
 done
 ```
 
@@ -183,4 +184,16 @@ MNLI                          |           |                 |                 | 
 
 
 #### Number of Hidden Layers
+
+GLUE tasks                    | 128_2_2_512_10 |128_3_2_512_10 | 128_4_2_512_10 | 128_5_2_512_10 |128_6_2_512_10 
+------------------------------|-----------|-----------------|-----------------|-------------------|---------------
+SST-2                         | 78.78     | 87.04           | 80.73           | 82.00           | 77.98           
+QNLI                          | 62.51     | 83.85           | 64.14           | 66.37           | 61.12          
+RTE                           | 54.51     | 55.23           | 51.26           | 53.79           | 50.54          
+CoLA                          | 0.0       | 18.99           | 0.0             | 0.0             | 0.0           
+WNLI                          | 53.52     | 32.39           | 52.11           | 59.15           | 57.75           
+QQP                           | 63.40     | 87.12           | 67.34           | 68.75           | 63.94               
+MRPC                          | 81.22     | 81.99           | 81.61           | 81.92           | 81.22           
+STS-B                         | -15.8     | 77.47           | 15.11           | 9.2             | -9.52           
+MNLI                          |           |                 |                 |                 |
 
