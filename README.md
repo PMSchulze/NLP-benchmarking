@@ -145,7 +145,7 @@ export GLUE_DIR=/home/ubuntu/data/glue
 export MODEL=bert
 export SEED=2020
 
-for VARIANT in 128_4_2_512_10 128_5_2_512_10
+for VARIANT in 128_4_2_512_10 128_5_2_512_10 128_6_2_512_10
 do
     cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/${VARIANT}/vocab.txt
 
@@ -162,7 +162,7 @@ do
             --per_device_train_batch_size=32   \
             --learning_rate 2e-5 \
             --num_train_epochs 3.0 \
-            --output_dir /home/ubuntu/fine_tuned/$MODEL/${VARIANT}/glue/${TASK}/ \
+            --output_dir /home/ubuntu/lrz_share/fine_tuned/$MODEL/${VARIANT}/glue/${TASK}/ \
             --overwrite_output_dir \
             --seed $SEED
     done
