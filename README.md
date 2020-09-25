@@ -151,7 +151,7 @@ do
 
     for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
     do
-        python ./examples/text-classification/run_glue.py \
+        python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
             --model_name_or_path /home/ubuntu/models/$MODEL/${VARIANT} \
             --task_name ${TASK} \
             --save_total_limit 1\
