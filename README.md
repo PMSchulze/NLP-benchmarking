@@ -146,6 +146,7 @@ export MODEL=bert
 export SEED=2020
 
 for VARIANT in 128_4_2_512_10 128_5_2_512_10
+do
     cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/${VARIANT}/vocab.txt
 
     for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
