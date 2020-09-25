@@ -141,7 +141,7 @@ time (hh:mm:ss)               | 03:13:07  |3:35:53   |03:47:11  |04:41:14  |5:21
 - NOTE: We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and STS-B (Spearman's Corr).
 
 ```
-export GLUE_DIR=~/data/glue
+export GLUE_DIR=/home/ubuntu/data/glue
 export MODEL=bert
 export SEED=2020
 
