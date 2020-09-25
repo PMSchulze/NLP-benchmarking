@@ -162,7 +162,7 @@ do
             --per_device_train_batch_size=32   \
             --learning_rate 2e-5 \
             --num_train_epochs 3.0 \
-            --output_dir /home/ubuntu/lrz_share/fine_tuned/$MODEL/${VARIANT}/glue/${TASK}/ \
+            --output_dir /home/ubuntu/fine_tuned/$MODEL/${VARIANT}/glue/${TASK}/ \
             --overwrite_output_dir \
             --seed $SEED
     done
