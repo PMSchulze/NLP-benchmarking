@@ -34,16 +34,21 @@ tokenizer.save_model("/home/ubuntu/data/token_vocab/bert/")
 For pre-training details check `pretrain_bert.py` in this repository.
 
 ```
-python ~/python_files/pretrain_bert.py \
-    --hidden_size 384 \
-    --num_hidden_layers 6 \
-    --num_attention_heads 6 \
-    --intermediate_size 1536 \
-    --num_train_epochs 10 \
-    --warmup_steps 1820 \
-    --output_dir /home/ubuntu/models/bert/384_6_6_1536_10 \
-    --corpus_pretrain /home/ubuntu/data/pretrain_data/wiki_train.txt \
-    --token_vocab /home/ubuntu/data/token_vocab/bert/
+for VARIANT in 128_2_2_512_12 128_2_2_512_15 128_2_2_512_17
+do
+    NEPOCHS=$(echo $VARIANT | cut -d'_' -f 5)
+    NWARMUP=$(($NEPOCHS*182))
+    python /home/ubuntu/python_files/pretrain_bert.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $NEPOCHS \
+        --warmup_steps $NWARMUP \
+        --output_dir /home/ubuntu/models/bert/${VARIANT} \
+        --corpus_pretrain /home/ubuntu/data/pretrain_data/wiki_train.txt \
+        --token_vocab /home/ubuntu/data/token_vocab/bert/
+done
 ```
 
 #### Number of Training Epochs
@@ -145,7 +150,7 @@ export GLUE_DIR=/home/ubuntu/data/glue
 export MODEL=bert
 export SEED=2020
 
-for VARIANT in 128_2_4_512_10 128_2_8_512_10 128_2_16_512_10 128_2_32_512_10 160_2_2_540_10 192_2_2_786_10 288_2_2_1152_10 384_2_2_1536_10
+for VARIANT in 128_2_2_512_12 128_2_2_512_15 128_2_2_512_17
 do
     cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/${VARIANT}/vocab.txt
 
@@ -171,16 +176,16 @@ done
 
 #### Number of Training Epochs
 
-GLUE tasks                    | 384_6_6_1536_10 | 384_6_6_1536_20 | 192_3_3_786_10 | 192_3_3_786_20 | 128_2_2_512_10 | 128_2_2_512_20
-------------------------------|-----------|-----------------|-----------------|-------------------|---------------|-----------------
-SST-2                         | 86.24     | 87.04           | 80.73           | 82.00           | 77.98           |78.78
-QNLI                          | 83.12     | 83.85           | 64.14           | 66.37           | 61.12           |62.51 
-RTE                           | 55.23     | 55.23           | 51.26           | 53.79           | 50.54           |54.51
-CoLA                          | 12.59     | 18.99           | 0.0             | 0.0             | 0.0             |0.0
-WNLI                          | 39.44     | 32.39           | 52.11           | 59.15           | 57.75           |53.52
-QQP                           | 82.08     | 87.12           | 67.34           | 68.75           | 63.94           |63.40            
-MRPC                          | 81.25     | 81.99           | 81.61           | 81.92           | 81.22           |81.22
-STS-B                         | 69.40     | 77.47           | 15.11           | 9.2             | -9.52           |-15.8
+GLUE tasks                    | 128_2_2_512_10 | 128_2_2_512_12 | 128_2_2_512_15 | 128_2_2_512_17 | 128_2_2_512_20
+------------------------------|-----------|-----------------|-----------------|------------------|-----------------
+SST-2                         | 77.98     | 87.04           | 80.73           | 82.00           |78.78
+QNLI                          | 61.12     | 83.85           | 64.14           | 66.37           |62.51 
+RTE                           | 50.54     | 55.23           | 51.26           | 53.79           |54.51
+CoLA                          | 0.0       | 18.99           | 0.0             | 0.0             |0.0
+WNLI                          | 57.75     | 32.39           | 52.11           | 59.15           |53.52
+QQP                           | 63.94     | 87.12           | 67.34           | 68.75           |63.40            
+MRPC                          | 81.22     | 81.99           | 81.61           | 81.92           |81.22
+STS-B                         | -9.52     | 77.47           | 15.11           | 9.2             |15.8
 MNLI                          |           |                 |                 |                 |
 
 
@@ -224,4 +229,18 @@ WNLI                          | 57.75     | 60.56           | 54.93           | 
 QQP                           | 63.94     | 64.51           | 65.40           | 67.25           | 75.83          
 MRPC                          | 81.22     | 81.22           | 81.22           | 81.34           | 79.13     
 STS-B                         | -9.52     | -10.59          | 8.14            | 6.32            | 10.61
+MNLI                          |           |                 |                 |                 |
+
+#### All Dimensions
+
+GLUE tasks                    | 384_6_6_1536_10 | 384_6_6_1536_20 | 192_3_3_786_10 | 192_3_3_786_20 | 128_2_2_512_10 | 128_2_2_512_20
+------------------------------|-----------|-----------------|-----------------|-------------------|---------------|-----------------
+SST-2                         | 86.24     | 87.04           | 80.73           | 82.00           | 77.98           |78.78
+QNLI                          | 83.12     | 83.85           | 64.14           | 66.37           | 61.12           |62.51 
+RTE                           | 55.23     | 55.23           | 51.26           | 53.79           | 50.54           |54.51
+CoLA                          | 12.59     | 18.99           | 0.0             | 0.0             | 0.0             |0.0
+WNLI                          | 39.44     | 32.39           | 52.11           | 59.15           | 57.75           |53.52
+QQP                           | 82.08     | 87.12           | 67.34           | 68.75           | 63.94           |63.40            
+MRPC                          | 81.25     | 81.99           | 81.61           | 81.92           | 81.22           |81.22
+STS-B                         | 69.40     | 77.47           | 15.11           | 9.2             | -9.52           |-15.8
 MNLI                          |           |                 |                 |                 |
