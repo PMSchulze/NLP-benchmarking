@@ -303,7 +303,7 @@ MNLI                          | 72.76/74.30|73.43/74.95     | 59.76/60.98     | 
 ### Language Modeling: Penn Tree Bank (PTB)
 
 - For LM one should use PTB, as the models are already pre-trained on Wikipedia data (so downstream task should not be on Wikipedia); see https://arxiv.org/abs/2005.14165, section 3.1.1
-- Unfortunately, Penn Treebank (PTB) is not publicly available
+- Unfortunately, PTB is not publicly available (at least not in raw form)
 - There exists, however, a public sample of PTB: https://github.com/nlp-compromise/penn-treebank
 - We use this sample, extracting only the sentences from the json file and applying a manual train/test split
 - Note that we report perplexity
