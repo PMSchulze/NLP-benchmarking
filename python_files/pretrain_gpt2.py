@@ -1,11 +1,12 @@
 import torch
 
 from transformers import GPT2Config
-config = GPT2Config(vocab_size=50_257, n_embd = 384, n_layer = 6, n_head = 6, n_inner = 1536, resid_pdrop=0.1, embd_pdrop=0.1, attn_pdrop=0.1,)
+config = GPT2Config(vocab_size=30_000, n_embd = 384, n_layer = 6, n_head = 6, resid_pdrop=0.1, embd_pdrop=0.1, attn_pdrop=0.1)
 
 from transformers import GPT2LMHeadModel
 model = GPT2LMHeadModel(config=config)
 
+from transformers import GPT2TokenizerFast
 tokenizer = GPT2TokenizerFast.from_pretrained('/home/ubuntu/data/token_vocab/gpt2/', additional_special_tokens=['<s>','<pad>','</s>','<unk>','<mask>'], pad_token='<pad>')
 
 from transformers import LineByLineTextDataset
