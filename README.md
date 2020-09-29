@@ -116,7 +116,8 @@ warmup_steps                  | 1820      |1820      |1820      |1820      |1820
 adam_beta1                    | 0.9       |0.9       |0.9       |0.9       |0.9       |
 adam_beta2                    | 0.999     |0.999     |0.999     |0.999     |0.999     |
 adam_epsilon                  | 1e-6      |1e-6      |1e-6      |1e-6      |1e-6      |
-per_device_train_batch_size   | 4,385,920 |4,584,192 |4,782,464 |4,980,736 |5,179,008 |
+per_device_train_batch_size   | 64        | 64      | 64          |   64           | 64                 
+number of parameters   | 4,385,920 |4,584,192 |4,782,464 |4,980,736 |5,179,008 |
 time (hh:mm:ss)               | 03:13:07  |03:32:14  |03:49:09  |04:06:48  |04:19:44  |
 
 #### Number of Attention Heads
@@ -137,7 +138,8 @@ warmup_steps                  | 1820      |1820      |1820      |1820      |1820
 adam_beta1                    | 0.9       |0.9       |0.9       |0.9       |0.9       |
 adam_beta2                    | 0.999     |0.999     |0.999     |0.999     |0.999     |
 adam_epsilon                  | 1e-6      |1e-6      |1e-6      |1e-6      |1e-6      |
-per_device_train_batch_size   | 4,385,920 |4,385,920 |4,385,920 |4,385,920 |4,385,920 |
+per_device_train_batch_size   | 64        | 64      | 64          |   64           | 64                 
+number of parameters   | 4,385,920 |4,385,920 |4,385,920 |4,385,920 |4,385,920 |
 time (hh:mm:ss)               | 03:13:07  |3:13:42   |03:16:19  |03:23:43  |03:36:20  |
 
 #### Hidden Size
@@ -158,7 +160,8 @@ warmup_steps                  | 1820      |1820      |1820      |1820      |1820
 adam_beta1                    | 0.9       |0.9       |0.9       |0.9       |0.9       |
 adam_beta2                    | 0.999     |0.999     |0.999     |0.999     |0.999     |
 adam_epsilon                  | 1e-6      |1e-6      |1e-6      |1e-6      |1e-6      |
-per_device_train_batch_size   | 4,385,920 |5,546,200 |6,899,940 |11,020,320 |15,615,360 |
+per_device_train_batch_size   | 64        | 64      | 64          |   64           | 64                 
+number of parameters   | 4,385,920 |5,546,200 |6,899,940 |11,020,320 |15,615,360 |
 time (hh:mm:ss)               | 03:13:07  |3:35:53   |03:47:11  |04:41:14  |5:21:55   |
 
 #### All Dimensions
@@ -179,7 +182,8 @@ warmup_steps                  | 1820      | 3640   | 1820        | 3640         
 adam_beta1                    | 0.9       | 0.9    | 0.9         |  0.9           | 0.9                 | 0.9
 adam_beta2                    | 0.999     | 0.999  | 0.999       |0.999           | 0.999               | 0.999
 adam_epsilon                  | 1e-6      | 1e-6   | 1e-6        | 1e-6           | 1e-6                 | 1e-6
-per_device_train_batch_size   | 22,713,216| 22,713,216 | 7,351,734 |7,351,734     | 4,385,920            | 4,385,920
+per_device_train_batch_size   | 64        | 64      | 64          |   64           | 64                 
+number of parameters   | 22,713,216| 22,713,216 | 7,351,734 |7,351,734     | 4,385,920            | 4,385,920
 time (hh:mm:ss)               | 08:17:47  |16:35:57| 07:29:36    | 08:22:00       | 03:13:07             | 07:31:24
 
 
@@ -208,7 +212,9 @@ done
 
 ## 3. Fine-tuning
 
-### GLUE
+### 3.1. BERT
+
+#### 3.1.1. GLUE
 
 - Data download: `python utils/download_glue_data.py --data_dir ~/data/glue --tasks all`
 - We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and STS-B (Spearman's Corr)
@@ -242,7 +248,7 @@ do
 done
 ```
 
-#### Number of Training Epochs
+##### Number of Training Epochs
 
 GLUE tasks                    | 128_2_2_512_10 | 128_2_2_512_12 | 128_2_2_512_15 | 128_2_2_512_17 | 128_2_2_512_20
 ------------------------------|-----------|-----------------|-----------------|------------------|-----------------
@@ -258,7 +264,7 @@ MNLI                          | 55.04/55.43|54.79/56.19     | 55.46/56.45     | 
 **Average (without WNLI)**    | **47.71** | **48.58**       | **46.88**       | **47.35**       | **51.56**
 **Average (with WNLI)**       | **48.83** | **49.28**       | **47.93**       | **48.04**       | **51.77**
 
-#### Number of Hidden Layers
+##### Number of Hidden Layers
 
 GLUE tasks                    | 128_2_2_512_10 |128_3_2_512_10 | 128_4_2_512_10 | 128_5_2_512_10 |128_6_2_512_10 
 ------------------------------|-----------|-----------------|-----------------|-------------------|---------------
@@ -274,7 +280,7 @@ MNLI                          |55.04/55.43|56.33/57.34      |56.08/57.09      | 
 **Average (without WNLI)**        | **47.71**     | **49.14**           | **47.76**           | **49.38**          | **50.51**
 **Average (with WNLI)**           | **48.83**     | **49.63**           | **49.03**           | **50.15**           | **48.81**
 
-#### Number of Attention Heads
+##### Number of Attention Heads
 
 GLUE tasks                    | 128_2_2_512_10 |128_2_4_512_10 | 128_2_8_512_10 | 128_2_16_512_10 |128_2_32_512_10 
 ------------------------------|-----------|-----------------|-----------------|-------------------|---------------
@@ -290,7 +296,7 @@ MNLI                          |55.04/55.43|55.20/56.48      |54.46/55.55      |5
 **Average (without WNLI)**        | **47.71**     | **48.3**        | **47.45**       | **49.11**| **48.41**
 **Average (with WNLI)**           | **48.83**     | **49.04**           | **47.50**           | **49.68**           | **49.45**
 
-#### Hidden Size
+##### Hidden Size
 
 GLUE tasks                    | 128_2_2_512_10 |160_2_2_540_10 | 192_2_2_786_10 |288_2_2_1152_10 |384_2_2_1536_10 |
 ------------------------------|-----------|-----------------|-----------------|-------------------|---------------
@@ -306,7 +312,7 @@ MNLI                          |55.04/55.43|56.00/57.07      | 59.11/60.51     | 
 **Average (without WNLI)**    | **47.71** | **49.16**       | **51.56**       | **52.24**       | **55.15**
 **Average (with WNLI)**       | **48.83**   | **50.43**       | **51.93**       | **52.06**       | **53.24**
 
-#### All Dimensions
+##### All Dimensions
 
 GLUE tasks                    | 384_6_6_1536_10 | 384_6_6_1536_20 | 192_3_3_786_10 | 192_3_3_786_20 | 128_2_2_512_10 | 128_2_2_512_20
 ------------------------------|-----------|-----------------|-----------------|-------------------|---------------|-----------------
@@ -323,7 +329,7 @@ MNLI                          | 72.76/74.30|73.43/74.95     | 59.76/60.98     | 
 **Average (with WNLI)**       | **64.85** | **66.55**       | **52.59**       | **53.75**       | **48.72**       | **48.23**
 
 
-### Language Modeling: Penn Tree Bank (PTB)
+#### 3.1.2. Language Modeling: Penn Tree Bank (PTB)
 
 - For LM one should use PTB, as the models are already pre-trained on Wikipedia data (so downstream task should not be on Wikipedia); see https://arxiv.org/abs/2005.14165, section 3.1.1
 - Unfortunately, PTB is not publicly available (at least not in raw form)
@@ -387,4 +393,30 @@ Perplexity                    | 112.35     | 92.16          | 77.38           | 
 Version                       | 384_6_6_1536_10 | 384_6_6_1536_20 | 192_3_3_786_10 | 192_3_3_786_20 | 128_2_2_512_10 | 128_2_2_512_20
 ------------------------------|-----------|-----------------|-----------------|-------------------|---------------|-----------------
 Perplexity                    | 27.60     | 21.70           | 58.92           | 46.92          | 112.35           |81.36
+
+
+### 3.2. GPT-2
+
+```
+export MODEL=gpt2
+export VARIANT=384_6_6
+export TRAIN_FILE=/home/ubuntu/data/ptb/ptb_train.txt
+export TEST_FILE=/home/ubuntu/data/ptb/ptb_test.txt
+
+for VARIANT in 128_2_2_512_10 160_2_2_540_10 192_2_2_786_10 288_2_2_1152_10 384_2_2_1536_10
+do
+    cp /home/ubuntu/data/token_vocab/$MODEL/* /home/ubuntu/models/$MODEL/${VARIANT}/
+
+    python /home/ubuntu/transformers/examples/language-modeling/run_language_modeling.py \
+        --output_dir=/home/ubuntu/fine_tuned/$MODEL/${VARIANT}/language_modeling \
+        --model_type=$MODEL \
+        --model_name_or_path=/home/ubuntu/models/$MODEL/${VARIANT} \
+        --do_train \
+        --train_data_file=$TRAIN_FILE \
+        --do_eval \
+        --eval_data_file=$TEST_FILE \
+        --block_size 128 \
+        --save_total_limit 1
+done
+```
 
