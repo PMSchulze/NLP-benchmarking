@@ -10,7 +10,7 @@ pip install -r ./examples/requirements.txt
 
 ## 1. Generation of Token Vocabulary
 
-### BERT
+### 1.1. BERT
 ```
 from tokenizers import BertWordPieceTokenizer
 
@@ -27,7 +27,7 @@ tokenizer.train(vocab_path)
 tokenizer.save_model("/home/ubuntu/data/token_vocab/bert/")
 ```
 
-### GPT-2
+### 1.2. GPT-2
 ```
 from tokenizers import ByteLevelBPETokenizer
 
@@ -53,7 +53,7 @@ tokenizer.save_model("/home/ubuntu/data/token_vocab/gpt2/")
 
 ## 2. Pre-training
 
-### BERT
+### 2.1. BERT
 
 For pre-training details check `pretrain_bert.py` in this repository.
 
@@ -181,6 +181,29 @@ adam_beta2                    | 0.999     | 0.999  | 0.999       |0.999         
 adam_epsilon                  | 1e-6      | 1e-6   | 1e-6        | 1e-6           | 1e-6                 | 1e-6
 per_device_train_batch_size   | 22,713,216| 22,713,216 | 7,351,734 |7,351,734     | 4,385,920            | 4,385,920
 time (hh:mm:ss)               | 08:17:47  |16:35:57| 07:29:36    | 08:22:00       | 03:13:07             | 07:31:24
+
+
+### 2.2. GPT-2
+
+For pre-training details check `pretrain_gpt2.py` in this repository.
+
+```
+for VARIANT in 128_2_2_512_10 160_2_2_540_10 192_2_2_786_10 288_2_2_1152_10 384_2_2_1536_10
+do
+    NEPOCHS=$(echo $VARIANT | cut -d'_' -f 5)
+    NWARMUP=$(($NEPOCHS*182))
+    python /home/ubuntu/python_files/pretrain_gpt2.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $NEPOCHS \
+        --warmup_steps $NWARMUP \
+        --output_dir /home/ubuntu/models/gpt2/${VARIANT} \
+        --corpus_pretrain /home/ubuntu/data/pretrain_data/wiki_train.txt \
+        --token_vocab /home/ubuntu/data/token_vocab/gpt2/
+done
+```
 
 
 ## 3. Fine-tuning
