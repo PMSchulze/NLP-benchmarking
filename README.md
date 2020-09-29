@@ -27,21 +27,21 @@ tokenizer.train(vocab_path)
 tokenizer.save_model("/home/ubuntu/data/token_vocab/bert/")
 ```
 
-### XLNet
+### GPT
 ```
-from tokenizers import SentencePieceBPETokenizer
+from tokenizers import ByteLevelBPETokenizer
 
 # Specify path of pre-training data
 vocab_path = "/home/ubuntu/data/pretrain_data/wiki_train.txt"
 
-# Initialize XLNet's SentencePiece tokenizer 
-tokenizer = SentencePieceBPETokenizer()
+# Initialize GPT's BPE tokenizer 
+tokenizer = ByteLevelBPETokenizer()
 
-# Generate SentencePiece token vocabulary from pre-training data
+# Generate BPE token vocabulary from pre-training data
 tokenizer.train(vocab_path)
 
 # Save the vocabulary
-tokenizer.save_model("/home/ubuntu/data/token_vocab/xlnet/")
+tokenizer.save_model("/home/ubuntu/data/token_vocab/gpt/")
 ```
 
 ## 2. Pre-training
