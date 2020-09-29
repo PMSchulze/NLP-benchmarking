@@ -1,18 +1,32 @@
+import argparse
+  
+parser = argparse.ArgumentParser()
+parser.add_argument("--hidden_size", type=int)
+parser.add_argument("--num_hidden_layers", type=int)
+parser.add_argument("--num_attention_heads", type=int)
+parser.add_argument("--intermediate_size", type=int)
+parser.add_argument("--num_train_epochs", type=int)
+parser.add_argument("--warmup_steps", type=int)
+parser.add_argument("--corpus_pretrain")
+parser.add_argument("--output_dir")
+parser.add_argument("--token_vocab")
+args = parser.parse_args()
+
 import torch
 
 from transformers import GPT2Config
-config = GPT2Config(vocab_size=30_000, n_embd = 384, n_layer = 6, n_head = 6, resid_pdrop=0.1, embd_pdrop=0.1, attn_pdrop=0.1)
+config = GPT2Config(vocab_size=40_000, n_embd = args.hidden_size, n_layer = args.num_hidden_layers, n_head = args.num_attention_heads, n_inner = args.intermediate_size, resid_pdrop=0.1, embd_pdrop=0.1, attn_pdrop=0.1)
 
 from transformers import GPT2LMHeadModel
 model = GPT2LMHeadModel(config=config)
 
 from transformers import GPT2TokenizerFast
-tokenizer = GPT2TokenizerFast.from_pretrained('/home/ubuntu/data/token_vocab/gpt2/', additional_special_tokens=['<s>','<pad>','</s>','<unk>','<mask>'], pad_token='<pad>')
+tokenizer = GPT2TokenizerFast.from_pretrained(args.token_vocab, additional_special_tokens=['<s>','<pad>','</s>','<unk>','<mask>'], pad_token='<pad>')
 
 from transformers import LineByLineTextDataset
 dataset = LineByLineTextDataset(
     tokenizer=tokenizer,
-    file_path='/home/ubuntu/data/pretrain_data/wiki_train.txt',
+    file_path=args.corpus_pretrain,
     block_size=128,
 )
 
@@ -23,13 +37,13 @@ data_collator = DataCollatorForLanguageModeling(
 
 from transformers import Trainer, TrainingArguments
 training_args = TrainingArguments(
-    output_dir="/home/ubuntu/models/gpt2/",
+    output_dir=args.output_dir,
     overwrite_output_dir=True,
     learning_rate = 2.5e-4,
     adam_epsilon = 1e-06,
     weight_decay = 0.01,
-    warmup_steps = 2000,
-    num_train_epochs=1,
+    warmup_steps = args.warmup_steps,
+    num_train_epochs=args.num_train_epochs,
     per_device_train_batch_size=64,
     save_steps=10_000,
     save_total_limit=2,
@@ -44,4 +58,5 @@ trainer = Trainer(
 
 trainer.train()
 
-trainer.save_model("/home/ubuntu/models/gpt2/")
+trainer.save_model("args.output_dir")
+
