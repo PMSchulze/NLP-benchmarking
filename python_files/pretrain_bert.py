@@ -6,6 +6,7 @@ parser.add_argument("--num_hidden_layers", type=int)
 parser.add_argument("--num_attention_heads", type=int)
 parser.add_argument("--intermediate_size", type=int)
 parser.add_argument("--num_train_epochs", type=int)
+parser.add_argument("--warmup_steps", type=int)
 parser.add_argument("--corpus_pretrain")
 parser.add_argument("--output_dir")
 parser.add_argument("--token_vocab")
@@ -41,7 +42,7 @@ training_args = TrainingArguments(
     learning_rate = 1e-4,
     adam_epsilon = 1e-06,
     weight_decay = 0.01,
-    warmup_steps = 1820,
+    warmup_steps = args.warmup_steps,
     num_train_epochs=args.num_train_epochs,
     per_device_train_batch_size=64,
     save_steps=10_000,
