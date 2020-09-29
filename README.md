@@ -34,7 +34,7 @@ from tokenizers import ByteLevelBPETokenizer
 # Specify path of pre-training data
 vocab_path = "/home/ubuntu/data/pretrain_data/wiki_train.txt"
 
-# Initialize GPT's BPE tokenizer 
+# Initialize GPT-2's Byte-level BPE tokenizer 
 tokenizer = ByteLevelBPETokenizer()
 
 # Generate BPE token vocabulary from pre-training data
