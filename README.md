@@ -187,9 +187,8 @@ time (hh:mm:ss)               | 08:17:47  |16:35:57| 07:29:36    | 08:22:00     
 
 ### GLUE
 
-- DATA DOWNLOAD: `python utils/download_glue_data.py --data_dir ~/data/glue --tasks all`
-- RUN SCRIPT IN TRANSFORMERS REPO!
-- NOTE: We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and STS-B (Spearman's Corr).
+- Data download: `python utils/download_glue_data.py --data_dir ~/data/glue --tasks all`
+- We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and STS-B (Spearman's Corr)
 
 ```
 export GLUE_DIR=/home/ubuntu/data/glue
@@ -299,3 +298,43 @@ STS-B                         | 69.40     | 77.47           | 15.11           | 
 MNLI                          | 72.76/74.30|73.43/74.95     | 59.76/60.98     | 61.34/62.55     |55.04/55.43      |55.57/56.26
 **Average (without WNLI)**    | **68.02** | **70.83**       | **52.65**       | **53.07**       | **47.58**       | **47.57**
 **Average (with WNLI)**       | **64.85** | **66.55**       | **52.59**       | **53.75**       | **48.72**       | **48.23**
+
+
+### Language Modeling: Penn Tree Bank (PTB)
+
+- For LM one should use PTM, as the models are pre-trained on Wikipedia data (so downstream task should not be on Wikipedia); see https://arxiv.org/abs/2005.14165, section 3.1.1
+- Unfortunately, Penn Treebank (PTB) is not publicly available
+- There exists, however, a public sample of PTB: https://github.com/nlp-compromise/penn-treebank
+- We use this sample, extracting only the sentences from the json file and applying a manual train/test split
+- Note that we report perplexity
+
+```
+export MODEL=bert
+export TRAIN_FILE=/home/ubuntu/data/ptb/ptb_train.txt
+export TEST_FILE=/home/ubuntu/data/ptb/ptb_test.txt
+
+for VARIANT in 128_2_2_512_10 128_2_2_512_12 128_2_2_512_15 128_2_2_512_17 128_2_2_512_20 \
+128_3_2_512_10 128_4_2_512_10 128_5_2_512_10 128_6_2_512_10 \
+128_2_4_512_10 128_2_8_512_10 128_2_16_512_10 128_2_32_512_10 \
+160_2_2_540_10 192_2_2_786_10 288_2_2_1152_10 384_2_2_1536_10 \
+384_6_6_1536_10 384_6_6_1536_20 192_3_3_786_10 192_3_3_786_20 
+do
+    cp /home/ubuntu/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/models/$MODEL/${VARIANT}/vocab.txt
+
+    python /home/ubuntu/transformers/examples/language-modeling/run_language_modeling.py \
+        --output_dir=/home/ubuntu/fine_tuned/$MODEL/${VARIANT}/language_modeling \
+        --model_type=$MODEL \
+        --model_name_or_path=/home/ubuntu/models/$MODEL/${VARIANT} \
+        --do_train \
+        --train_data_file=$TRAIN_FILE \
+        --do_eval \
+        --eval_data_file=$TEST_FILE \
+        --mlm \
+        --block_size 128 \
+        --num_train_epochs 3.0 \
+        --overwrite_output_dir
+done
+```
+
+
+
