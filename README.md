@@ -38,7 +38,7 @@ vocab_path = "/home/ubuntu/data/pretrain_data/wiki_train.txt"
 tokenizer = ByteLevelBPETokenizer()
 
 # Generate BPE token vocabulary from pre-training data
-tokenizer.train(files=vocab_path, vocab_size=40_000, min_frequency=2)
+tokenizer.train(files=vocab_path, vocab_size=30_000, min_frequency=2, special_tokens=['<s>','<pad>','</s>'])
 
 # Save the vocabulary
 tokenizer.save_model("/home/ubuntu/data/token_vocab/gpt2/")
