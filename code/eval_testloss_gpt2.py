@@ -1,8 +1,10 @@
 import argparse
 
+parser = argparse.ArgumentParser()
 parser.add_argument("--test_corpus")
 parser.add_argument("--model_dir")
 parser.add_argument("--token_vocab")
+args = parser.parse_args()
 
 import torch
 from transformers import GPT2TokenizerFast
