@@ -7,11 +7,11 @@ parser.add_argument("--token_vocab")
 args = parser.parse_args()
 
 import torch
-from transformers import GPT2TokenizerFast
-tokenizer = GPT2TokenizerFast.from_pretrained(args.token_vocab, additional_special_tokens=['<s>','<pad>','</s>','<unk>','<mask>'], pad_token='<pad>')
+from transformers import BertTokenizerFast
+tokenizer = BertTokenizerFast.from_pretrained(args.token_vocab)
 
-from transformers import GPT2LMHeadModel
-model = GPT2LMHeadModel.from_pretrained(args.model_dir)
+from transformers import BertForMaskedLM
+model = BertForMaskedLM.from_pretrained(args.model_dir)
 
 with open(args.test_corpus, encoding="utf-8") as f:
     lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
@@ -26,7 +26,7 @@ dataset_split = torch.split(dataset,128)
 
 from transformers import DataCollatorForLanguageModeling
 data_collator = DataCollatorForLanguageModeling(
-    tokenizer=tokenizer, mlm=False,
+    tokenizer=tokenizer, mlm=True, mlm_probability=0.15
 )
 
 from transformers import Trainer
