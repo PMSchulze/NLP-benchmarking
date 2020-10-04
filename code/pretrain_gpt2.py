@@ -27,7 +27,7 @@ from transformers import LineByLineTextDataset
 dataset = LineByLineTextDataset(
     tokenizer=tokenizer,
     file_path=args.corpus_pretrain,
-    block_size=128,
+    block_size=512,
 )
 
 from transformers import DataCollatorForLanguageModeling
