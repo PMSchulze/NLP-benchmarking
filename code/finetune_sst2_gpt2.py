@@ -8,14 +8,10 @@ import torch
 
 # If there's a GPU available...
 if torch.cuda.is_available():    
-
     # Tell PyTorch to use the GPU.    
     device = torch.device("cuda")
-
     print('There are %d GPU(s) available.' % torch.cuda.device_count())
-
     print('We will use the GPU:', torch.cuda.get_device_name(0))
-
 # If not...
 else:
     print('No GPU available, using the CPU instead.')
@@ -31,7 +27,7 @@ df_eval = pd.read_csv("/home/ubuntu/data/glue/SST-2/dev.tsv", delimiter='\t', he
 
 # Store sentences and their labels as lists.
 sentences_train, sentences_eval = df_train.sentence.to_list(), df_eval.sentence.to_list()
-labels_train, labels_eval = df_train.label.to_list(), df_eval.label.to_list()
+labels_train, labels_eval = torch.tensor(df_train.label.to_list()), torch.tensor(df_eval.label.to_list())
 
 # Load GPT2 tokenizer
 from transformers import GPT2Tokenizer
@@ -53,7 +49,8 @@ attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], en
 
 from torch.utils.data import TensorDataset
 # Combine the training inputs into a TensorDataset.
-dataset_train, dataset_eval = TensorDataset(input_ids_train, attention_mask_train, labels_train), TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
+dataset_train = TensorDataset(input_ids_train, attention_mask_train, labels_train)
+dataset_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
 
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
