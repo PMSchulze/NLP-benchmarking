@@ -54,11 +54,18 @@ dataset_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
 
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
-# The DataLoader needs to know our batch size for training, so we specify it 
-# here. For fine-tuning BERT on a specific task, the authors recommend a batch 
-# size of 16 or 32.
+import random
+import numpy as np
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
 batch_size = 32
 
+set_seed(42)
 # Create the DataLoaders for our training and validation sets.
 # We'll take training samples in random order. 
 train_dataloader = DataLoader(
@@ -110,6 +117,7 @@ model = SimpleGPT2SequenceClassifier(
     num_classes=num_classes,
     gpt_model_name='/home/ubuntu/lrz_share/models/gpt2/384_2_2_1536_10/',
 )
+model.cuda()
 
 # ---------------------------------------------------------------------------------------------------------------
 # We choose the same optimizer (and hyperparam.) that was used for the other models fine-tuned on GLUE
@@ -141,28 +149,19 @@ scheduler = get_linear_schedule_with_warmup(
 # Train & Eval Loop
 # ---------------------------------------------------------------------------------------------------------------
 
-import random
-import numpy as np
-
 # This training code is based on the `run_glue.py` script here:
 # https://github.com/huggingface/transformers/blob/5bfcd0485ece086ebcbed2d008813037968a9e58/examples/run_glue.py#L128
-
-# Set the seed value all over the place to make this reproducible.
-seed_val = 42
-
-random.seed(seed_val)
-np.random.seed(seed_val)
-torch.manual_seed(seed_val)
-torch.cuda.manual_seed_all(seed_val)
 
 def compute_accuracy(y_pred, y_target):
     y_pred = y_pred.cpu()
     y_target = y_target.cpu()
     return torch.eq(torch.argmax(y_pred,dim=1),y_target).sum().item() / len(y_pred)
 
-model.cuda()
 loss_func = nn.CrossEntropyLoss()
 training_stats = []
+
+torch.backends.cudnn.deterministic=True
+set_seed(42)
 
 for epoch_i in range(0, epochs):
     # Training
@@ -202,21 +201,19 @@ for epoch_i in range(0, epochs):
     avg_eval_loss = eval_loss / len(eval_dataloader)    
     # Record all statistics from this epoch.
     training_stats.append(
-        {
-            'epoch': epoch_i + 1,
-            'Training Loss': avg_train_loss,
-            'Valid. Loss': avg_eval_loss,
-            'Valid. Accur.': avg_eval_accuracy,
-        }
-    )
-    
+        {'epoch': epoch_i + 1,
+         'Training Loss': avg_train_loss,
+         'Valid. Loss': avg_eval_loss,
+         'Valid. Accur.': avg_eval_accuracy,})
+
+ 
 # Save model
 torch.save(model.state_dict(), '/home/ubuntu/lrz_share/fine_tuned/gpt2/glue/384_2_2_1536_10/model')
 
 # Save evaluation set results
 eval_loss=training_stats[epochs-1].get('Valid. Loss')
 eval_acc=training_stats[epochs-1].get('Valid. Accur.')
- with open('/home/ubuntu/lrz_share/fine_tuned/gpt2/glue/384_2_2_1536_10/' + 'eval_results_sst-2.txt', "w") as text_file:
+with open('/home/ubuntu/lrz_share/fine_tuned/gpt2/glue/384_2_2_1536_10/' + 'eval_results_sst-2.txt', "w") as text_file:
     print("eval_loss = {}".format(eval_loss), file=text_file)
     print("eval_acc = {}".format(eval_acc), file=text_file)
     print("epoch = {}".format(epochs), file=text_file)
