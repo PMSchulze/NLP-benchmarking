@@ -13,17 +13,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--eval_data")
 parser.add_argument("--train_data")
 parser.add_argument("--token_vocab")
-parser.add_argument("--batch_size")
-parser.add_argument("--seed")
-parser.add_argument("--token_vocab")
-parser.add_argument("--hidden_size")
+parser.add_argument("--batch_size", type=int)
+parser.add_argument("--seed", type=int)
+parser.add_argument("--hidden_size", type=int)
 parser.add_argument("--model_name_or_path")
-parser.add_argument("--num_train_epochs")
+parser.add_argument("--num_train_epochs", type=int)
 parser.add_argument("--output_dir")
 args = parser.parse_args()
 
 # Setup CUDA
-if torch.cuda.is_available():    
+if torch.cuda.is_available():
     device = torch.device("cuda")
 else:
     device = torch.device("cpu")
@@ -61,15 +60,12 @@ attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], en
 dataset_train = TensorDataset(input_ids_train, attention_mask_train, labels_train)
 dataset_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
 
-def set_seed(seed):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-
 batch_size = args.batch_size
 
-set_seed(args.seed)
+random.seed(args.seed)
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed_all(args.seed)
 # Create the DataLoaders for our training and validation sets.
 # We'll take training samples in random order. 
 train_dataloader = DataLoader(
@@ -89,23 +85,23 @@ eval_dataloader = DataLoader(
 
 class SimpleGPT2SequenceClassifier(nn.Module):
     def __init__(
-        self, 
+        self,
         sequence_size: int,
         num_classes:int ,
-        gpt_model_name:str, 
+        gpt_model_name:str,
     ):
         super(SimpleGPT2SequenceClassifier,self).__init__()
         self.gpt2model = GPT2Model.from_pretrained(
             gpt_model_name
         )
         self.fc1 = nn.Linear(sequence_size, num_classes)
-        
+
     def forward(self, x_in, attention_mask):
-        
+
         gpt_out = self.gpt2model(x_in, attention_mask=attention_mask)[0]
         batch_size = gpt_out.shape[0]
         prediction_vector = self.fc1(gpt_out.view(batch_size,-1))
-    
+
         return prediction_vector
 
 model = SimpleGPT2SequenceClassifier(
@@ -121,7 +117,7 @@ model.cuda()
 
 optimizer = AdamW(
     model.parameters(),
-    lr = 2e-5, 
+    lr = 2e-5,
     eps = 1e-8
 )
 
@@ -130,10 +126,10 @@ total_steps = len(train_dataloader) * args.num_train_epochs
 
 # Create the learning rate scheduler.
 scheduler = get_linear_schedule_with_warmup(
-    optimizer, 
+    optimizer,
     num_warmup_steps = 0, # Default value in run_glue.py
     num_training_steps = total_steps
-) 
+)
 
 # ---------------------------------------------------------------------------------------------------------------
 # Train & Eval Loop
@@ -151,12 +147,15 @@ loss_func = nn.CrossEntropyLoss()
 training_stats = []
 
 torch.backends.cudnn.deterministic=True
-set_seed(42)
+random.seed(args.seed)
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed_all(args.seed)
 
 for epoch_i in range(0, args.num_train_epochs):
     # Training
     training_loss = 0.0
-    model.train()    
+    model.train()
     for step, batch in enumerate(train_dataloader):
         input_ids_t = batch[0].to(device)
         attention_mask_t = batch[1].to(device)
@@ -178,7 +177,7 @@ for epoch_i in range(0, args.num_train_epochs):
         input_ids_t = batch[0].to(device)
         attention_mask_t = batch[1].to(device)
         target_t = batch[2].to(device)
-        with torch.no_grad():        
+        with torch.no_grad():
             pred_t = model(input_ids_t, attention_mask_t)
             loss = loss_func(pred_t, target_t)
         eval_loss += loss.item()
@@ -188,7 +187,7 @@ for epoch_i in range(0, args.num_train_epochs):
         # accumulate it over all batches.
         eval_accuracy += compute_accuracy(pred_t, target_t)
     avg_eval_accuracy = eval_accuracy / len(eval_dataloader)
-    avg_eval_loss = eval_loss / len(eval_dataloader)    
+    avg_eval_loss = eval_loss / len(eval_dataloader)
     # Record all statistics from this epoch.
     training_stats.append(
         {'epoch': epoch_i + 1,
@@ -196,7 +195,7 @@ for epoch_i in range(0, args.num_train_epochs):
          'Valid. Loss': avg_eval_loss,
          'Valid. Accur.': avg_eval_accuracy,})
 
- 
+
 # Save model
 torch.save(model.state_dict(), args.output_dir + 'model')
 
@@ -207,5 +206,3 @@ with open(args.output_dir + 'eval_results_sst-2.txt', "w") as text_file:
     print("eval_loss = {}".format(eval_loss), file=text_file)
     print("eval_acc = {}".format(eval_acc), file=text_file)
     print("epoch = {}".format(args.num_train_epochs), file=text_file)
-
-
