@@ -1,6 +1,27 @@
 import pandas as pd
 
 # ---------------------------------------------------------------------------------------------------------------
+# Setup CUDA
+# ---------------------------------------------------------------------------------------------------------------
+
+import torch
+
+# If there's a GPU available...
+if torch.cuda.is_available():    
+
+    # Tell PyTorch to use the GPU.    
+    device = torch.device("cuda")
+
+    print('There are %d GPU(s) available.' % torch.cuda.device_count())
+
+    print('We will use the GPU:', torch.cuda.get_device_name(0))
+
+# If not...
+else:
+    print('No GPU available, using the CPU instead.')
+    device = torch.device("cpu")
+
+# ---------------------------------------------------------------------------------------------------------------
 # First we load & prepare training and evaluation data
 # ---------------------------------------------------------------------------------------------------------------
 
@@ -32,7 +53,7 @@ attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], en
 
 from torch.utils.data import TensorDataset
 # Combine the training inputs into a TensorDataset.
-dataset_train, dataset_eval = TensorDataset(input_ids_train, attention_mask_train), TensorDataset(input_ids_eval, attention_mask_eval)
+dataset_train, dataset_eval = TensorDataset(input_ids_train, attention_mask_train, labels_train), TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
 
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
@@ -45,12 +66,12 @@ batch_size = 32
 # We'll take training samples in random order. 
 train_dataloader = DataLoader(
     dataset_train,  # The training samples.
-    sampler = RandomSampler(dataset), # Select batches randomly
+    sampler = RandomSampler(dataset_train), # Select batches randomly
     batch_size = batch_size # Trains with this batch size.
 )
 eval_dataloader = DataLoader(
     dataset_eval,  # The training samples.
-    sampler = SequentialSampler(dataset), # Select batches sequentially
+    sampler = SequentialSampler(dataset_eval), # Select batches sequentially
     batch_size = batch_size # Trains with this batch size.
 )
 
@@ -156,28 +177,35 @@ def make_train_state():
     }
     return dict(d)
 ------------------------------------------------------------------------------------------------------------------------------------
-
-
+batch = 0
+for step, tbatch in enumerate(train_dataloader):
+    if step == 1:
+        batch = tbatch
 
 loss_func = nn.CrossEntropyLoss()
 
-running_loss = 0.0
-running_acc = 0.0
-running_f1 = 0.0
+training_loss = 0.0
 
 model.train()
 
-optimizer.zero_grad()
-y_pred=model(input_ids, attention_mask)
-y_tgt=torch.tensor([0,1])
-loss = loss_func(y_pred, y_tgt)
-loss_t = loss.item()
+input_ids_t = batch[0].to(device)
+attention_mask_t =  = batch[1].to(device)
+target_t =  = batch[2].to(device)
+
+model.zero_grad()
+
+pred_t = model(input_ids_t, attention_mask_t)
+
+loss = loss_func(pred_t, target_t)
+training_loss += loss.item()
 
 loss.backward()
+
+torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+
 optimizer.step()
 
-loss_t = loss.item()
-# running_loss += (loss_t - running_loss) / (batch_index + 1)
+scheduler.step()
 
 y_pred = y_pred.detach().cpu()
 y_tgt = y_tgt.detach().cpu()
