@@ -1,35 +1,38 @@
 import pandas as pd
 
+# ---------------------------------------------------------------------------------------------------------------
+# First we load & prepare training and evaluation data
+# ---------------------------------------------------------------------------------------------------------------
+
 # Load the dataset into a pandas dataframe.
-df = pd.read_csv("/home/ubuntu/data/glue/SST-2/train.tsv", delimiter='\t', header=0, names=['sentence', 'label'])
+df_train = pd.read_csv("/home/ubuntu/data/glue/SST-2/train.tsv", delimiter='\t', header=0, names=['sentence', 'label'])
+df_eval = pd.read_csv("/home/ubuntu/data/glue/SST-2/dev.tsv", delimiter='\t', header=0, names=['sentence', 'label'])
 
 # Store sentences and their labels as lists.
-sentences = df.sentence.to_list()
-labels = df.label.to_list()
+sentences_train, sentences_eval = df_train.sentence.to_list(), df_eval.sentence.to_list()
+labels_train, labels_eval = df_train.label.to_list(), df_eval.label.to_list()
 
 # Load GPT2 tokenizer
 from transformers import GPT2Tokenizer
 tokenizer = GPT2Tokenizer.from_pretrained('/home/ubuntu/data/token_vocab/roberta/', additional_special_tokens=['<s>','<pad>','</s>'], pad_token='<pad>')
 
 max_len = 0
-
 # For every sentence...
-for sent in sentences:
+for sent in sentences_train:
     # Tokenize the text and for each sentence return the sequence of indices.
-    input_ids = tokenizer.encode(sent)
+    ids = tokenizer.encode(sent)
     # Update the maximum sentence length.
-    max_len = max(max_len, len(input_ids))
-
-print('Max sentence length: ', max_len)
+    max_len = max(max_len, len(ids))
 
 # Tokenize all of the sentences and map the tokens to thier word IDs.
-encoding = tokenizer(sentences, return_tensors='pt', padding=True, truncation=True, max_length = max_len)
-input_ids = encoding['input_ids']
-attention_mask = encoding['attention_mask']
+encoding_train = tokenizer(sentences_train, return_tensors='pt', padding=True, truncation=True, max_length = max_len)
+encoding_eval = tokenizer(sentences_eval, return_tensors='pt', padding=True, truncation=True, max_length = max_len)
+input_ids_train, input_ids_eval = encoding_train['input_ids'], encoding_eval['input_ids']
+attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], encoding_eval['attention_mask']
 
 from torch.utils.data import TensorDataset
 # Combine the training inputs into a TensorDataset.
-dataset = TensorDataset(input_ids, attention_mask)
+dataset_train, dataset_eval = TensorDataset(input_ids_train, attention_mask_train), TensorDataset(input_ids_eval, attention_mask_eval)
 
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
@@ -41,10 +44,19 @@ batch_size = 32
 # Create the DataLoaders for our training and validation sets.
 # We'll take training samples in random order. 
 train_dataloader = DataLoader(
-    dataset,  # The training samples.
+    dataset_train,  # The training samples.
     sampler = RandomSampler(dataset), # Select batches randomly
     batch_size = batch_size # Trains with this batch size.
 )
+eval_dataloader = DataLoader(
+    dataset_eval,  # The training samples.
+    sampler = SequentialSampler(dataset), # Select batches sequentially
+    batch_size = batch_size # Trains with this batch size.
+)
+
+# ---------------------------------------------------------------------------------------------------------------
+# Here we define the classification head of GPT-2 & initialize the model
+# ---------------------------------------------------------------------------------------------------------------
 
 from transformers import GPT2Tokenizer, GPT2Model
 import torch
@@ -80,6 +92,10 @@ model = SimpleGPT2SequenceClassifier(
     num_classes=num_classes,
     gpt_model_name='/home/ubuntu/lrz_share/models/gpt2/128_2_2_512_10/',
 )
+
+# ---------------------------------------------------------------------------------------------------------------
+# The optimizer is the same that as we used for other models on GLUE
+# ---------------------------------------------------------------------------------------------------------------
 
 from transformers import AdamW
 optimizer = AdamW(
