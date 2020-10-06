@@ -135,7 +135,7 @@ scheduler = get_linear_schedule_with_warmup(
     optimizer, 
     num_warmup_steps = 0, # Default value in run_glue.py
     num_training_steps = total_steps
-)
+) 
 ------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -174,42 +174,54 @@ def make_train_state():
     }
     return dict(d)
 ------------------------------------------------------------------------------------------------------------------------------------
-batch = 0
-for step, tbatch in enumerate(train_dataloader):
-    if step == 1:
-        batch = tbatch
-
+# Tell pytorch to run this model on the GPU.
+model.cuda()
 loss_func = nn.CrossEntropyLoss()
+training_stats = []
 
-training_loss = 0.0
-
-model.train()
-
-input_ids_t = batch[0].to(device)
-attention_mask_t =  = batch[1].to(device)
-target_t =  = batch[2].to(device)
-
-model.zero_grad()
-
-pred_t = model(input_ids_t, attention_mask_t)
-
-loss = loss_func(pred_t, target_t)
-training_loss += loss.item()
-
-loss.backward()
-
-torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-
-optimizer.step()
-
-scheduler.step()
-
-y_pred = y_pred.detach().cpu()
-y_tgt = y_tgt.detach().cpu()
-
-acc_t = compute_accuracy(
-    y_pred, y_tgt
-)
-
-# running_acc += (acc_t - running_acc) / (batch_index + 1)
+for epoch_i in range(0, epochs):
+    # Training
+    training_loss = 0.0
+    model.train()    
+    for step, batch in enumerate(train_dataloader):
+        input_ids_t = batch[0].to(device)
+        attention_mask_t = batch[1].to(device)
+        target_t = batch[2].to(device)
+        model.zero_grad()
+        pred_t = model(input_ids_t, attention_mask_t)
+        loss = loss_func(pred_t, target_t)
+        training_loss += loss.item()
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        optimizer.step()
+        scheduler.step()
+    avg_train_loss = training_loss / len(train_dataloader)
+    # Validation
+    model.eval()
+    eval_accuracy = 0
+    eval_loss = 0
+    for batch in validation_dataloader:
+        input_ids_t = batch[0].to(device)
+        attention_mask_t = batch[1].to(device)
+        target_t = batch[2].to(device)
+        with torch.no_grad():        
+            pred_t = model(input_ids_t, attention_mask_t)
+            loss = loss_func(pred_t, target_t)
+        eval_loss += loss.item()
+        pred_t = pred_t.detach().cpu().numpy()
+        target_t = target_t.to('cpu').numpy()
+        # Calculate the accuracy for this batch of test sentences, and
+        # accumulate it over all batches.
+        eval_accuracy += compute_accuracy(pred_t, target_t)
+    avg_eval_accuracy = eval_accuracy / len(validation_dataloader)
+    avg_val_loss = eval_loss / len(validation_dataloader)    
+    # Record all statistics from this epoch.
+    training_stats.append(
+        {
+            'epoch': epoch_i + 1,
+            'Training Loss': avg_train_loss,
+            'Valid. Loss': avg_val_loss,
+            'Valid. Accur.': avg_val_accuracy,
+        }
+    )
 
