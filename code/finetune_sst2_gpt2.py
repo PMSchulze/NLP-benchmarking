@@ -31,58 +31,57 @@ else:
 # First we load & prepare training and evaluation data
 # ---------------------------------------------------------------------------------------------------------------
 
-# Load the dataset into a pandas dataframe.
+# Load training & evaluation data into pandas dataframe.
 df_train = pd.read_csv(args.train_data, delimiter='\t', header=0, names=['sentence', 'label'])
 df_eval = pd.read_csv(args.eval_data, delimiter='\t', header=0, names=['sentence', 'label'])
 
-# Store sentences and their labels as lists.
+# Store sentences and labels as lists.
 sentences_train, sentences_eval = df_train.sentence.to_list(), df_eval.sentence.to_list()
 labels_train, labels_eval = torch.tensor(df_train.label.to_list()), torch.tensor(df_eval.label.to_list())
 
 # Load GPT2 tokenizer
 tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, additional_special_tokens=['<s>','<pad>','</s>'], pad_token='<pad>')
 
+# Calculate length of the longest sentence
 max_len = 0
-# For every sentence...
 for sent in sentences_train:
-    # Tokenize the text and for each sentence return the sequence of indices.
     ids = tokenizer.encode(sent)
-    # Update the maximum sentence length.
     max_len = max(max_len, len(ids))
 
-# Tokenize all of the sentences and map the tokens to thier word IDs.
+# Tokenize all sentences & store IDs and attention mask
 encoding_train = tokenizer(sentences_train, return_tensors='pt', padding='max_length', truncation=True, max_length = max_len)
 encoding_eval = tokenizer(sentences_eval, return_tensors='pt', padding='max_length', truncation=True, max_length = max_len)
 input_ids_train, input_ids_eval = encoding_train['input_ids'], encoding_eval['input_ids']
 attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], encoding_eval['attention_mask']
 
-# Combine the training inputs into a TensorDataset.
+# Store IDs, attention masks and labels in one object
 dataset_train = TensorDataset(input_ids_train, attention_mask_train, labels_train)
 dataset_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
 
-batch_size = args.batch_size
-
+# Set seed before shuffling the batches for reproducability
 random.seed(args.seed)
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
 torch.cuda.manual_seed_all(args.seed)
-# Create the DataLoaders for our training and validation sets.
-# We'll take training samples in random order. 
+
+# Create input batches
 train_dataloader = DataLoader(
-    dataset_train,  # The training samples.
-    sampler = RandomSampler(dataset_train), # Select batches randomly
-    batch_size = batch_size # Trains with this batch size.
+    dataset_train, 
+    sampler = RandomSampler(dataset_train),
+    batch_size = args.batch_size
 )
 eval_dataloader = DataLoader(
-    dataset_eval,  # The training samples.
-    sampler = SequentialSampler(dataset_eval), # Select batches sequentially
-    batch_size = batch_size # Trains with this batch size.
+    dataset_eval,
+    sampler = SequentialSampler(dataset_eval),
+    batch_size = args.batch_size
 )
 
 # ---------------------------------------------------------------------------------------------------------------
 # Here we define the classification head of GPT-2 & initialize the model
 # ---------------------------------------------------------------------------------------------------------------
 
+# We implement the (simple) approach used for the original GPT.
+# That is, the hidden states are fed into a single linear layer to predict the scores.
 class SimpleGPT2SequenceClassifier(nn.Module):
     def __init__(
         self,
@@ -99,32 +98,35 @@ class SimpleGPT2SequenceClassifier(nn.Module):
     def forward(self, x_in, attention_mask):
 
         gpt_out = self.gpt2model(x_in, attention_mask=attention_mask)[0]
-        batch_size = gpt_out.shape[0]
-        prediction_vector = self.fc1(gpt_out.view(batch_size,-1))
+        btch_size = gpt_out.shape[0]
+        prediction_vector = self.fc1(gpt_out.view(btch_size,-1))
 
         return prediction_vector
 
+# Instatiate model
 model = SimpleGPT2SequenceClassifier(
     sequence_size=max_len * args.hidden_size,
     num_classes=2,
     gpt_model_name=args.model_name_or_path,
 )
+# Activate CUDA
 model.cuda()
 
 # ---------------------------------------------------------------------------------------------------------------
-# We choose the same optimizer (and hyperparam.) that was used for the other models fine-tuned on GLUE
+# We choose the same optimizer & hyperparameters used for the other models fine-tuned on GLUE
 # ---------------------------------------------------------------------------------------------------------------
 
+# Specify optimizer and hyperparameters
 optimizer = AdamW(
     model.parameters(),
     lr = 2e-5,
     eps = 1e-8
 )
 
-# Total number of training steps is [number of batches] x [number of epochs]. 
+# Calculate number of training steps (# of batches x # of epochs)
 total_steps = len(train_dataloader) * args.num_train_epochs
 
-# Create the learning rate scheduler.
+# Create the learning rate scheduler
 scheduler = get_linear_schedule_with_warmup(
     optimizer,
     num_warmup_steps = 0, # Default value in run_glue.py
@@ -138,20 +140,26 @@ scheduler = get_linear_schedule_with_warmup(
 # This training code is based on the `run_glue.py` script here:
 # https://github.com/huggingface/transformers/blob/5bfcd0485ece086ebcbed2d008813037968a9e58/examples/run_glue.py#L128
 
+# Define function to compute accuracy for a given batch
 def compute_accuracy(y_pred, y_target):
     y_pred = y_pred.cpu()
     y_target = y_target.cpu()
     return torch.eq(torch.argmax(y_pred,dim=1),y_target).sum().item() / len(y_pred)
 
+# Define loss function 
 loss_func = nn.CrossEntropyLoss()
+
+# Initialize list to store training & evaluation history
 training_stats = []
 
+# Set seed before training for reproducability
 torch.backends.cudnn.deterministic=True
 random.seed(args.seed)
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
 torch.cuda.manual_seed_all(args.seed)
 
+# Start training & evaluation loop
 for epoch_i in range(0, args.num_train_epochs):
     # Training
     training_loss = 0.0
@@ -169,7 +177,7 @@ for epoch_i in range(0, args.num_train_epochs):
         optimizer.step()
         scheduler.step()
     avg_train_loss = training_loss / len(train_dataloader)
-    # Validation
+    # Evaluation
     model.eval()
     eval_accuracy = 0
     eval_loss = 0
@@ -183,12 +191,10 @@ for epoch_i in range(0, args.num_train_epochs):
         eval_loss += loss.item()
         pred_t = pred_t.detach().cpu()
         target_t = target_t.to('cpu')
-        # Calculate the accuracy for this batch of test sentences, and
-        # accumulate it over all batches.
         eval_accuracy += compute_accuracy(pred_t, target_t)
     avg_eval_accuracy = eval_accuracy / len(eval_dataloader)
     avg_eval_loss = eval_loss / len(eval_dataloader)
-    # Record all statistics from this epoch.
+    # Store results of each epoch
     training_stats.append(
         {'epoch': epoch_i + 1,
          'Training Loss': avg_train_loss,
