@@ -55,8 +55,8 @@ input_ids_train, input_ids_eval = encoding_train['input_ids'], encoding_eval['in
 attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], encoding_eval['attention_mask']
 
 # Store IDs, attention masks and labels in one object
-dataset_train = TensorDataset(input_ids_train, attention_mask_train, labels_train)
-dataset_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
+data_train = TensorDataset(input_ids_train, attention_mask_train, labels_train)
+data_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
 
 # Set seed before shuffling the batches for reproducability
 random.seed(args.seed)
@@ -65,14 +65,14 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed_all(args.seed)
 
 # Create input batches
-train_dataloader = DataLoader(
-    dataset_train, 
-    sampler = RandomSampler(dataset_train),
+batches_train = DataLoader(
+    data_train, 
+    sampler = RandomSampler(data_train),
     batch_size = args.batch_size
 )
-eval_dataloader = DataLoader(
-    dataset_eval,
-    sampler = SequentialSampler(dataset_eval),
+batches_eval = DataLoader(
+    data_eval,
+    sampler = SequentialSampler(data_eval),
     batch_size = args.batch_size
 )
 
@@ -82,32 +82,32 @@ eval_dataloader = DataLoader(
 
 # We implement the (simple) approach used for the original GPT.
 # That is, the hidden states are fed into a single linear layer to predict the scores.
-class SimpleGPT2SequenceClassifier(nn.Module):
+class GPT2ForSequenceClassification(nn.Module):
     def __init__(
         self,
         sequence_size: int,
-        num_classes:int ,
-        gpt_model_name:str,
+        n_classes:int ,
+        gpt_model_name_or_path:str,
     ):
-        super(SimpleGPT2SequenceClassifier,self).__init__()
+        super(GPT2ForSequenceClassification,self).__init__()
         self.gpt2model = GPT2Model.from_pretrained(
-            gpt_model_name
+            gpt_model_name_or_path
         )
-        self.fc1 = nn.Linear(sequence_size, num_classes)
+        self.lin = nn.Linear(sequence_size, n_classes)
 
-    def forward(self, x_in, attention_mask):
+    def forward(self, ids_in, attention_mask):
 
-        gpt_out = self.gpt2model(x_in, attention_mask=attention_mask)[0]
-        btch_size = gpt_out.shape[0]
-        prediction_vector = self.fc1(gpt_out.view(btch_size,-1))
+        gpt_out = self.gpt2model(ids_in, attention_mask = attention_mask)[0]
+        n_sentences = gpt_out.shape[0]
+        logits = self.lin(gpt_out.view(n_sentences,-1))
 
-        return prediction_vector
+        return logits
 
 # Instatiate model
-model = SimpleGPT2SequenceClassifier(
-    sequence_size=max_len * args.hidden_size,
-    num_classes=2,
-    gpt_model_name=args.model_name_or_path,
+model = GPT2ForSequenceClassification(
+    sequence_size = max_len * args.hidden_size,
+    n_classes = 2,
+    gpt_model_name_or_path = args.model_name_or_path,
 )
 # Activate CUDA
 model.cuda()
@@ -123,13 +123,13 @@ optimizer = AdamW(
     eps = 1e-8
 )
 
-# Calculate number of training steps (# of batches x # of epochs)
-total_steps = len(train_dataloader) * args.num_train_epochs
+# Calculate number of training steps
+total_steps = len(batches_train) * args.num_train_epochs
 
-# Create the learning rate scheduler
+# Create the learning rate scheduler (with num_warmup_steps=0, as in other models fine-tuned on GLUE)
 scheduler = get_linear_schedule_with_warmup(
     optimizer,
-    num_warmup_steps = 0, # Default value in run_glue.py
+    num_warmup_steps = 0,
     num_training_steps = total_steps
 )
 
@@ -137,20 +137,17 @@ scheduler = get_linear_schedule_with_warmup(
 # Train & Eval Loop
 # ---------------------------------------------------------------------------------------------------------------
 
-# This training code is based on the `run_glue.py` script here:
-# https://github.com/huggingface/transformers/blob/5bfcd0485ece086ebcbed2d008813037968a9e58/examples/run_glue.py#L128
-
 # Define function to compute accuracy for a given batch
-def compute_accuracy(y_pred, y_target):
-    y_pred = y_pred.cpu()
-    y_target = y_target.cpu()
-    return torch.eq(torch.argmax(y_pred,dim=1),y_target).sum().item() / len(y_pred)
+def compute_acc(pred, label):
+    pred = pred.cpu()
+    label = label.cpu()
+    return torch.eq(torch.argmax(pred,dim=1),label).sum().item() / len(pred)
 
 # Define loss function 
 loss_func = nn.CrossEntropyLoss()
 
 # Initialize list to store training & evaluation history
-training_stats = []
+train_eval_hist = []
 
 # Set seed before training for reproducability
 torch.backends.cudnn.deterministic=True
@@ -162,26 +159,26 @@ torch.cuda.manual_seed_all(args.seed)
 # Start training & evaluation loop
 for epoch_i in range(0, args.num_train_epochs):
     # Training
-    training_loss = 0.0
+    train_loss = 0.0
     model.train()
-    for step, batch in enumerate(train_dataloader):
+    for step, batch in enumerate(batches_train):
         input_ids_t = batch[0].to(device)
         attention_mask_t = batch[1].to(device)
         target_t = batch[2].to(device)
         model.zero_grad()
         pred_t = model(input_ids_t, attention_mask_t)
         loss = loss_func(pred_t, target_t)
-        training_loss += loss.item()
+        train_loss += loss.item()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         scheduler.step()
-    avg_train_loss = training_loss / len(train_dataloader)
+    batch_train_loss = train_loss / len(batches_train)
     # Evaluation
     model.eval()
-    eval_accuracy = 0
+    eval_acc = 0
     eval_loss = 0
-    for batch in eval_dataloader:
+    for batch in batches_eval:
         input_ids_t = batch[0].to(device)
         attention_mask_t = batch[1].to(device)
         target_t = batch[2].to(device)
@@ -191,23 +188,23 @@ for epoch_i in range(0, args.num_train_epochs):
         eval_loss += loss.item()
         pred_t = pred_t.detach().cpu()
         target_t = target_t.to('cpu')
-        eval_accuracy += compute_accuracy(pred_t, target_t)
-    avg_eval_accuracy = eval_accuracy / len(eval_dataloader)
-    avg_eval_loss = eval_loss / len(eval_dataloader)
+        eval_acc += compute_acc(pred_t, target_t)
+    batch_eval_acc = eval_acc / len(batches_eval)
+    batch_eval_loss = eval_loss / len(batches_eval)
     # Store results of each epoch
-    training_stats.append(
+    train_eval_hist.append(
         {'epoch': epoch_i + 1,
-         'Training Loss': avg_train_loss,
-         'Valid. Loss': avg_eval_loss,
-         'Valid. Accur.': avg_eval_accuracy,})
+         'Training Loss': batch_train_loss,
+         'Eval Loss': batch_eval_loss,
+         'Eval Acc': batch_eval_acc,})
 
 
 # Save model
 torch.save(model.state_dict(), args.output_dir + 'model')
 
 # Save evaluation set results
-eval_loss=training_stats[args.num_train_epochs-1].get('Valid. Loss')
-eval_acc=training_stats[args.num_train_epochs-1].get('Valid. Accur.')
+eval_loss = train_eval_hist[args.num_train_epochs-1].get('Eval Loss')
+eval_acc = train_eval_hist[args.num_train_epochs-1].get('Eval Acc')
 with open(args.output_dir + 'eval_results_sst-2.txt', "w") as text_file:
     print("eval_loss = {}".format(eval_loss), file=text_file)
     print("eval_acc = {}".format(eval_acc), file=text_file)
