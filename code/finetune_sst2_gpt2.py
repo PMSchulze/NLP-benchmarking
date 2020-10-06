@@ -42,8 +42,8 @@ for sent in sentences_train:
     max_len = max(max_len, len(ids))
 
 # Tokenize all of the sentences and map the tokens to thier word IDs.
-encoding_train = tokenizer(sentences_train, return_tensors='pt', padding=True, truncation=True, max_length = max_len)
-encoding_eval = tokenizer(sentences_eval, return_tensors='pt', padding=True, truncation=True, max_length = max_len)
+encoding_train = tokenizer(sentences_train, return_tensors='pt', padding='max_length', truncation=True, max_length = max_len)
+encoding_eval = tokenizer(sentences_eval, return_tensors='pt', padding='max_length', truncation=True, max_length = max_len)
 input_ids_train, input_ids_eval = encoding_train['input_ids'], encoding_eval['input_ids']
 attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], encoding_eval['attention_mask']
 
@@ -102,17 +102,17 @@ class SimpleGPT2SequenceClassifier(nn.Module):
         return prediction_vector
 
 num_classes = 2
-hidden_size = 128
+hidden_size = 384
 sequence_size = max_len * hidden_size
 
 model = SimpleGPT2SequenceClassifier(
     sequence_size=sequence_size,
     num_classes=num_classes,
-    gpt_model_name='/home/ubuntu/lrz_share/models/gpt2/128_2_2_512_10/',
+    gpt_model_name='/home/ubuntu/lrz_share/models/gpt2/384_2_2_1536_10/',
 )
 
 # ---------------------------------------------------------------------------------------------------------------
-# The optimizer is the same that as we used for other models on GLUE
+# We choose the same optimizer (and hyperparam.) that was used for the other models fine-tuned on GLUE
 # ---------------------------------------------------------------------------------------------------------------
 
 from transformers import AdamW
@@ -136,45 +136,30 @@ scheduler = get_linear_schedule_with_warmup(
     num_warmup_steps = 0, # Default value in run_glue.py
     num_training_steps = total_steps
 ) 
-------------------------------------------------------------------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------------------------------------------
+# Train & Eval Loop
+# ---------------------------------------------------------------------------------------------------------------
 
-------------------------------------------------------------------------------------------------------------------------------------
+import random
+import numpy as np
+
+# This training code is based on the `run_glue.py` script here:
+# https://github.com/huggingface/transformers/blob/5bfcd0485ece086ebcbed2d008813037968a9e58/examples/run_glue.py#L128
+
+# Set the seed value all over the place to make this reproducible.
+seed_val = 42
+
+random.seed(seed_val)
+np.random.seed(seed_val)
+torch.manual_seed(seed_val)
+torch.cuda.manual_seed_all(seed_val)
 
 def compute_accuracy(y_pred, y_target):
     y_pred = y_pred.cpu()
     y_target = y_target.cpu()
     return torch.eq(torch.argmax(y_pred,dim=1),y_target).sum().item() / len(y_pred)
 
-def make_train_state():
-    d = {
-        "train_preds": [],
-        "train_indexes": [],
-        "train_targets": [],
-        "train_accuracies": [],
-        "train_f1s": [],
-        "train_losses": [],
-        "val_preds": [],
-        "val_indexes": [],
-        "val_targets": [],
-        "val_accuracies": [],
-        "val_f1s": [],
-        "val_losses": [],
-        "test_preds": [],
-        "test_indexes": [],
-        "test_targets": [],
-        "test_accuracies": [],
-        "test_f1s": [],
-        "test_losses": [],
-        "batch_preds": [],
-        "batch_targets": [],
-        "batch_indexes": [],
-        "epoch_index": 0,
-        # "save_path": ''
-    }
-    return dict(d)
-------------------------------------------------------------------------------------------------------------------------------------
-# Tell pytorch to run this model on the GPU.
 model.cuda()
 loss_func = nn.CrossEntropyLoss()
 training_stats = []
@@ -200,7 +185,7 @@ for epoch_i in range(0, epochs):
     model.eval()
     eval_accuracy = 0
     eval_loss = 0
-    for batch in validation_dataloader:
+    for batch in eval_dataloader:
         input_ids_t = batch[0].to(device)
         attention_mask_t = batch[1].to(device)
         target_t = batch[2].to(device)
@@ -208,20 +193,32 @@ for epoch_i in range(0, epochs):
             pred_t = model(input_ids_t, attention_mask_t)
             loss = loss_func(pred_t, target_t)
         eval_loss += loss.item()
-        pred_t = pred_t.detach().cpu().numpy()
-        target_t = target_t.to('cpu').numpy()
+        pred_t = pred_t.detach().cpu()
+        target_t = target_t.to('cpu')
         # Calculate the accuracy for this batch of test sentences, and
         # accumulate it over all batches.
         eval_accuracy += compute_accuracy(pred_t, target_t)
-    avg_eval_accuracy = eval_accuracy / len(validation_dataloader)
-    avg_val_loss = eval_loss / len(validation_dataloader)    
+    avg_eval_accuracy = eval_accuracy / len(eval_dataloader)
+    avg_eval_loss = eval_loss / len(eval_dataloader)    
     # Record all statistics from this epoch.
     training_stats.append(
         {
             'epoch': epoch_i + 1,
             'Training Loss': avg_train_loss,
-            'Valid. Loss': avg_val_loss,
-            'Valid. Accur.': avg_val_accuracy,
+            'Valid. Loss': avg_eval_loss,
+            'Valid. Accur.': avg_eval_accuracy,
         }
     )
+    
+# Save model
+torch.save(model.state_dict(), '/home/ubuntu/lrz_share/fine_tuned/gpt2/glue/384_2_2_1536_10/model')
+
+# Save evaluation set results
+eval_loss=training_stats[epochs-1].get('Valid. Loss')
+eval_acc=training_stats[epochs-1].get('Valid. Accur.')
+ with open('/home/ubuntu/lrz_share/fine_tuned/gpt2/glue/384_2_2_1536_10/' + 'eval_results_sst-2.txt', "w") as text_file:
+    print("eval_loss = {}".format(eval_loss), file=text_file)
+    print("eval_acc = {}".format(eval_acc), file=text_file)
+    print("epoch = {}".format(epochs), file=text_file)
+
 
