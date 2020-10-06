@@ -1,20 +1,31 @@
+import numpy as np
 import pandas as pd
-
-# ---------------------------------------------------------------------------------------------------------------
-# Setup CUDA
-# ---------------------------------------------------------------------------------------------------------------
-
+import random
 import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
+from torch.utils.data import TensorDataset
+from transformers import AdamW, get_linear_schedule_with_warmup, GPT2Tokenizer, GPT2Model
 
-# If there's a GPU available...
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--eval_data")
+parser.add_argument("--train_data")
+parser.add_argument("--token_vocab")
+parser.add_argument("--batch_size")
+parser.add_argument("--seed")
+parser.add_argument("--token_vocab")
+parser.add_argument("--hidden_size")
+parser.add_argument("--model_name_or_path")
+parser.add_argument("--num_train_epochs")
+parser.add_argument("--output_dir")
+args = parser.parse_args()
+
+# Setup CUDA
 if torch.cuda.is_available():    
-    # Tell PyTorch to use the GPU.    
     device = torch.device("cuda")
-    print('There are %d GPU(s) available.' % torch.cuda.device_count())
-    print('We will use the GPU:', torch.cuda.get_device_name(0))
-# If not...
 else:
-    print('No GPU available, using the CPU instead.')
     device = torch.device("cpu")
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -22,16 +33,15 @@ else:
 # ---------------------------------------------------------------------------------------------------------------
 
 # Load the dataset into a pandas dataframe.
-df_train = pd.read_csv("/home/ubuntu/data/glue/SST-2/train.tsv", delimiter='\t', header=0, names=['sentence', 'label'])
-df_eval = pd.read_csv("/home/ubuntu/data/glue/SST-2/dev.tsv", delimiter='\t', header=0, names=['sentence', 'label'])
+df_train = pd.read_csv(args.train_data, delimiter='\t', header=0, names=['sentence', 'label'])
+df_eval = pd.read_csv(args.eval_data, delimiter='\t', header=0, names=['sentence', 'label'])
 
 # Store sentences and their labels as lists.
 sentences_train, sentences_eval = df_train.sentence.to_list(), df_eval.sentence.to_list()
 labels_train, labels_eval = torch.tensor(df_train.label.to_list()), torch.tensor(df_eval.label.to_list())
 
 # Load GPT2 tokenizer
-from transformers import GPT2Tokenizer
-tokenizer = GPT2Tokenizer.from_pretrained('/home/ubuntu/data/token_vocab/roberta/', additional_special_tokens=['<s>','<pad>','</s>'], pad_token='<pad>')
+tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, additional_special_tokens=['<s>','<pad>','</s>'], pad_token='<pad>')
 
 max_len = 0
 # For every sentence...
@@ -47,15 +57,9 @@ encoding_eval = tokenizer(sentences_eval, return_tensors='pt', padding='max_leng
 input_ids_train, input_ids_eval = encoding_train['input_ids'], encoding_eval['input_ids']
 attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], encoding_eval['attention_mask']
 
-from torch.utils.data import TensorDataset
 # Combine the training inputs into a TensorDataset.
 dataset_train = TensorDataset(input_ids_train, attention_mask_train, labels_train)
 dataset_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
-
-from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
-
-import random
-import numpy as np
 
 def set_seed(seed):
     random.seed(seed)
@@ -63,9 +67,9 @@ def set_seed(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
-batch_size = 32
+batch_size = args.batch_size
 
-set_seed(42)
+set_seed(args.seed)
 # Create the DataLoaders for our training and validation sets.
 # We'll take training samples in random order. 
 train_dataloader = DataLoader(
@@ -82,10 +86,6 @@ eval_dataloader = DataLoader(
 # ---------------------------------------------------------------------------------------------------------------
 # Here we define the classification head of GPT-2 & initialize the model
 # ---------------------------------------------------------------------------------------------------------------
-
-from transformers import GPT2Tokenizer, GPT2Model
-import torch
-import torch.nn as nn
 
 class SimpleGPT2SequenceClassifier(nn.Module):
     def __init__(
@@ -108,14 +108,10 @@ class SimpleGPT2SequenceClassifier(nn.Module):
     
         return prediction_vector
 
-num_classes = 2
-hidden_size = 384
-sequence_size = max_len * hidden_size
-
 model = SimpleGPT2SequenceClassifier(
-    sequence_size=sequence_size,
-    num_classes=num_classes,
-    gpt_model_name='/home/ubuntu/lrz_share/models/gpt2/384_2_2_1536_10/',
+    sequence_size=max_len * args.hidden_size,
+    num_classes=2,
+    gpt_model_name=args.model_name_or_path,
 )
 model.cuda()
 
@@ -123,20 +119,14 @@ model.cuda()
 # We choose the same optimizer (and hyperparam.) that was used for the other models fine-tuned on GLUE
 # ---------------------------------------------------------------------------------------------------------------
 
-from transformers import AdamW
 optimizer = AdamW(
     model.parameters(),
-    lr = 2e-5, # args.learning_rate - default is 5e-5, our notebook had 2e-5
-    eps = 1e-8 # args.adam_epsilon  - default is 1e-8.
+    lr = 2e-5, 
+    eps = 1e-8
 )
 
-from transformers import get_linear_schedule_with_warmup
-
-# As in all other cases, we set the number of training epochs to 3.
-epochs = 3
-
 # Total number of training steps is [number of batches] x [number of epochs]. 
-total_steps = len(train_dataloader) * epochs
+total_steps = len(train_dataloader) * args.num_train_epochs
 
 # Create the learning rate scheduler.
 scheduler = get_linear_schedule_with_warmup(
@@ -163,7 +153,7 @@ training_stats = []
 torch.backends.cudnn.deterministic=True
 set_seed(42)
 
-for epoch_i in range(0, epochs):
+for epoch_i in range(0, args.num_train_epochs):
     # Training
     training_loss = 0.0
     model.train()    
@@ -208,14 +198,14 @@ for epoch_i in range(0, epochs):
 
  
 # Save model
-torch.save(model.state_dict(), '/home/ubuntu/lrz_share/fine_tuned/gpt2/glue/384_2_2_1536_10/model')
+torch.save(model.state_dict(), args.output_dir + 'model')
 
 # Save evaluation set results
-eval_loss=training_stats[epochs-1].get('Valid. Loss')
-eval_acc=training_stats[epochs-1].get('Valid. Accur.')
-with open('/home/ubuntu/lrz_share/fine_tuned/gpt2/glue/384_2_2_1536_10/' + 'eval_results_sst-2.txt', "w") as text_file:
+eval_loss=training_stats[args.num_train_epochs-1].get('Valid. Loss')
+eval_acc=training_stats[args.num_train_epochs-1].get('Valid. Accur.')
+with open(args.output_dir + 'eval_results_sst-2.txt', "w") as text_file:
     print("eval_loss = {}".format(eval_loss), file=text_file)
     print("eval_acc = {}".format(eval_acc), file=text_file)
-    print("epoch = {}".format(epochs), file=text_file)
+    print("epoch = {}".format(args.num_train_epochs), file=text_file)
 
 
