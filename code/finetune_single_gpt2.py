@@ -52,6 +52,13 @@ labels_train, labels_eval = torch.tensor(df_train.label.to_list()), torch.tensor
 # Load GPT2 tokenizer
 tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, additional_special_tokens=['<s>','<pad>','</s>'], pad_token='<pad>')
 
+# Add <start> and <end> tokens to the tokenizer, as proposed in GPT paper
+tokenizer.add_tokens(["<start>", "<end>"])
+
+# Add <start> and <end> tokens to the input sentences
+sentences_train = ['<start> '+ s + "<end>" for s in sentences_train]
+sentences_eval = ['<start> '+ s + "<end>" for s in sentences_eval]
+
 # Calculate length of the longest sentence
 max_len = 0
 for sent in sentences_train+sentences_eval:
@@ -119,11 +126,16 @@ model = GPT2ForSequenceClassification(
     n_classes = 2,
     gpt_model_name_or_path = args.model_name_or_path,
 )
+
+# Add new tokens (<start>, <end>) to the embedding matrix
+# Weights are randomly initialized, as in GPT paper
+model.gpt2model.resize_token_embeddings(len(tokenizer)) 
+
 # Activate CUDA
 model.cuda()
 
 # ---------------------------------------------------------------------------------------------------------------
-# We choose the same optimizer & hyperparameters used for the other models fine-tuned on GLUE
+# We choose the same optimizer & hyperparameters that we used for BERT and RoBERTa on GLUE
 # ---------------------------------------------------------------------------------------------------------------
 
 # Specify optimizer and hyperparameters
