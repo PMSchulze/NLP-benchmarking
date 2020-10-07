@@ -35,6 +35,11 @@ else:
 df_train = pd.read_csv(args.train_data, delimiter='\t', header=0, names=['sentence', 'label'])
 df_eval = pd.read_csv(args.eval_data, delimiter='\t', header=0, names=['sentence', 'label'])
 
+df_train = pd.read_csv('/home/ubuntu/data/glue/CoLA/test.tsv', delimiter='\t', header=0, 
+                       names=['abc', 'label', 'xyz', 'sentence'], usecols = ['label', 'sentence'])
+df_eval = pd.read_csv('/home/ubuntu/data/glue/CoLA/dev.tsv', delimiter='\t', header=0, 
+                      names=['abc', 'label', 'xyz', 'sentence'], usecols = ['label', 'sentence'])
+
 # Store sentences and labels as lists.
 sentences_train, sentences_eval = df_train.sentence.to_list(), df_eval.sentence.to_list()
 labels_train, labels_eval = torch.tensor(df_train.label.to_list()), torch.tensor(df_eval.label.to_list())
@@ -137,17 +142,12 @@ scheduler = get_linear_schedule_with_warmup(
 # Train & Eval Loop
 # ---------------------------------------------------------------------------------------------------------------
 
-# Define function to compute accuracy for a given batch
-def compute_acc(pred, label):
-    pred = pred.cpu()
-    label = label.cpu()
-    return torch.eq(torch.argmax(pred,dim=1),label).sum().item() / len(pred)
-
 # Define loss function 
 loss_func = nn.CrossEntropyLoss()
 
-# Initialize list to store training & evaluation history
+# Initialize empty list to store predictions on evaluation set
 train_eval_hist = []
+predictions, targets = [], []
 
 # Set seed before training for reproducability
 torch.backends.cudnn.deterministic=True
@@ -176,7 +176,6 @@ for epoch_i in range(0, args.num_train_epochs):
     batch_train_loss = train_loss / len(batches_train)
     # Evaluation
     model.eval()
-    eval_acc = 0
     eval_loss = 0
     for batch in batches_eval:
         input_ids_t = batch[0].to(device)
@@ -188,18 +187,16 @@ for epoch_i in range(0, args.num_train_epochs):
         eval_loss += loss.item()
         pred_t = pred_t.detach().cpu()
         target_t = target_t.to('cpu')
-        eval_acc += compute_acc(pred_t, target_t)
-    batch_eval_acc = eval_acc / len(batches_eval)
+        predictions.append(pred_t)
+        targets.append(target_t)
     batch_eval_loss = eval_loss / len(batches_eval)
     # Store results of each epoch
     train_eval_hist.append(
         {'epoch': epoch_i + 1,
          'Training Loss': batch_train_loss,
-         'Eval Loss': batch_eval_loss,
-         'Eval Acc': batch_eval_acc,})
+         'Eval Loss': batch_eval_loss})
 
-
-# Create output directory if non-existent
+# Create output directory if needed
 if not os.path.exists(args.output_dir):
     os.makedirs(args.output_dir)
 
@@ -207,8 +204,14 @@ if not os.path.exists(args.output_dir):
 torch.save(model.state_dict(), args.output_dir + 'model')
 
 # Save evaluation set results
+def compute_acc(pred, label):
+    return np.equal(np.argmax(pred,axis=1),label).sum().item() / len(pred)
+
+predictions = np.concatenate(predictions, axis=0)
+targets = np.concatenate(targets, axis=0)
 eval_loss = train_eval_hist[args.num_train_epochs-1].get('Eval Loss')
-eval_acc = train_eval_hist[args.num_train_epochs-1].get('Eval Acc')
+eval_acc = compute_acc(predictions, targets)
+eval_mcc = matthews_corrcoef(np.argmax(predictions, axis=1),targets)
 with open(args.output_dir + 'eval_results_sst-2.txt', "w") as text_file:
     print("eval_loss = {}".format(eval_loss), file=text_file)
     print("eval_acc = {}".format(eval_acc), file=text_file)
