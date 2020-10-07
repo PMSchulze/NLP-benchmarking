@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 import pandas as pd
 import random
@@ -6,8 +7,6 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from torch.utils.data import TensorDataset
 from transformers import AdamW, get_linear_schedule_with_warmup, GPT2Tokenizer, GPT2Model
-
-import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--eval_data")
@@ -198,6 +197,10 @@ for epoch_i in range(0, args.num_train_epochs):
          'Eval Loss': batch_eval_loss,
          'Eval Acc': batch_eval_acc,})
 
+
+# Create output directory if non-existent
+if not os.path.exists(args.output_dir):
+    os.makedirs(args.output_dir)
 
 # Save model
 torch.save(model.state_dict(), args.output_dir + 'model')
