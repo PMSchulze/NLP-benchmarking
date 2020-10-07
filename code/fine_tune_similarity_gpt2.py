@@ -1,0 +1,11 @@
+python /home/ubuntu/python_files/finetune_sst2_gpt2.py \
+    --task SST-2 \
+    --eval_data /home/ubuntu/data/glue/SST-2/dev.tsv \
+    --train_data /home/ubuntu/data/glue/SST-2/train.tsv \
+    --batch_size 32 \
+    --seed 42 \
+    --token_vocab /home/ubuntu/data/token_vocab/gpt2/ \
+    --hidden_size 192 \
+    --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/192_2_2_786_10/ \
+    --num_train_epochs 3 \
+    --output_dir /home/ubuntu/lrz_share/fine_tuned/gpt2/glue/192_2_2_786_10/
