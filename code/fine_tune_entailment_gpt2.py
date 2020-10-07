@@ -69,7 +69,7 @@ attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], en
 data_train = TensorDataset(input_ids_train, attention_mask_train, labels_train)
 data_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
 
-# Set seed before shuffling the batches for reproducability
+# Set seed before shuffling the batches for reproducibility
 random.seed(args.seed)
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
@@ -155,7 +155,7 @@ loss_func = nn.CrossEntropyLoss()
 train_eval_hist = []
 logits, true_labels = [], []
 
-# Set seed before training for reproducability
+# Set seed before training for reproducibility
 torch.backends.cudnn.deterministic=True
 random.seed(args.seed)
 np.random.seed(args.seed)
