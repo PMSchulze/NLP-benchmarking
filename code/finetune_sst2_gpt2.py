@@ -44,7 +44,7 @@ tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, additional_special_t
 
 # Calculate length of the longest sentence
 max_len = 0
-for sent in sentences_train:
+for sent in sentences_train+sentences_eval:
     ids = tokenizer.encode(sent)
     max_len = max(max_len, len(ids))
 
