@@ -1,5 +1,4 @@
 import argparse
-import json
 import numpy as np
 import os
 import pandas as pd
@@ -35,23 +34,27 @@ else:
 # ---------------------------------------------------------------------------------------------------------------
 
 # Load training & evaluation data into pandas dataframe
-if args.task == 'SST-2':
-    df_train = pd.read_csv(args.train_data, delimiter='\t', header=0, names=['sentence', 'label'])
-    df_eval = pd.read_csv(args.eval_data, delimiter='\t', header=0, names=['sentence', 'label'])
-elif args.task == 'CoLA':
-    df_train = pd.read_csv('/home/ubuntu/data/glue/CoLA/train.tsv', delimiter='\t', header=0, 
-                           names=['abc', 'label', 'xyz', 'sentence'], usecols = ['label', 'sentence'])
-    df_eval = pd.read_csv('/home/ubuntu/data/glue/CoLA/dev.tsv', delimiter='\t', header=0, 
-                          names=['abc', 'label', 'xyz', 'sentence'], usecols = ['label', 'sentence'])
-else:
-    raise Error("Task must be 'SST-2' or 'CoLA'!")
+df_train = pd.read_csv('/home/ubuntu/data/glue/QNLI/train.tsv', sep='\t|\\\\t', engine='python')
+df_eval = pd.read_csv('/home/ubuntu/data/glue/QNLI/dev.tsv', sep='\t|\\\\t', engine='python')
+df_train.rename(columns={"question": "premise", "sentence": "hypothesis"}, inplace=True)
+df_eval.rename(columns={"question": "premise", "sentence": "hypothesis"}, inplace=True)
 
-# Store sentences and labels as lists
-sentences_train, sentences_eval = df_train.sentence.to_list(), df_eval.sentence.to_list()
-labels_train, labels_eval = torch.tensor(df_train.label.to_list()), torch.tensor(df_eval.label.to_list())
+# Store questions & sentences as lists
+premises_train, premises_eval = df_train.premise.to_list(), df_eval.premise.to_list()
+hypotheses_train, hypotheses_eval = df_train.hypothesis.to_list(), df_eval.hypothesis.to_list()
+# Convert labels to 0,1 and store as them torch tensor
+labels_train = torch.tensor([1 if s=='entailment' else 0 for s in df_train.label.to_list()])
+labels_eval = torch.tensor([1 if s=='entailment' else 0 for s in df_eval.label.to_list()])
 
 # Load GPT2 tokenizer
-tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, additional_special_tokens=['<s>','<pad>','</s>'], pad_token='<pad>')
+tokenizer = GPT2Tokenizer.from_pretrained('/home/ubuntu/data/token_vocab/gpt2/', pad_token='<pad>')
+
+# Add <start>, <$> and <end> tokens to tokenizer
+tokenizer.add_tokens(["<start>", "<end>", "<$>"])
+
+# Concatenate premises and hypotheses and insert <start>, <$> and <end> tokens
+sentences_train = ["<start> "+ x + " <$> " + y + " <end>" for x,y in zip(premises_train, hypotheses_train)]
+sentences_eval = ["<start> "+ x + " <$> " + y + " <end>" for x,y in zip(premises_eval, hypotheses_eval)]
 
 # Calculate length of the longest sentence
 max_len = 0
@@ -69,7 +72,7 @@ attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], en
 data_train = TensorDataset(input_ids_train, attention_mask_train, labels_train)
 data_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
 
-# Set seed before shuffling the batches for reproducibility
+# Set seed before shuffling the batches for reproducability
 random.seed(args.seed)
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
@@ -120,11 +123,16 @@ model = GPT2ForSequenceClassification(
     n_classes = 2,
     gpt_model_name_or_path = args.model_name_or_path,
 )
+
+# Add new tokens (<start>, <end>) to the embedding matrix
+# Weights are randomly initialized, as in GPT paper
+model.gpt2model.resize_token_embeddings(len(tokenizer)) 
+
 # Activate CUDA
 model.cuda()
 
 # ---------------------------------------------------------------------------------------------------------------
-# We choose the same optimizer & hyperparameters used for the other models fine-tuned on GLUE
+# We choose the same optimizer & hyperparameters that we used for BERT and RoBERTa on GLUE
 # ---------------------------------------------------------------------------------------------------------------
 
 # Specify optimizer and hyperparameters
@@ -155,7 +163,7 @@ loss_func = nn.CrossEntropyLoss()
 train_eval_hist = []
 logits, true_labels = [], []
 
-# Set seed before training for reproducibility
+# Set seed before training for reproducability
 torch.backends.cudnn.deterministic=True
 random.seed(args.seed)
 np.random.seed(args.seed)
@@ -227,7 +235,7 @@ torch.save(model.state_dict(), output_dir + 'model')
 # Define function to compute accuracy
 def compute_acc(preds, labels):
     return (preds == labels).mean()
- 
+
 # Save evaluation set results
 if args.task == 'SST-2':
     eval_acc = compute_acc(predictions, true_labels)
@@ -241,7 +249,3 @@ else:
         print("eval_loss = {}".format(eval_loss), file=text_file)
         print("eval_mcc = {}".format(eval_mcc), file=text_file)
         print("epoch = {}".format(args.num_train_epochs), file=text_file)
-        
-# save training & evaluation history
-with open(output_dir + 'train_eval_hist.json', 'w') as json_file:
-    json.dump(train_eval_hist, json_file)
