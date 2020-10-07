@@ -214,8 +214,8 @@ eval_loss = train_eval_hist[args.num_train_epochs-1].get('Eval Loss')
 output_dir = args.output_dir + args.task + "/"
 
 # Create output directory if not existing
-if not os.path.exists(args.output_dir):
-    os.makedirs(args.output_dir)
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
 
 # Save model
 torch.save(model.state_dict(), output_dir + 'model')
