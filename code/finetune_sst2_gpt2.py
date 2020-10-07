@@ -152,7 +152,7 @@ loss_func = nn.CrossEntropyLoss()
 
 # Initialize empty list to store predictions on evaluation set
 train_eval_hist = []
-predictions, targets = [], []
+logits, true_labels = [], []
 
 # Set seed before training for reproducability
 torch.backends.cudnn.deterministic=True
@@ -162,17 +162,17 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed_all(args.seed)
 
 # Start training & evaluation loop
-for epoch_i in range(0, args.num_train_epochs):
+for epoch_e in range(0, args.num_train_epochs):
     # Training
     train_loss = 0.0
     model.train()
     for step, batch in enumerate(batches_train):
-        input_ids_t = batch[0].to(device)
-        attention_mask_t = batch[1].to(device)
-        target_t = batch[2].to(device)
+        input_ids_i = batch[0].to(device)
+        attention_mask_i = batch[1].to(device)
+        true_labels_i = batch[2].to(device)
         model.zero_grad()
-        pred_t = model(input_ids_t, attention_mask_t)
-        loss = loss_func(pred_t, target_t)
+        preds_i = model(input_ids_i, attention_mask_i)
+        loss = loss_func(preds_i, true_labels_i)
         train_loss += loss.item()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -183,27 +183,30 @@ for epoch_i in range(0, args.num_train_epochs):
     model.eval()
     eval_loss = 0
     for batch in batches_eval:
-        input_ids_t = batch[0].to(device)
-        attention_mask_t = batch[1].to(device)
-        target_t = batch[2].to(device)
+        input_ids_i = batch[0].to(device)
+        attention_mask_i = batch[1].to(device)
+        true_labels_i = batch[2].to(device)
         with torch.no_grad():
-            pred_t = model(input_ids_t, attention_mask_t)
-            loss = loss_func(pred_t, target_t)
+            preds_i = model(input_ids_i, attention_mask_i)
+            loss = loss_func(preds_i, true_labels_i)
         eval_loss += loss.item()
-        pred_t = pred_t.detach().cpu()
-        target_t = target_t.to('cpu')
-        predictions.append(pred_t)
-        targets.append(target_t)
+        preds_i = preds_i.detach().cpu()
+        true_labels_i = true_labels_i.to('cpu')
+        logits.append(preds_i)
+        true_labels.append(true_labels_i)
     batch_eval_loss = eval_loss / len(batches_eval)
     # Store results of each epoch
     train_eval_hist.append(
-        {'epoch': epoch_i + 1,
+        {'epoch': epoch_e + 1,
          'Training Loss': batch_train_loss,
          'Eval Loss': batch_eval_loss})
 
 
-predictions = np.concatenate(predictions, axis=0)
-targets = np.concatenate(targets, axis=0)
+# Convert logits to predictions and append over all batches
+predictions = np.argmax(np.concatenate(logits, axis=0),axis=1)
+true_labels = np.concatenate(true_labels, axis=0)
+
+# Store evaluation loss
 eval_loss = train_eval_hist[args.num_train_epochs-1].get('Eval Loss')
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -223,18 +226,16 @@ torch.save(model.state_dict(), output_dir + 'model')
 # Define function to compute accuracy
 def compute_acc(preds, labels):
     return (preds == labels).mean()
-# def compute_acc(pred, label):
-#     return np.equal(np.argmax(pred,axis=1),label).sum().item() / len(pred)
 
 # Save evaluation set results
 if args.task == 'SST-2':
-    eval_acc = compute_acc(np.argmax(predictions,axis=1), targets)
+    eval_acc = compute_acc(predictions, true_labels)
     with open(output_dir + 'eval_results_sst-2.txt', "w") as text_file:
         print("eval_loss = {}".format(eval_loss), file=text_file)
         print("eval_acc = {}".format(eval_acc), file=text_file)
         print("epoch = {}".format(args.num_train_epochs), file=text_file)
 else:
-    eval_mcc = matthews_corrcoef(np.argmax(predictions, axis=1),targets)
+    eval_mcc = matthews_corrcoef(predictions,true_labels)
     with open(output_dir + 'eval_results_sst-2.txt', "w") as text_file:
         print("eval_loss = {}".format(eval_loss), file=text_file)
         print("eval_mcc = {}".format(eval_mcc), file=text_file)
