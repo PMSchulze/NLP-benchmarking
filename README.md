@@ -391,6 +391,29 @@ Perplexity                    | 27.60     | 21.70           | 58.92           | 
 
 ### 3.2. GPT-2
 
+#### 3.2.1 GLUE
+
+Single-sentence tasks (CoLA and SST-2):
+```
+export TASK=SST-2
+for VARIANT in 128_2_2_512_10 192_2_2_786_10 288_2_2_1152_10 384_2_2_1536_10 128_5_2_512_10 128_10_2_512_10 128_18_2_512_10
+do
+    python /home/ubuntu/python_files/finetune_single_gpt2.py \
+        --task $TASK \
+        --eval_data /home/ubuntu/data/glue/$TASK/dev.tsv \
+        --train_data /home/ubuntu/data/glue/$TASK/train.tsv \
+        --batch_size 32 \
+        --seed 42 \
+        --token_vocab /home/ubuntu/data/token_vocab/gpt2/ \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/${VARIANT}/ \
+        --num_train_epochs 3 \
+        --output_dir /home/ubuntu/lrz_share/fine_tuned/gpt2/glue/${VARIANT}/
+done
+```
+
+#### 3.2.2 Language Modeling: Penn Tree Bank (PTB)
+
 ```
 export MODEL=gpt2
 export VARIANT=384_6_6
