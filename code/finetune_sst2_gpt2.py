@@ -221,12 +221,14 @@ if not os.path.exists(output_dir):
 torch.save(model.state_dict(), output_dir + 'model')
 
 # Define function to compute accuracy
-def compute_acc(pred, label):
-    return np.equal(np.argmax(pred,axis=1),label).sum().item() / len(pred)
+def compute_acc(preds, labels):
+    return (preds == labels).mean()
+# def compute_acc(pred, label):
+#     return np.equal(np.argmax(pred,axis=1),label).sum().item() / len(pred)
 
 # Save evaluation set results
 if args.task == 'SST-2':
-    eval_acc = compute_acc(predictions, targets)
+    eval_acc = compute_acc(np.argmax(predictions,axis=1), targets)
     with open(output_dir + 'eval_results_sst-2.txt', "w") as text_file:
         print("eval_loss = {}".format(eval_loss), file=text_file)
         print("eval_acc = {}".format(eval_acc), file=text_file)
