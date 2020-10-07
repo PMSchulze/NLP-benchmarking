@@ -1,4 +1,5 @@
 import argparse
+import json
 import numpy as np
 import os
 import pandas as pd
@@ -226,7 +227,7 @@ torch.save(model.state_dict(), output_dir + 'model')
 # Define function to compute accuracy
 def compute_acc(preds, labels):
     return (preds == labels).mean()
-
+ 
 # Save evaluation set results
 if args.task == 'SST-2':
     eval_acc = compute_acc(predictions, true_labels)
@@ -240,3 +241,7 @@ else:
         print("eval_loss = {}".format(eval_loss), file=text_file)
         print("eval_mcc = {}".format(eval_mcc), file=text_file)
         print("epoch = {}".format(args.num_train_epochs), file=text_file)
+        
+# save training & evaluation history
+with open(output_dir + 'train_eval_hist.json', 'w') as json_file:
+    json.dump(train_eval_hist, json_file)
