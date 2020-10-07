@@ -17,6 +17,7 @@ parser.add_argument("--model_name_or_path")
 parser.add_argument("--num_train_epochs", type=int)
 parser.add_argument("--output_dir")
 parser.add_argument("--seed", type=int)
+parser.add_argument("--task")
 parser.add_argument("--train_data")
 parser.add_argument("--token_vocab")
 args = parser.parse_args()
@@ -31,16 +32,19 @@ else:
 # First we load & prepare training and evaluation data
 # ---------------------------------------------------------------------------------------------------------------
 
-# Load training & evaluation data into pandas dataframe.
-df_train = pd.read_csv(args.train_data, delimiter='\t', header=0, names=['sentence', 'label'])
-df_eval = pd.read_csv(args.eval_data, delimiter='\t', header=0, names=['sentence', 'label'])
+# Load training & evaluation data into pandas dataframe
+if args.task == 'SST-2':
+    df_train = pd.read_csv(args.train_data, delimiter='\t', header=0, names=['sentence', 'label'])
+    df_eval = pd.read_csv(args.eval_data, delimiter='\t', header=0, names=['sentence', 'label'])
+elif args.task == 'CoLA':
+    df_train = pd.read_csv('/home/ubuntu/data/glue/CoLA/train.tsv', delimiter='\t', header=0, 
+                           names=['abc', 'label', 'xyz', 'sentence'], usecols = ['label', 'sentence'])
+    df_eval = pd.read_csv('/home/ubuntu/data/glue/CoLA/dev.tsv', delimiter='\t', header=0, 
+                          names=['abc', 'label', 'xyz', 'sentence'], usecols = ['label', 'sentence'])
+else:
+    raise Error("Task must be 'SST-2' or 'CoLA'!")
 
-df_train = pd.read_csv('/home/ubuntu/data/glue/CoLA/test.tsv', delimiter='\t', header=0, 
-                       names=['abc', 'label', 'xyz', 'sentence'], usecols = ['label', 'sentence'])
-df_eval = pd.read_csv('/home/ubuntu/data/glue/CoLA/dev.tsv', delimiter='\t', header=0, 
-                      names=['abc', 'label', 'xyz', 'sentence'], usecols = ['label', 'sentence'])
-
-# Store sentences and labels as lists.
+# Store sentences and labels as lists
 sentences_train, sentences_eval = df_train.sentence.to_list(), df_eval.sentence.to_list()
 labels_train, labels_eval = torch.tensor(df_train.label.to_list()), torch.tensor(df_eval.label.to_list())
 
@@ -196,23 +200,39 @@ for epoch_i in range(0, args.num_train_epochs):
          'Training Loss': batch_train_loss,
          'Eval Loss': batch_eval_loss})
 
-# Create output directory if needed
-if not os.path.exists(args.output_dir):
-    os.makedirs(args.output_dir)
-
-# Save model
-torch.save(model.state_dict(), args.output_dir + 'model')
-
-# Save evaluation set results
-def compute_acc(pred, label):
-    return np.equal(np.argmax(pred,axis=1),label).sum().item() / len(pred)
 
 predictions = np.concatenate(predictions, axis=0)
 targets = np.concatenate(targets, axis=0)
 eval_loss = train_eval_hist[args.num_train_epochs-1].get('Eval Loss')
-eval_acc = compute_acc(predictions, targets)
-eval_mcc = matthews_corrcoef(np.argmax(predictions, axis=1),targets)
-with open(args.output_dir + 'eval_results_sst-2.txt', "w") as text_file:
-    print("eval_loss = {}".format(eval_loss), file=text_file)
-    print("eval_acc = {}".format(eval_acc), file=text_file)
-    print("epoch = {}".format(args.num_train_epochs), file=text_file)
+
+# ---------------------------------------------------------------------------------------------------------------
+# Save results
+# ---------------------------------------------------------------------------------------------------------------
+
+# Set name of output_dir dependent on task 
+output_dir = args.output_dir + args.task + "/"
+
+# Create output directory if not existing
+if not os.path.exists(args.output_dir):
+    os.makedirs(args.output_dir)
+
+# Save model
+torch.save(model.state_dict(), output_dir + 'model')
+
+# Define function to compute accuracy
+def compute_acc(pred, label):
+    return np.equal(np.argmax(pred,axis=1),label).sum().item() / len(pred)
+
+# Save evaluation set results
+if args.task == 'SST-2':
+    eval_acc = compute_acc(predictions, targets)
+    with open(output_dir + 'eval_results_sst-2.txt', "w") as text_file:
+        print("eval_loss = {}".format(eval_loss), file=text_file)
+        print("eval_acc = {}".format(eval_acc), file=text_file)
+        print("epoch = {}".format(args.num_train_epochs), file=text_file)
+else:
+    eval_mcc = matthews_corrcoef(np.argmax(predictions, axis=1),targets)
+    with open(output_dir + 'eval_results_sst-2.txt', "w") as text_file:
+        print("eval_loss = {}".format(eval_loss), file=text_file)
+        print("eval_mcc = {}".format(eval_mcc), file=text_file)
+        print("epoch = {}".format(args.num_train_epochs), file=text_file)
