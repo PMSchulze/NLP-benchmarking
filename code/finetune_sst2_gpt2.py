@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import os
 import pandas as pd
 import random
 import torch
@@ -9,15 +10,15 @@ from torch.utils.data import TensorDataset
 from transformers import AdamW, get_linear_schedule_with_warmup, GPT2Tokenizer, GPT2Model
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--eval_data")
-parser.add_argument("--train_data")
-parser.add_argument("--token_vocab")
 parser.add_argument("--batch_size", type=int)
-parser.add_argument("--seed", type=int)
+parser.add_argument("--eval_data")
 parser.add_argument("--hidden_size", type=int)
 parser.add_argument("--model_name_or_path")
 parser.add_argument("--num_train_epochs", type=int)
 parser.add_argument("--output_dir")
+parser.add_argument("--seed", type=int)
+parser.add_argument("--train_data")
+parser.add_argument("--token_vocab")
 args = parser.parse_args()
 
 # Setup CUDA
