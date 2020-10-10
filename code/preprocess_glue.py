@@ -12,11 +12,20 @@ def extract_cols_single(task, df):
     labels, sentences = df.iloc[:,1].tolist(), df.iloc[:,3].tolist()
   elif task == 'SST-2':
     labels, sentences = df.iloc[:,1].tolist(), df.iloc[:,0].tolist()
+  sentences = ["<start> "+ x + " <end>" for x in sentences]
   return labels, sentences;
       
-def extract_cols_similarity(task, df):
+def extract_cols_NLI(task, df):
   if task == 'QNLI' or task =='RTE' or task =='WNLI':
-    labels, premises, hypotheses = df_train.iloc[:,3].tolist(), df_train.iloc[:,1].tolist(), df_train.iloc[:,2].tolist()
+    labels, premises, hypotheses = df.iloc[:,3].tolist(), df.iloc[:,1].tolist(), df.iloc[:,2].tolist()
   elif task == 'MNLI':
-    labels, premises, hypotheses = df_train.iloc[:,11].tolist(), df_train.iloc[:,8].tolist(), df_train.iloc[:,9].tolist()
-  return labels, premises, hypotheses
+    labels, premises, hypotheses = df.iloc[:,11].tolist(), df.iloc[:,8].tolist(), df.iloc[:,9].tolist()
+  sentences = ["<start> "+ x + " <$> " + y + " <end>" for x,y in zip(premises, hypotheses)]
+  return labels, sentences
+
+def extract_and_prepare(task, df):
+  if task == 'CoLA' or task == 'SST-2':
+    labels, sentences = extract_cols_single(task, df)
+  elif task == 'QNLI' or task =='RTE' or task =='WNLI' or task == 'MNLI':
+    labels, sentences = extract_cols_NLI(task, df)
+  return labels, sentences
