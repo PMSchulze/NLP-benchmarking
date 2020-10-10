@@ -1,8 +1,11 @@
 import argparse
+from glue_utils import load_data, extract_and_prepare
 import numpy as np
 import os
+import os.path
 import pandas as pd
 import random
+from sklearn import preprocessing
 from sklearn.metrics import matthews_corrcoef
 import torch
 import torch.nn as nn
@@ -12,14 +15,13 @@ from transformers import AdamW, get_linear_schedule_with_warmup, GPT2Tokenizer, 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--batch_size", type=int)
-parser.add_argument("--eval_data")
+parser.add_argument("--glue_dir")
 parser.add_argument("--hidden_size", type=int)
 parser.add_argument("--model_name_or_path")
 parser.add_argument("--num_train_epochs", type=int)
 parser.add_argument("--output_dir")
 parser.add_argument("--seed", type=int)
 parser.add_argument("--task")
-parser.add_argument("--train_data")
 parser.add_argument("--token_vocab")
 args = parser.parse_args()
 
@@ -34,28 +36,29 @@ else:
 # ---------------------------------------------------------------------------------------------------------------
 
 # Load training & evaluation data into pandas dataframe
-df_train = pd.read_csv('/home/ubuntu/data/glue/QNLI/train.tsv', sep='\t|\\\\t', engine='python')
-df_eval = pd.read_csv('/home/ubuntu/data/glue/QNLI/dev.tsv', sep='\t|\\\\t', engine='python')
-df_train.rename(columns={"question": "premise", "sentence": "hypothesis"}, inplace=True)
-df_eval.rename(columns={"question": "premise", "sentence": "hypothesis"}, inplace=True)
+df_train, df_eval = load_data(args.task, args.glue_dir)
 
-# Store questions & sentences as lists
-premises_train, premises_eval = df_train.premise.to_list(), df_eval.premise.to_list()
-hypotheses_train, hypotheses_eval = df_train.hypothesis.to_list(), df_eval.hypothesis.to_list()
-# Convert labels to 0,1 and store as them torch tensor
-labels_train = torch.tensor([1 if s=='entailment' else 0 for s in df_train.label.to_list()])
-labels_eval = torch.tensor([1 if s=='entailment' else 0 for s in df_eval.label.to_list()])
+# Extract labels and sentences, which are modified by adding task-specific special tokens
+labels_train, sentences_train = extract_and_prepare(args.task, df_train)
+labels_eval, sentences_eval = extract_and_prepare(args.task, df_eval)
+
+# Convert labels and store as them torch tensor
+le = preprocessing.LabelEncoder()
+labels_train = torch.tensor(le.fit_transform(labels_train))
+labels_eval = torch.tensor(le.fit_transform(labels_eval))
 
 # Load GPT2 tokenizer
-tokenizer = GPT2Tokenizer.from_pretrained('/home/ubuntu/data/token_vocab/gpt2/', pad_token='<pad>')
+tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, pad_token='<pad>')
 
-# Add <start>, <$> and <end> tokens to tokenizer
-tokenizer.add_tokens(["<start>", "<end>", "<$>"])
-
-# Concatenate premises and hypotheses and insert <start>, <$> and <end> tokens
-sentences_train = ["<start> "+ x + " <$> " + y + " <end>" for x,y in zip(premises_train, hypotheses_train)]
-sentences_eval = ["<start> "+ x + " <$> " + y + " <end>" for x,y in zip(premises_eval, hypotheses_eval)]
-
+# Add special tokens to tokenizer
+single = {'CoLA', 'SST-2'}
+NLI = {'QNLI', 'RTE', 'WNLI', 'MNLI'}
+similarity = {'MRPC', 'STS-B', 'QQP'}
+if args.task in single:
+    tokenizer.add_tokens(["<start>", "<end>"])
+elif args.task in NLI:
+    tokenizer.add_tokens(["<start>", "<end>", "<$>"])
+    
 # Calculate length of the longest sentence
 max_len = 0
 for sent in sentences_train+sentences_eval:
@@ -72,7 +75,7 @@ attention_mask_train, attention_mask_eval = encoding_train['attention_mask'], en
 data_train = TensorDataset(input_ids_train, attention_mask_train, labels_train)
 data_eval = TensorDataset(input_ids_eval, attention_mask_eval, labels_eval)
 
-# Set seed before shuffling the batches for reproducability
+# Set seed before shuffling the batches for reproducibility
 random.seed(args.seed)
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
@@ -120,7 +123,7 @@ class GPT2ForSequenceClassification(nn.Module):
 # Instatiate model
 model = GPT2ForSequenceClassification(
     sequence_size = max_len * args.hidden_size,
-    n_classes = 2,
+    n_classes = len(torch.unique(labels_train)),
     gpt_model_name_or_path = args.model_name_or_path,
 )
 
@@ -163,7 +166,7 @@ loss_func = nn.CrossEntropyLoss()
 train_eval_hist = []
 logits, true_labels = [], []
 
-# Set seed before training for reproducability
+# Set seed before training for reproducibility
 torch.backends.cudnn.deterministic=True
 random.seed(args.seed)
 np.random.seed(args.seed)
@@ -223,14 +226,14 @@ eval_loss = train_eval_hist[args.num_train_epochs-1].get('Eval Loss')
 # ---------------------------------------------------------------------------------------------------------------
 
 # Set name of output_dir dependent on task 
-output_dir = args.output_dir + args.task + "/"
+output_dir = os.path.join(args.output_dir, args.task)
 
 # Create output directory if not existing
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 # Save model
-torch.save(model.state_dict(), output_dir + 'model')
+torch.save(model.state_dict(), os.path.join(output_dir, 'model'))
 
 # Define function to compute accuracy
 def compute_acc(preds, labels):
@@ -239,13 +242,13 @@ def compute_acc(preds, labels):
 # Save evaluation set results
 if args.task == 'SST-2':
     eval_acc = compute_acc(predictions, true_labels)
-    with open(output_dir + 'eval_results_sst-2.txt', "w") as text_file:
+    with open(os.path.join(output_dir, 'eval_results_sst-2.txt'), "w") as text_file:
         print("eval_loss = {}".format(eval_loss), file=text_file)
         print("eval_acc = {}".format(eval_acc), file=text_file)
         print("epoch = {}".format(args.num_train_epochs), file=text_file)
 else:
     eval_mcc = matthews_corrcoef(predictions,true_labels)
-    with open(output_dir + 'eval_results_sst-2.txt', "w") as text_file:
+    with open(os.path.join(output_dir, 'eval_results_sst-2.txt'), "w") as text_file:
         print("eval_loss = {}".format(eval_loss), file=text_file)
         print("eval_mcc = {}".format(eval_mcc), file=text_file)
         print("epoch = {}".format(args.num_train_epochs), file=text_file)
