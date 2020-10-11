@@ -1,5 +1,6 @@
 import argparse
 from glue_utils import load_data, extract_and_prepare
+import json
 import numpy as np
 import os
 import os.path
@@ -240,15 +241,19 @@ def compute_acc(preds, labels):
     return (preds == labels).mean()
 
 # Save evaluation set results
-if args.task == 'SST-2':
+if args.task in NLI or args.task == 'SST-2':
     eval_acc = compute_acc(predictions, true_labels)
-    with open(os.path.join(output_dir, 'eval_results_sst-2.txt'), "w") as text_file:
+    with open(os.path.join(output_dir, 'eval_results_' + args.task.lower() + '.txt'), "w") as text_file:
         print("eval_loss = {}".format(eval_loss), file=text_file)
         print("eval_acc = {}".format(eval_acc), file=text_file)
         print("epoch = {}".format(args.num_train_epochs), file=text_file)
-else:
+elif args.task == 'CoLA':
     eval_mcc = matthews_corrcoef(predictions,true_labels)
-    with open(os.path.join(output_dir, 'eval_results_sst-2.txt'), "w") as text_file:
+    with open(os.path.join(output_dir, 'eval_results_cola.txt'), "w") as text_file:
         print("eval_loss = {}".format(eval_loss), file=text_file)
         print("eval_mcc = {}".format(eval_mcc), file=text_file)
         print("epoch = {}".format(args.num_train_epochs), file=text_file)
+        
+# Save training history
+with open(os.path.join(output_dir, 'train_eval_hist.json'), 'w') as json_file:
+    json.dump(train_eval_hist, json_file)
