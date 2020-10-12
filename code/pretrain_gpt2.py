@@ -15,7 +15,7 @@ args = parser.parse_args()
 import torch
 
 from transformers import GPT2Config
-config = GPT2Config(vocab_size=30_000, n_embd = args.hidden_size, n_layer = args.num_hidden_layers, n_head = args.num_attention_heads, 
+config = GPT2Config(vocab_size=30000, n_embd = args.hidden_size, n_layer = args.num_hidden_layers, n_head = args.num_attention_heads, 
                     bos_token_id=29999, eos_token_id=29999, n_inner = args.intermediate_size, resid_pdrop=0.1, embd_pdrop=0.1, 
                     attn_pdrop=0.1, activation_function = 'gelu')
 
@@ -29,7 +29,7 @@ from transformers import LineByLineTextDataset
 dataset = LineByLineTextDataset(
     tokenizer=tokenizer,
     file_path=args.corpus_pretrain,
-    block_size=512,
+    block_size=128,
 )
 
 from transformers import DataCollatorForLanguageModeling
