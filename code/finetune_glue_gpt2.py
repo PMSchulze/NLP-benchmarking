@@ -49,7 +49,7 @@ labels_train = torch.tensor(le.fit_transform(labels_train))
 labels_eval = torch.tensor(le.fit_transform(labels_eval))
 
 # Load GPT2 tokenizer
-tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, bos_token = '<|startoftext|>', pad_token='<pad>')
+tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, bos_token = '<|start|>', eos_token = '<|end|>', pad_token='<pad>')
 
 # Add special tokens to tokenizer
 NLI = {'QNLI', 'RTE', 'WNLI', 'MNLI'}
