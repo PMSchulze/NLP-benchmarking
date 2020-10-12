@@ -49,16 +49,13 @@ labels_train = torch.tensor(le.fit_transform(labels_train))
 labels_eval = torch.tensor(le.fit_transform(labels_eval))
 
 # Load GPT2 tokenizer
-tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, pad_token='<pad>')
+tokenizer = GPT2Tokenizer.from_pretrained(args.token_vocab, bos_token = '<|startoftext|>', pad_token='<pad>')
 
 # Add special tokens to tokenizer
-single = {'CoLA', 'SST-2'}
 NLI = {'QNLI', 'RTE', 'WNLI', 'MNLI'}
 similarity = {'MRPC', 'STS-B', 'QQP'}
-if args.task in single:
-    tokenizer.add_tokens(["<start>", "<end>"])
-elif args.task in NLI:
-    tokenizer.add_tokens(["<start>", "<end>", "<$>"])
+if args.task in NLI:
+    tokenizer.add_tokens(["<$>"])
     
 # Calculate length of the longest sentence
 max_len = 0
