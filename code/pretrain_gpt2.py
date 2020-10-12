@@ -15,13 +15,15 @@ args = parser.parse_args()
 import torch
 
 from transformers import GPT2Config
-config = GPT2Config(vocab_size=40_000, n_embd = args.hidden_size, n_layer = args.num_hidden_layers, n_head = args.num_attention_heads, n_inner = args.intermediate_size, resid_pdrop=0.1, embd_pdrop=0.1, attn_pdrop=0.1)
+config = GPT2Config(vocab_size=30_000, n_embd = args.hidden_size, n_layer = args.num_hidden_layers, n_head = args.num_attention_heads, 
+                    bos_token_id=29999, eos_token_id=29999, n_inner = args.intermediate_size, resid_pdrop=0.1, embd_pdrop=0.1, 
+                    attn_pdrop=0.1, activation_function = 'gelu')
 
 from transformers import GPT2LMHeadModel
 model = GPT2LMHeadModel(config=config)
 
 from transformers import GPT2TokenizerFast
-tokenizer = GPT2TokenizerFast.from_pretrained(args.token_vocab, additional_special_tokens=['<s>','<pad>','</s>','<unk>','<mask>'], pad_token='<pad>')
+tokenizer = GPT2TokenizerFast.from_pretrained(args.token_vocab, additional_special_tokens=['<pad>'], pad_token='<pad>')
 
 from transformers import LineByLineTextDataset
 dataset = LineByLineTextDataset(
