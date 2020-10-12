@@ -12,7 +12,7 @@ def extract_cols_single(task, df):
     labels, sentences = df.iloc[:,1].tolist(), df.iloc[:,3].tolist()
   elif task == 'SST-2':
     labels, sentences = df.iloc[:,1].tolist(), df.iloc[:,0].tolist()
-  sentences = ["<start> "+ x + " <end>" for x in sentences]
+  sentences = ["<|startoftext|>"+ x + "<|endoftext|>" for x in sentences]
   return labels, sentences;
       
 def extract_cols_NLI(task, df):
@@ -20,7 +20,7 @@ def extract_cols_NLI(task, df):
     labels, premises, hypotheses = df.iloc[:,3].tolist(), df.iloc[:,1].tolist(), df.iloc[:,2].tolist()
   elif task == 'MNLI':
     labels, premises, hypotheses = df.iloc[:,11].tolist(), df.iloc[:,8].tolist(), df.iloc[:,9].tolist()
-  sentences = ["<start> "+ x + " <$> " + y + " <end>" for x,y in zip(premises, hypotheses)]
+  sentences = ["<|startoftext|>"+ x + "<$>" + y + "<|endoftext|>" for x,y in zip(premises, hypotheses)]
   return labels, sentences
 
 def extract_and_prepare(task, df):
