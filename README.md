@@ -45,6 +45,22 @@ tokenizer.save_model("/home/ubuntu/data/token_vocab/gpt2/")
 
 ```
 
+### 1.3. RoBERTa
+```
+from tokenizers import ByteLevelBPETokenizer
+
+# Specify path of pre-training data
+vocab_path = "/home/ubuntu/data/pretrain_data/wiki_train.txt"
+
+# Initialize RoBERTa's BPE tokenizer 
+tokenizer = ByteLevelBPETokenizer()
+
+# Generate BPE token vocabulary from pre-training data
+tokenizer.train(files=vocab_path, vocab_size=30_000, min_frequency=2, special_tokens=['<s>','<pad>','</s>','<mask>'])
+
+# Save the vocabulary
+tokenizer.save_model("/home/ubuntu/data/token_vocab/roberta/")
+```
 ## 2. Pre-training
 
 ### 2.1. BERT
