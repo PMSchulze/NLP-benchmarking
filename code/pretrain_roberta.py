@@ -14,11 +14,11 @@ args = parser.parse_args()
 
 import torch
 
-from transformers import RobertaConfig
-config = RobertaConfig(vocab_size=30_000, hidden_size=args.hidden_size, num_hidden_layers=args.num_hidden_layers, num_attention_heads=args.num_attention_heads, intermediate_size=args.intermediate_size, attention_probs_dropout_prob=0.1, hidden_dropout_prob=0.1)
-
 from transformers import RobertaTokenizerFast
 tokenizer = RobertaTokenizerFast.from_pretrained(args.token_vocab, additional_special_tokens=['<s>','<pad>','</s>','<mask>'])
+
+from transformers import RobertaConfig
+config = RobertaConfig(vocab_size=len(tokenizer), hidden_size=args.hidden_size, num_hidden_layers=args.num_hidden_layers, num_attention_heads=args.num_attention_heads, intermediate_size=args.intermediate_size, attention_probs_dropout_prob=0.1, hidden_dropout_prob=0.1)
 
 from transformers import RobertaForMaskedLM
 model = RobertaForMaskedLM(config=config)
