@@ -14,12 +14,13 @@ args = parser.parse_args()
 
 import torch
 
-from transformers import BertConfig
-config = BertConfig(hidden_size=args.hidden_size, num_hidden_layers=args.num_hidden_layers, num_attention_heads=args.num_attention_heads, 
-                    intermediate_size=args.intermediate_size, attention_probs_dropout_prob=0.1, hidden_dropout_prob=0.1)
-
 from transformers import BertTokenizerFast
 tokenizer = BertTokenizerFast.from_pretrained(args.token_vocab)
+
+from transformers import BertConfig
+config = BertConfig(vocab_size = len(tokenizer), hidden_size=args.hidden_size, num_hidden_layers=args.num_hidden_layers, 
+                    num_attention_heads=args.num_attention_heads, intermediate_size=args.intermediate_size, 
+                    attention_probs_dropout_prob=0.1, hidden_dropout_prob=0.1)
 
 from transformers import BertForMaskedLM
 model = BertForMaskedLM(config=config)
