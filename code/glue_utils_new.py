@@ -1,4 +1,6 @@
-from transformers import GPT2Tokenizer
+import torch
+import torch.nn as nn
+from transformers import GPT2Tokenizer, GPT2Model
 
 # Load GPT2 tokenizer
 tokenizer = None
@@ -38,8 +40,108 @@ def encode(examples, task):
     nli = {'QNLI', 'RTE', 'WNLI', 'MNLI'}
     similarity = {'MRPC', 'STS-B', 'QQP'}
     if task in single:
-        return encode_single(examples, task)
+        return encode_single(examples)
     elif task in similarity:
         return encode_similarity(examples, task)
     else:
         return encode_nli(examples, task)
+
+# ---------------------------------------------------------------------------------------------------------------
+# Here we define the classification head of GPT-2 & initialize the model
+# ---------------------------------------------------------------------------------------------------------------
+
+# We implement the approach used for the original GPT.
+#
+# That is, the hidden states which are obtained by the transformer (GPT2Model) 
+# are fed into a single linear layer to predict the scores.
+#
+# For similarity tasks the authors of GPT feed two sequences into separate
+# transformers for each input. The resulting hidden states are then added
+# before fed into the linear layer.
+
+
+# This head takes a single sequence as input.
+# It is used for all GlUE tasks except similarity/paraphrasing. 
+class GPT2ForSequenceClassification(nn.Module):
+    def __init__(
+        self,
+        sequence_size: int,
+        n_classes:int ,
+        gpt_model_name_or_path:str,
+    ):
+        super(GPT2ForSequenceClassification,self).__init__()
+        
+        # Load the pre-trained transformer
+        self.gpt2model = GPT2Model.from_pretrained(
+            gpt_model_name_or_path
+        )
+        # Define a linear layer which predicts scores from hidden states
+        self.lin = nn.Linear(sequence_size, n_classes)
+
+    def forward(self, attention_mask, input_ids):
+        
+        # Calculate hidden states based on pre-trained weights and inputs
+        gpt_out = self.gpt2model(input_ids, attention_mask = attention_mask)[0] 
+        # Extract the hidden states
+        n_sentences = gpt_out.shape[0]
+        # Calculate logits for batch of hidden sequence states
+        logits = self.lin(gpt_out.view(n_sentences,-1))
+        
+        loss = None
+        # Use MSE loss for regression tasks (SST-2) 
+        if n_classes == 1:
+            loss_fct = nn.MSELoss()
+            loss = loss_fct(logits.view(-1), labels.view(-1))
+        # Use cross entropy for classification tasks (all but SST-2)
+        else:
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(logits.view(-1, n_classes), labels.view(-1))
+
+        # Return loss and logits for each forward pass
+        return loss, logits
+
+
+# This head takes two sequences as input, each processed by an individual
+# transformers. It is used for all similarity/paraphrasing tasks.
+class GPT2ForSimilarityClassification(nn.Module):
+    def __init__(
+        self,
+        sequence_size: int,
+        n_classes:int ,
+        gpt_model_name_or_path:str,
+    ):
+
+        # Load the pre-trained transformer
+        super(GPT2ForSimilarityClassification,self).__init__()
+        self.gpt2model = GPT2Model.from_pretrained(
+            gpt_model_name_or_path
+        )
+        # Define a linear layer which predicts scores from hidden states
+        self.lin = nn.Linear(sequence_size, n_classes)
+
+    def forward(self, attention_mask1, attention_mask2, input_ids1, input_ids2, labels):
+        
+        # Calculate hidden states for the first sequence
+        gpt_out1 = self.gpt2model(input_ids1, attention_mask = attention_mask1)[0]
+        # Calculate hidden states for the second equence
+        gpt_out2 = self.gpt2model(input_ids2, attention_mask = attention_mask2)[0]
+        # Add the two hidden states element-wise
+        gpt_out = gpt_out1 + gpt_out2
+        # Extract the hidden states
+        n_sentences = gpt_out.shape[0]
+        # Calculate logits for batch of hidden sequence states
+        logits = self.lin(gpt_out.view(n_sentences,-1))
+
+        loss = None
+        # Use MSE loss for regression tasks (SST-2) 
+        if n_classes == 1:
+            loss_fct = nn.MSELoss()
+            loss = loss_fct(logits.view(-1), labels.view(-1))
+        # Use cross entropy for classification tasks (all but SST-2)
+        else:
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(logits.view(-1, n_classes), labels.view(-1))
+        
+        # Return loss and logits for each forward pass
+        return loss, logits
+

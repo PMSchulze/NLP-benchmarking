@@ -1,5 +1,4 @@
-import argparse
-from glue_utils import load_data, extract_and_prepare
+import argparse from glue_utils import load_data, extract_and_prepare
 import json
 import numpy as np
 import os
@@ -91,34 +90,7 @@ batches_eval = DataLoader(
     batch_size = args.batch_size
 )
 
-# ---------------------------------------------------------------------------------------------------------------
-# Here we define the classification head of GPT-2 & initialize the model
-# ---------------------------------------------------------------------------------------------------------------
-
-# We implement the (simple) approach used for the original GPT.
-# That is, the hidden states are fed into a single linear layer to predict the scores.
-class GPT2ForSequenceClassification(nn.Module):
-    def __init__(
-        self,
-        sequence_size: int,
-        n_classes:int ,
-        gpt_model_name_or_path:str,
-    ):
-        super(GPT2ForSequenceClassification,self).__init__()
-        self.gpt2model = GPT2Model.from_pretrained(
-            gpt_model_name_or_path
-        )
-        self.lin = nn.Linear(sequence_size, n_classes)
-
-    def forward(self, ids_in, attention_mask):
-
-        gpt_out = self.gpt2model(ids_in, attention_mask = attention_mask)[0]
-        n_sentences = gpt_out.shape[0]
-        logits = self.lin(gpt_out.view(n_sentences,-1))
-
-        return logits
-
-# Instatiate model
+# Instatiate model 
 model = GPT2ForSequenceClassification(
     sequence_size = max_len * args.hidden_size,
     n_classes = len(torch.unique(labels_train)),
