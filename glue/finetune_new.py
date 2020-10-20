@@ -99,13 +99,13 @@ data_train.cleanup_cache_files()
 data_eval.cleanup_cache_files()
 
 # specify number of classes
-n_classes = 1 if task == 'STS-B' else 2
+n_classes = 1 if args.task == 'STS-B' else 2
 
 # Instatiate the model:
 model = None
 ## In case of similarity tasks we choose model which processes two sequences
 ## per input
-if task in similarity:
+if args.task in similarity:
     model = glue_utils_new.GPT2ForSimilarityClassification(
         sequence_size = args.hidden_size*1024,
         n_classes = n_classes,
@@ -114,7 +114,7 @@ if task in similarity:
 ## For all other tasks we choose model which processes a single sequence
 else: 
     model = glue_utils_new.GPT2ForSequenceClassification(
-        sequence_size = args.hiddens_size*1024,
+        sequence_size = args.hidden_size*1024,
         n_classes = n_classes,
         gpt_model_name_or_path = args.model_name_or_path,
     )
