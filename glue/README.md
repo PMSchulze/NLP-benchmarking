@@ -5,7 +5,7 @@ pip install datasets
 ```
 
 ```
-python finetune_new.py \
+python /home/ubuntu/masters_thesis/glue/finetune_new.py \
   --batch_size 32 \
   --cache_dir /home/ubuntu/lrz_share/huggingface_datasets/ \
   --hidden_size 128 \
