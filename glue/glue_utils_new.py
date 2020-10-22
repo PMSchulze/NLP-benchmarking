@@ -77,8 +77,9 @@ class GPT2ForSequenceClassification(nn.Module):
         )
         # Define a linear layer which predicts scores from hidden states
         self.lin = nn.Linear(sequence_size, n_classes)
+        self.n_classes = n_classes
 
-    def forward(self, attention_mask, input_ids):
+    def forward(self, attention_mask, input_ids, labels):
         
         # Calculate hidden states based on pre-trained weights and inputs
         gpt_out = self.gpt2model(input_ids, attention_mask = attention_mask)[0] 
@@ -89,13 +90,13 @@ class GPT2ForSequenceClassification(nn.Module):
         
         loss = None
         # Use MSE loss for regression tasks (SST-2) 
-        if n_classes == 1:
+        if self.n_classes == 1:
             loss_fct = nn.MSELoss()
             loss = loss_fct(logits.view(-1), labels.view(-1))
         # Use cross entropy for classification tasks (all but SST-2)
         else:
             loss_fct = nn.CrossEntropyLoss()
-            loss = loss_fct(logits.view(-1, n_classes), labels.view(-1))
+            loss = loss_fct(logits.view(-1, self.n_classes), labels.view(-1))
 
         # Return loss and logits for each forward pass
         return loss, logits
@@ -118,6 +119,7 @@ class GPT2ForSimilarityClassification(nn.Module):
         )
         # Define a linear layer which predicts scores from hidden states
         self.lin = nn.Linear(sequence_size, n_classes)
+        self.n_classes = n_classes
 
     def forward(self, attention_mask1, attention_mask2, input_ids1, input_ids2, labels):
         
@@ -134,13 +136,13 @@ class GPT2ForSimilarityClassification(nn.Module):
 
         loss = None
         # Use MSE loss for regression tasks (SST-2) 
-        if n_classes == 1:
+        if self.n_classes == 1:
             loss_fct = nn.MSELoss()
             loss = loss_fct(logits.view(-1), labels.view(-1))
         # Use cross entropy for classification tasks (all but SST-2)
         else:
             loss_fct = nn.CrossEntropyLoss()
-            loss = loss_fct(logits.view(-1, n_classes), labels.view(-1))
+            loss = loss_fct(logits.view(-1, self.n_classes), labels.view(-1))
         
         # Return loss and logits for each forward pass
         return loss, logits
