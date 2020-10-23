@@ -72,7 +72,7 @@ for VARIANT in 128_2_2_512_12 128_2_2_512_15 128_2_2_512_17
 do
     NEPOCHS=$(echo $VARIANT | cut -d'_' -f 5)
     NWARMUP=$(($NEPOCHS*182))
-    python /home/ubuntu/python_files/pretrain_bert.py \
+    python /home/ubuntu/masters_thesis/code/pretrain_bert.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
         --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
         --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
@@ -202,11 +202,11 @@ time (hh:mm:ss)               | 08:17:47  |16:35:57| 07:29:36    | 08:22:00     
 For pre-training details check `pretrain_gpt2.py` in this repository.
 
 ```
-for VARIANT in 128_2_2_512_10 160_2_2_540_10 192_2_2_786_10 288_2_2_1152_10 384_2_2_1536_10
+for VARIANT in 544_2_2_2176_10 128_36_2_512_10 192_2_2_768_10
 do
     NEPOCHS=$(echo $VARIANT | cut -d'_' -f 5)
     NWARMUP=$(($NEPOCHS*182))
-    python /home/ubuntu/python_files/pretrain_gpt2.py \
+    python /home/ubuntu/masters_thesis/code/pretrain_gpt2.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
         --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
         --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
@@ -216,6 +216,28 @@ do
         --output_dir /home/ubuntu/models/gpt2/${VARIANT} \
         --corpus_pretrain /home/ubuntu/data/pretrain_data/wiki_train.txt \
         --token_vocab /home/ubuntu/data/token_vocab/gpt2/
+done
+```
+
+### 2.2. RoBERTa
+
+For pre-training details check `pretrain_roberta.py` in this repository.
+
+```
+for VARIANT in 544_2_2_2176_10 128_36_2_512_10 192_2_2_768_10
+do
+    NEPOCHS=$(echo $VARIANT | cut -d'_' -f 5)
+    NWARMUP=$(($NEPOCHS*182))
+    python /home/ubuntu/masters_thesis/code/pretrain_roberta.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $NEPOCHS \
+        --warmup_steps $NWARMUP \
+        --output_dir /home/ubuntu/models/robert/${VARIANT} \
+        --corpus_pretrain /home/ubuntu/data/pretrain_data/wiki_train.txt \
+        --token_vocab /home/ubuntu/data/token_vocab/roberta/
 done
 ```
 
