@@ -219,7 +219,7 @@ do
 done
 ```
 
-### 2.2. RoBERTa
+### 2.3. RoBERTa
 
 For pre-training details check `pretrain_roberta.py` in this repository.
 
