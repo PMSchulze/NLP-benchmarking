@@ -60,12 +60,27 @@ def encode(examples, task):
 # before fed into the linear layer.
 
 
+class GPT2Pooler(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.lin = nn.Linear(config.hidden_size, config.hidden_size)
+        self.activation = nn.Tanh()
+
+    def forward(self, hidden_states):
+        # We "pool" the model by simply taking the hidden state corresponding
+        # to the first token.
+        first_token_tensor = hidden_states[:, 0]
+        pooled_output = self.lin(first_token_tensor)
+        pooled_output = self.activation(pooled_output)
+        return pooled_output
+
+
 # This head takes a single sequence as input.
 # It is used for all GlUE tasks except similarity/paraphrasing. 
 class GPT2ForSequenceClassification(nn.Module):
     def __init__(
         self,
-        sequence_size: int,
+        hidden_size: int,
         n_classes:int ,
         gpt_model_name_or_path:str,
     ):
@@ -76,17 +91,20 @@ class GPT2ForSequenceClassification(nn.Module):
             gpt_model_name_or_path
         )
         # Define a linear layer which predicts scores from hidden states
-        self.lin = nn.Linear(sequence_size, n_classes)
+        self.lin = nn.Linear(hidden_size, n_classes)
         self.n_classes = n_classes
 
     def forward(self, attention_mask, input_ids, labels):
         
-        # Calculate hidden states based on pre-trained weights and inputs
-        gpt_out = self.gpt2model(input_ids, attention_mask = attention_mask)[0] 
-        # Extract the hidden states
-        n_sentences = gpt_out.shape[0]
-        # Calculate logits for batch of hidden sequence states
-        logits = self.lin(gpt_out.view(n_sentences,-1))
+        # Compute the hidden states of all tokens for pre-trained model
+        gpt_out_all = self.gpt2model(
+            input_ids, 
+            attention_mask = attention_mask
+        )[0]
+        # Extract the hidden states of the first token
+        gpt_out_first = gpt_out_all[:,0,:]
+        # Calculate logits for each sequence using first token hidden states
+        logits = self.lin(gpt_out_first)
         
         loss = None
         # Use MSE loss for regression tasks (SST-2) 
