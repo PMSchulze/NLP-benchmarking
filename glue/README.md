@@ -25,7 +25,7 @@ export GLUE_DIR=/home/ubuntu/data/glue
 export MODEL=roberta
 export SEED=2020
 
-for VARIANT in 288_2_2_1152_10 384_2_2_1536_10
+for VARIANT in 192_2_2_768_10 384_2_2_1536_10 544_2_2_2176_10 128_5_2_512_10 128_10_2_512_10 128_18_2_512_10 128_36_2_512_10
 do
     cp /home/ubuntu/data/token_vocab/$MODEL/* /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/
 
