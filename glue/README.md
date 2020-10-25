@@ -27,7 +27,7 @@ export SEED=2020
 
 for VARIANT in 288_2_2_1152_10 384_2_2_1536_10
 do
-    cp /home/ubuntu/data/token_vocab/$MODEL/* /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/*
+    cp /home/ubuntu/data/token_vocab/$MODEL/* /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/
 
     for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
     do
