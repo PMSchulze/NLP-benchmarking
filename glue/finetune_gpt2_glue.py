@@ -1,6 +1,5 @@
 import argparse
 from datasets import load_dataset, load_metric
-import glue_utils_new
 import itertools
 import numpy as np
 import os
@@ -12,6 +11,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from tqdm import tqdm
+import utils_gpt2_glue
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--batch_size", type=int)
@@ -46,7 +46,7 @@ data_eval = load_dataset(
 )
 
 # Load GPT2 tokenizer
-glue_utils_new.tokenizer = GPT2Tokenizer.from_pretrained(
+utils_gpt2_glue.tokenizer = GPT2Tokenizer.from_pretrained(
     args.token_vocab, 
     bos_token = '<|start|>', 
     eos_token = '<|end|>', 
@@ -58,7 +58,7 @@ single = {'CoLA', 'SST-2'}
 NLI = {'QNLI', 'RTE', 'WNLI', 'MNLI'}
 similarity = {'MRPC', 'STS-B', 'QQP'}
 if args.task in NLI or args.task in similarity:
-    glue_utils_new.tokenizer.add_tokens(["<$>"])
+    utils_gpt2_glue.tokenizer.add_tokens(["<$>"])
 
 # Rename column 'label' to 'labels', which is the expected keyword argument 
 # of huggingface's models.
@@ -81,10 +81,10 @@ elif args.task in single:
 
 # tokenize the sentences dependent on the task, using the same method that was 
 # used in the original GPT
-data_train = data_train.map(lambda x: glue_utils_new.encode(x, args.task), 
+data_train = data_train.map(lambda x: utils_gpt2_glue.encode(x, args.task), 
                             batched = True, remove_columns = remove_cols, 
                             keep_in_memory = True)
-data_eval = data_eval.map(lambda x: glue_utils_new.encode(x, args.task), 
+data_eval = data_eval.map(lambda x: utils_gpt2_glue.encode(x, args.task), 
                           batched = True, remove_columns = remove_cols, 
                           keep_in_memory = True)
 
@@ -116,14 +116,14 @@ model = None
 ## In case of similarity tasks we choose model which processes two sequences
 ## per input
 if args.task in similarity:
-    model = glue_utils_new.GPT2ForSimilarityClassification(
+    model = utils_gpt2_glue.GPT2ForSimilarityClassification(
         sequence_size = args.hidden_size*1024,
         n_classes = n_classes,
         gpt_model_name_or_path = args.model_name_or_path,
     )
 ## For all other tasks we choose model which processes a single sequence
 else: 
-    model = glue_utils_new.GPT2ForSequenceClassification(
+    model = utils_gpt2_glue.GPT2ForSequenceClassification(
         hidden_size = args.hidden_size,
         n_classes = n_classes,
         gpt_model_name_or_path = args.model_name_or_path,
@@ -131,7 +131,7 @@ else:
 
 # Add new tokens (<start>, <end>) to the embedding matrix
 # Weights are randomly initialized, as in GPT paper
-model.gpt2model.resize_token_embeddings(len(glue_utils_new.tokenizer))
+model.gpt2model.resize_token_embeddings(len(utils_gpt2_glue.tokenizer))
 
 # Specify optimizer and hyperparameters
 optimizer = AdamW(
