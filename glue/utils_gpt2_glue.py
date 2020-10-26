@@ -103,7 +103,7 @@ class GPT2ForSequenceClassification(nn.Module):
         )[0]
         # Extract the hidden states of the first token
         gpt_out_first = gpt_out_all[:,0,:]
-        # Calculate logits for each sequence using first token hidden states
+        # Calculate logits for batch 
         logits = self.lin(gpt_out_first)
         
         loss = None
@@ -125,7 +125,7 @@ class GPT2ForSequenceClassification(nn.Module):
 class GPT2ForSimilarityClassification(nn.Module):
     def __init__(
         self,
-        sequence_size: int,
+        hidden_size: int,
         n_classes:int ,
         gpt_model_name_or_path:str,
     ):
@@ -136,21 +136,29 @@ class GPT2ForSimilarityClassification(nn.Module):
             gpt_model_name_or_path
         )
         # Define a linear layer which predicts scores from hidden states
-        self.lin = nn.Linear(sequence_size, n_classes)
+        self.lin = nn.Linear(hidden_size, n_classes)
         self.n_classes = n_classes
 
     def forward(self, attention_mask1, attention_mask2, input_ids1, input_ids2, labels):
         
-        # Calculate hidden states for the first sequence
-        gpt_out1 = self.gpt2model(input_ids1, attention_mask = attention_mask1)[0]
-        # Calculate hidden states for the second equence
-        gpt_out2 = self.gpt2model(input_ids2, attention_mask = attention_mask2)[0]
+        # Calculate hidden states of all tokens for the first sequence
+        gpt_out_all1 = self.gpt2model(
+            input_ids1, 
+            attention_mask = attention_mask1
+        )[0]
+        # Calculate hidden states of all tokens for the second sequence
+        gpt_out_all2 = self.gpt2model(
+            input_ids2, 
+            attention_mask = attention_mask2
+        )[0]
+        # Extract hidden states of the first token for first sequence
+        gpt_out_first1 = gpt_out_all1[:,0,:]
+        # Extract hidden states of the first token for second sequence
+        gpt_out_first2 = gpt_out_all2[:,0,:]
         # Add the two hidden states element-wise
-        gpt_out = gpt_out1 + gpt_out2
-        # Extract the hidden states
-        n_sentences = gpt_out.shape[0]
-        # Calculate logits for batch of hidden sequence states
-        logits = self.lin(gpt_out.view(n_sentences,-1))
+        gpt_out_first = gpt_out_first1 + gpt_out_first2
+        # Calculate logits for batch
+        logits = self.lin(gpt_out_first)
 
         loss = None
         # Use MSE loss for regression tasks (SST-2) 

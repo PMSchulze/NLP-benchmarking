@@ -159,7 +159,7 @@ model.cuda()
 
 # Initialize empty list to store predictions on evaluation set
 train_eval_hist = []
-preds, true_labels = [], []
+logits, true_labels = [], []
 
 # Set seed before training for reproducibility
 torch.backends.cudnn.deterministic=True
@@ -207,15 +207,15 @@ for epoch in range(0, args.num_train_epochs):
         with torch.no_grad():
             # calculate loss and predictions; the latter are later used to 
             # calculate various task-dependent metrics 
-            loss_i, preds_i = model(**inputs_i)
+            loss_i, logits_i = model(**inputs_i)
         # increment evaluation loss 
         eval_loss += loss_i.item()
         # move predictions to cpu
-        preds_i = preds_i.detach().cpu()
+        logits_i = logits_i.detach().cpu()
         # move labels to cpu
         true_labels_i = inputs_i['labels'].to('cpu')
         # add predictions of current batch to list of all predictions
-        preds.append(preds_i)
+        logits.append(logits_i)
         # add labels of current batch to list of all labels
         true_labels.append(true_labels_i)
     total_eval_loss = eval_loss / len(batches_eval)
@@ -234,7 +234,7 @@ metric = load_metric(
 
 # Specify predictions and true labels to calculate the scores
 metric.add_batch(
-    predictions = np.argmax(np.concatenate(preds, axis = 0), axis = 1), 
+    predictions = np.argmax(np.concatenate(logits, axis = 0), axis = 1), 
     references = np.concatenate(true_labels, axis = 0)
 )
 
