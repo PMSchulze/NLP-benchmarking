@@ -1,6 +1,11 @@
 import torch
 import torch.nn as nn
-from transformers import GPT2Tokenizer, GPT2Model
+from transformers.modeling_utils import Conv1D, PreTrainedModel
+from transformers.modeling_gpt2 import (
+    GPT2Model,
+    GPT2PreTrainedModel,
+)
+from transformers import GPT2Tokenizer
 
 # Load GPT2 tokenizer
 tokenizer = None
@@ -118,7 +123,7 @@ class GPT2ForSequenceClassification(nn.Module):
 
         # Return loss and logits for each forward pass
         return loss, logits
-
+    
 
 # This head takes two sequences as input, each processed by an individual
 # transformers. It is used for all similarity/paraphrasing tasks.
@@ -173,3 +178,43 @@ class GPT2ForSimilarityClassification(nn.Module):
         # Return loss and logits for each forward pass
         return loss, logits
 
+
+class GPT2ForSeqClassification(GPT2PreTrainedModel):
+    authorized_missing_keys = [r"h\.\d+\.attn\.masked_bias", r"lm_head\.weight"]
+
+    def __init__(self, config):
+        super().__init__(config)
+        config.num_labels = 2
+        # Load number of classes to predict
+        self.n_classes = config.num_labels
+        # Load the pre-trained transformer
+        self.gpt2model = GPT2Model(config)
+        # Define a linear layer which predicts scores from hidden states
+        self.lin = nn.Linear(config.n_embd, self.n_classes, bias=False)
+        # Initialize the weights
+        self.init_weights()
+
+    def forward(self, attention_mask, input_ids, labels):
+
+        # Compute the hidden states of all tokens for pre-trained model
+        gpt_out_all = self.gpt2model(
+            input_ids, 
+            attention_mask = attention_mask
+        )[0]
+        # Extract the hidden states of the first token
+        gpt_out_first = gpt_out_all[:,0,:]
+        # Calculate logits for batch 
+        logits = self.lin(gpt_out_first)
+        
+        loss = None
+        # Use MSE loss for regression tasks (SST-2) 
+        if self.n_classes == 1:
+            loss_fct = nn.MSELoss()
+            loss = loss_fct(logits.view(-1), labels.view(-1))
+        # Use cross entropy for classification tasks (all but SST-2)
+        else:
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(logits.view(-1, self.n_classes), labels.view(-1))
+
+        # Return loss and logits for each forward pass
+        return loss, logits
