@@ -124,7 +124,7 @@ if args.task in similarity:
 ## For all other tasks we choose model which processes a single sequence
 else: 
     model = glue_utils_new.GPT2ForSequenceClassification(
-        sequence_size = args.hidden_size*1024,
+        hidden_size = args.hidden_size,
         n_classes = n_classes,
         gpt_model_name_or_path = args.model_name_or_path,
     )

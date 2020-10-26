@@ -76,7 +76,7 @@ class GPT2Pooler(nn.Module):
 
 
 # This head takes a single sequence as input.
-# It is used for all GlUE tasks except similarity/paraphrasing. 
+# It is used for all GlUE tasks except for similarity/paraphrasing. 
 class GPT2ForSequenceClassification(nn.Module):
     def __init__(
         self,
