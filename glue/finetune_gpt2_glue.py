@@ -244,9 +244,18 @@ metric.add_batch(
 # Calculate the scores
 final_score = metric.compute()
 
+# Create name of task-specific output directory
+output_dir_task = os.path.join(args.output_dir, args.task)
+
+# Create the task-specific output directory if not existing already
+if not os.path.exists(output_dir_task):
+    os.makedirs(output_dir_task)
+
 # Specify path for text file with evaluation results
-filepath_out = os.path.join(os.path.join(args.output_dir, args.task), 
-                            'eval_results_' + args.task.lower() + '.txt')
+filepath_out = os.path.join(
+    output_dir_task, 
+    'eval_results_' + args.task.lower() + '.txt',
+)
 
 # Save evaluation results
 with open(filepath_out, 'w') as text_file:
