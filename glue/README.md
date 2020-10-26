@@ -5,7 +5,7 @@ pip install datasets
 ```
 
 ```
-python /home/ubuntu/masters_thesis/glue/finetune_new.py \
+python /home/ubuntu/masters_thesis/glue/finetune_gpt2_glue.py \
   --batch_size 32 \
   --cache_dir /home/ubuntu/lrz_share/huggingface_datasets/ \
   --hidden_size 128 \
@@ -13,7 +13,7 @@ python /home/ubuntu/masters_thesis/glue/finetune_new.py \
   --num_train_epochs 3 \
   --output_dir /home/ubuntu/fine_tuned/gpt2 \
   --seed 2020 \
-  --task 'CoLA' \
+  --task 'SST-2' \
   --token_vocab /home/ubuntu/data/token_vocab/gpt2
 ```
 
