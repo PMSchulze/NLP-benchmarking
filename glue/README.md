@@ -5,16 +5,23 @@ pip install datasets
 ```
 
 ```
-python /home/ubuntu/masters_thesis/glue/finetune_gpt2_glue.py \
-  --batch_size 32 \
-  --cache_dir /home/ubuntu/lrz_share/huggingface_datasets/ \
-  --hidden_size 128 \
-  --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/128_2_2_512_10/ \
-  --num_train_epochs 3 \
-  --output_dir /home/ubuntu/lrz_share/fine_tuned/gpt2/glue \
-  --seed 2020 \
-  --task 'SST-2' \
-  --token_vocab /home/ubuntu/data/token_vocab/gpt2
+export SEED=2020
+
+for VARIANT in 128_2_2_512_10
+do
+    for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B
+    do
+        python /home/ubuntu/masters_thesis/glue/finetune_gpt2_glue.py \
+            --batch_size 32 \
+            --cache_dir /home/ubuntu/lrz_share/huggingface_datasets/ \
+            --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/${VARIANT}/ \
+            --num_train_epochs 3 \
+            --output_dir /home/ubuntu/lrz_share/fine_tuned/gpt2/glue/${VARIANT}/ \
+            --seed $SEED \
+            --task ${TASK} \
+            --token_vocab /home/ubuntu/data/token_vocab/gpt2
+    done
+done
 ```
 
 
