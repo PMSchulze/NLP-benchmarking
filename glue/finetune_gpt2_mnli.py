@@ -82,3 +82,58 @@ data_eval_matched = data_eval_matched.map(lambda x: utils_gpt2_glue.encode(x, 'M
 data_eval_mismatched = data_eval_mismatched.map(lambda x: utils_gpt2_glue.encode(x, 'MNLI'), 
                           batched = True, remove_columns = remove_cols, 
                           keep_in_memory = True)
+
+# Convert data to torch.tensor
+data_train.set_format(type = 'torch')
+data_eval_matched.set_format(type = 'torch')
+data_eval_mismatched.set_format(type = 'torch')
+
+# Set seed before creating and shuffling the batches for reproducibility
+random.seed(args.seed)
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed_all(args.seed)
+
+# Create input batches; the training data is randomly shuffled to implement SGD
+batches_train = DataLoader(data_train, sampler = RandomSampler(data_train),
+                           batch_size = args.batch_size)
+batches_eval_matched = DataLoader(data_eval_matched, sampler = SequentialSampler(data_eval), 
+                          batch_size = args.batch_size)
+batches_eval_mismatched = DataLoader(data_eval_mismatched, sampler = SequentialSampler(data_eval), 
+                          batch_size = args.batch_size)
+
+# Drop the cached data (only the batches are needed)
+data_train.cleanup_cache_files()
+data_eval_matched.cleanup_cache_files()
+data_eval_mismatched.cleanup_cache_files()
+
+# Instatiate the model:
+model = utils_gpt2_glue.GPT2ForSequenceClassification(
+    n_classes = n_classes,
+    gpt_model_name_or_path = args.model_name_or_path,
+)
+
+# Add new tokens (<start>, <end>) to the embedding matrix
+# Weights are randomly initialized, as in GPT paper
+model.gpt2model.resize_token_embeddings(len(utils_gpt2_glue.tokenizer))
+
+# Specify optimizer and hyperparameters
+optimizer = AdamW(
+    model.parameters(),
+    lr = 2e-5,
+    eps = 1e-8
+)
+
+# Calculate number of training steps
+total_steps = len(batches_train) * args.num_train_epochs
+
+# Create the learning rate scheduler (with num_warmup_steps=0, as in other models fine-tuned on GLUE)
+scheduler = get_linear_schedule_with_warmup(
+    optimizer,
+    num_warmup_steps = 0,
+    num_training_steps = total_steps
+)
+
+# Activate CUDA
+model.cuda()
+
