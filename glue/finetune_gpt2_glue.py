@@ -1,6 +1,7 @@
 import argparse
 from datasets import load_dataset, load_metric
 import itertools
+import json
 import numpy as np
 import os
 import os.path
@@ -229,9 +230,10 @@ metric = load_metric(
     cache_dir = args.cache_dir
 )
 
-# Concatenate batches of logits and true labels 
-logits = np.concatenate(logits, axis = 0)
-true_labels = np.concatenate(true_labels, axis = 0)
+# Concatenate batches of logits and true labels of last epoch
+batchsize_last_epoch = len(batches_eval)
+logits = np.concatenate(logits, axis = 0)[-batchsize_last_epoch:]
+true_labels = np.concatenate(true_labels, axis = 0)[-batchsize_last_epoch:]
 
 # If not regression task, then prediction is argmax of logits
 preds = np.argmax(logits, axis = 1) if n_classes>1 else logits.flatten()
@@ -253,12 +255,22 @@ if not os.path.exists(output_dir_task):
     os.makedirs(output_dir_task)
 
 # Specify path for text file with evaluation results
-filepath_out = os.path.join(
+filepath_out_eval = os.path.join(
     output_dir_task, 
     'eval_results_' + args.task.lower() + '.txt',
 )
 
+# Specify path for log file with train/testloss history
+filepath_out_log = os.path.join(
+    output_dir_task,
+    'log_history.json',
+)
+
 # Save evaluation results
-with open(filepath_out, 'w') as text_file:
+with open(filepath_out_eval, 'w') as text_file:
     for k,v in final_score.items():
              print(f'{k} = {v}', file = text_file)
+
+# Save log history
+with open(filepath_out_log, 'w') as json_file:
+    json.dump(train_eval_hist, json_file)
