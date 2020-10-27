@@ -264,8 +264,8 @@ logits_mismatched = np.concatenate(
 )[-batchsize_last_epoch_mismatched:]
 true_labels_mismatched = np.concatenate(
     true_labels_mismatched, 
-    axis = 0)
-[-batchsize_last_epoch_mismatched:]
+    axis = 0
+)[-batchsize_last_epoch_mismatched:]
 
 # If not regression task, then prediction is argmax of logits
 preds_matched = np.argmax(logits_matched, axis = 1) if n_classes>1 \
