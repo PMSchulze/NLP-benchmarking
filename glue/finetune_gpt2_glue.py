@@ -233,8 +233,8 @@ metric = load_metric(
 logits = np.concatenate(logits, axis = 0)
 true_labels = np.concatenate(true_labels, axis = 0)
 
-# If not regression task, then prediction is max of logtis
-preds = np.argmax(logits, axis = 1) if n_classes>1 else logits
+# If not regression task, then prediction is argmax of logits
+preds = np.argmax(logits, axis = 1) if n_classes>1 else logits.flatten()
 
 # Specify predictions and true labels to calculate the scores
 metric.add_batch(
