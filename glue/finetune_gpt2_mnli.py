@@ -97,9 +97,9 @@ torch.cuda.manual_seed_all(args.seed)
 # Create input batches; the training data is randomly shuffled to implement SGD
 batches_train = DataLoader(data_train, sampler = RandomSampler(data_train),
                            batch_size = args.batch_size)
-batches_eval_matched = DataLoader(data_eval_matched, sampler = SequentialSampler(data_eval), 
+batches_eval_matched = DataLoader(data_eval_matched, sampler = SequentialSampler(data_eval_matched), 
                           batch_size = args.batch_size)
-batches_eval_mismatched = DataLoader(data_eval_mismatched, sampler = SequentialSampler(data_eval), 
+batches_eval_mismatched = DataLoader(data_eval_mismatched, sampler = SequentialSampler(data_eval_mismatched), 
                           batch_size = args.batch_size)
 
 # Drop the cached data (only the batches are needed)
@@ -137,3 +137,189 @@ scheduler = get_linear_schedule_with_warmup(
 # Activate CUDA
 model.cuda()
 
+# ---------------------------------------------------------------------------------------------------------------
+# Train & Eval Loop
+# ---------------------------------------------------------------------------------------------------------------
+
+# Initialize empty list to store predictions on evaluation set
+train_eval_hist = []
+logits_matched, true_labels_matched = [], []
+logits_mismatched, true_labels_mismatched = [], []
+
+# Set seed before training for reproducibility
+torch.backends.cudnn.deterministic=True
+random.seed(args.seed)
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed_all(args.seed)
+
+# Start training & evaluation loop
+for epoch in range(0, args.num_train_epochs):
+    print(f'\nEpoch {epoch+1}/{args.num_train_epochs}')
+    print('Training:')
+    # Training
+    train_loss = 0.0
+    model.train()
+    for step, batch in enumerate(tqdm(batches_train)):
+        # Convert input tensors to cuda device
+        inputs_i = {k: v.to(device) for k, v in batch.items()}
+        # Set gradients to zero to avoid
+        # accumulation of gradients in backward pass
+        model.zero_grad()
+        # Calculate loss of forward pass
+        loss_i = model(**inputs_i)[0]
+        # Increment total training loss
+        train_loss += loss_i.item()
+        # Compute dloss_i/dx for every parameter x
+        loss_i.backward()
+        # Clip gradients to avoid 'exploding' gradients
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        # Update parameters using gradient descent
+        optimizer.step()
+        # Update learning rate
+        scheduler.step()
+    # Calculate the training loss average over all batches
+    total_train_loss = train_loss / len(batches_train)
+    print('Evaluation (matched):')
+    # Evaluation
+    model.eval()
+    eval_loss_matched = 0
+    for batch in tqdm(batches_eval_matched):
+        # Convert input tensors to cuda device
+        inputs_i = {k: v.to(device) for k, v in batch.items()}
+        # Turn off tracking of history, because for evaluation we do not want
+        # to perform parameter updates
+        with torch.no_grad():
+            # Calculate loss and predictions; the latter are later used to 
+            # Calculate various task-dependent metrics 
+            loss_i, logits_i = model(**inputs_i)
+        # Increment evaluation loss 
+        eval_loss_matched += loss_i.item()
+        # Move predictions to cpu
+        logits_i = logits_i.detach().cpu()
+        # Move labels to cpu
+        true_labels_i = inputs_i['labels'].to('cpu')
+        # Add predictions of current batch to list of all predictions
+        logits_matched.append(logits_i)
+        # Add labels of current batch to list of all labels
+        true_labels_matched.append(true_labels_i)
+    total_eval_loss_matched = eval_loss_matched / len(batches_eval_matched)
+    print('Evaluation (mismatched):')
+    # Evaluation
+    model.eval()
+    eval_loss_mismatched = 0
+    for batch in tqdm(batches_eval_mismatched):
+        # Convert input tensors to cuda device
+        inputs_i = {k: v.to(device) for k, v in batch.items()}
+        # Turn off tracking of history, because for evaluation we do not want
+        # to perform parameter updates
+        with torch.no_grad():
+            # Calculate loss and predictions; the latter are later used to 
+            # Calculate various task-dependent metrics 
+            loss_i, logits_i = model(**inputs_i)
+        # Increment evaluation loss 
+        eval_loss_mismatched += loss_i.item()
+        # Move predictions to cpu
+        logits_i = logits_i.detach().cpu()
+        # Move labels to cpu
+        true_labels_i = inputs_i['labels'].to('cpu')
+        # Add predictions of current batch to list of all predictions
+        logits_mismatched.append(logits_i)
+        # Add labels of current batch to list of all labels
+        true_labels_mismatched.append(true_labels_i)
+    total_eval_loss_mismatched = eval_loss_mismatched / len(batches_eval_matched)
+    # Store results of each epoch
+    train_eval_hist.append(
+        {'epoch': epoch + 1,
+         'Training Loss': total_train_loss,
+         'Eval Loss (matched)': total_eval_loss_matched,
+         'Eval Loss (mismatched)': total_eval_loss_mismatched})
+
+# Load task-specific metrics from huggingface hub 
+metric_matched = load_metric(
+    'glue', 
+    args.task.lower().replace('-', ''), 
+    cache_dir = args.cache_dir
+)
+metric_mismatched = load_metric(
+    'glue', 
+    args.task.lower().replace('-', ''), 
+    cache_dir = args.cache_dir
+)
+
+# Concatenate batches of logits and true labels of last epoch
+batchsize_last_epoch_matched = len(batches_eval_matched)
+batchsize_last_epoch_mismatched = len(batches_eval_mismatched)
+logits_matched = np.concatenate(
+    logits_matched, 
+    axis = 0
+)[-batchsize_last_epoch_matched:]
+true_labels_matched = np.concatenate(
+    true_labels_matched, 
+    axis = 0
+)[-batchsize_last_epoch_matched:]
+logits_mismatched = np.concatenate(
+    logits_mismatched, 
+    axis = 0
+)[-batchsize_last_epoch_mismatched:]
+true_labels_mismatched = np.concatenate(
+    true_labels_mismatched, 
+    axis = 0)
+[-batchsize_last_epoch_mismatched:]
+
+# If not regression task, then prediction is argmax of logits
+preds_matched = np.argmax(logits_matched, axis = 1) if n_classes>1 \
+    else logits_matched.flatten()
+preds_mismatched = np.argmax(logits_mismatched, axis = 1) if n_classes>1 \
+    else logits_mismatched.flatten()
+
+# Specify predictions and true labels to calculate the scores
+metric_matched.add_batch(
+    predictions = preds_matched, 
+    references = true_labels_matched
+)
+metric_mismatched.add_batch(
+    predictions = preds_mismatched, 
+    references = true_labels_mismatched
+)
+
+# Calculate the scores
+final_score_matched = metric_matched.compute()
+final_score_mismatched = metric_mismatched.compute()
+
+# Create name of task-specific output directory
+output_dir_task = os.path.join(args.output_dir, args.task)
+
+# Create the task-specific output directory if not existing already
+if not os.path.exists(output_dir_task):
+    os.makedirs(output_dir_task)
+
+# Specify path for text file with evaluation results
+filepath_out_eval_matched = os.path.join(
+    output_dir_task, 
+    'eval_results_' + args.task.lower() + '_matched.txt',
+)
+# Specify path for text file with evaluation results
+filepath_out_eval_mismatched = os.path.join(
+    output_dir_task, 
+    'eval_results_' + args.task.lower() + '_mismatched.txt',
+)
+
+# Specify path for log file with train/testloss history
+filepath_out_log = os.path.join(
+    output_dir_task,
+    'log_history.json',
+)
+
+# Save evaluation results
+with open(filepath_out_eval_matched, 'w') as text_file:
+    for k,v in final_score.items():
+             print(f'{k} = {v}', file = text_file)
+
+with open(filepath_out_eval_mismatched, 'w') as text_file:
+    for k,v in final_score.items():
+             print(f'{k} = {v}', file = text_file)
+
+# Save log history
+with open(filepath_out_log, 'w') as json_file:
+    json.dump(train_eval_hist, json_file)
