@@ -78,7 +78,7 @@ elif args.task == 'MNLI':
 elif args.task in single:
     remove_cols += ['sentence']
 
-# tokenize the sentences dependent on the task, using the same method that was 
+# Tokenize the sentences dependent on the task, using the same method that was 
 # used in the original GPT
 data_train = data_train.map(lambda x: utils_gpt2_glue.encode(x, args.task), 
                             batched = True, remove_columns = remove_cols, 
@@ -87,27 +87,27 @@ data_eval = data_eval.map(lambda x: utils_gpt2_glue.encode(x, args.task),
                           batched = True, remove_columns = remove_cols, 
                           keep_in_memory = True)
 
-# convert data to torch.tensor
+# Convert data to torch.tensor
 data_train.set_format(type = 'torch')
 data_eval.set_format(type = 'torch')
 
-# set seed before creating and shuffling the batches for reproducibility
+# Set seed before creating and shuffling the batches for reproducibility
 random.seed(args.seed)
 np.random.seed(args.seed)
 torch.manual_seed(args.seed)
 torch.cuda.manual_seed_all(args.seed)
 
-# create input batches; the training data is randomly shuffled to implement SGD
+# Create input batches; the training data is randomly shuffled to implement SGD
 batches_train = DataLoader(data_train, sampler = RandomSampler(data_train),
                            batch_size = args.batch_size)
 batches_eval = DataLoader(data_eval, sampler = SequentialSampler(data_eval), 
                           batch_size = args.batch_size)
 
-# drop the cached data (only the batches are needed)
+# Drop the cached data (only the batches are needed)
 data_train.cleanup_cache_files()
 data_eval.cleanup_cache_files()
 
-# specify number of classes
+# Specify number of classes
 n_classes = 1 if args.task == 'STS-B' else 2
 
 # Instatiate the model:
@@ -173,47 +173,47 @@ for epoch in range(0, args.num_train_epochs):
     train_loss = 0.0
     model.train()
     for step, batch in enumerate(tqdm(batches_train)):
-        # convert input tensors to cuda device
+        # Convert input tensors to cuda device
         inputs_i = {k: v.to(device) for k, v in batch.items()}
-        # set gradients to zero to avoid
+        # Set gradients to zero to avoid
         # accumulation of gradients in backward pass
         model.zero_grad()
-        # calculate loss of forward pass
+        # Calculate loss of forward pass
         loss_i = model(**inputs_i)[0]
-        # increment total training loss
+        # Increment total training loss
         train_loss += loss_i.item()
-        # compute dloss_i/dx for every parameter x
+        # Compute dloss_i/dx for every parameter x
         loss_i.backward()
-        # clip gradients to avoid 'exploding' gradients
+        # Clip gradients to avoid 'exploding' gradients
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        # update parameters using gradient descent
+        # Update parameters using gradient descent
         optimizer.step()
-        # update learning rate
+        # Update learning rate
         scheduler.step()
-    # calculate the training loss average over all batches
+    # Calculate the training loss average over all batches
     total_train_loss = train_loss / len(batches_train)
     print('Evaluation:')
     # Evaluation
     model.eval()
     eval_loss = 0
     for batch in tqdm(batches_eval):
-        # convert input tensors to cuda device
+        # Convert input tensors to cuda device
         inputs_i = {k: v.to(device) for k, v in batch.items()}
-        # turn off tracking of history, because for evaluation we do not want
+        # Turn off tracking of history, because for evaluation we do not want
         # to perform parameter updates
         with torch.no_grad():
-            # calculate loss and predictions; the latter are later used to 
-            # calculate various task-dependent metrics 
+            # Calculate loss and predictions; the latter are later used to 
+            # Calculate various task-dependent metrics 
             loss_i, logits_i = model(**inputs_i)
-        # increment evaluation loss 
+        # Increment evaluation loss 
         eval_loss += loss_i.item()
-        # move predictions to cpu
+        # Move predictions to cpu
         logits_i = logits_i.detach().cpu()
-        # move labels to cpu
+        # Move labels to cpu
         true_labels_i = inputs_i['labels'].to('cpu')
-        # add predictions of current batch to list of all predictions
+        # Add predictions of current batch to list of all predictions
         logits.append(logits_i)
-        # add labels of current batch to list of all labels
+        # Add labels of current batch to list of all labels
         true_labels.append(true_labels_i)
     total_eval_loss = eval_loss / len(batches_eval)
     # Store results of each epoch
@@ -229,10 +229,17 @@ metric = load_metric(
     cache_dir = args.cache_dir
 )
 
+# Concatenate batches of logits and true labels 
+logits = np.concatenate(logits, axis = 0)
+true_labels = np.concatenate(true_labels, axis = 0)
+
+# If not regression task, then prediction is max of logtis
+preds = np.argmax(logits, axis = 1) if n_classes>1 else logits
+
 # Specify predictions and true labels to calculate the scores
 metric.add_batch(
-    predictions = np.argmax(np.concatenate(logits, axis = 0), axis = 1), 
-    references = np.concatenate(true_labels, axis = 0)
+    predictions = preds, 
+    references = true_labels
 )
 
 # Calculate the scores
