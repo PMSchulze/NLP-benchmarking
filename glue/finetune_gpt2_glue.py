@@ -70,7 +70,7 @@ remove_cols = ['idx']
 if args.task in {'MRPC', 'STS-B', 'RTE', 'WNLI'}:
     remove_cols += ['sentence1', 'sentence2']
 elif args.task == 'QQP':
-    remove_cols  += ['question2', 'question2']
+    remove_cols  += ['question1', 'question2']
 elif args.task == 'QNLI':
     remove_cols  += ['question', 'sentence']
 elif args.task == 'MNLI':
