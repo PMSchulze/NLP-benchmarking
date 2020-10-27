@@ -9,7 +9,7 @@ export SEED=2020
 
 for VARIANT in 128_2_2_512_10
 do
-    for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B
+    for TASK in QQP
     do
         python /home/ubuntu/masters_thesis/glue/finetune_gpt2_glue.py \
             --batch_size 32 \
