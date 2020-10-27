@@ -73,7 +73,7 @@ class GPT2ForSequenceClassification(nn.Module):
         n_classes:int ,
         gpt_model_name_or_path:str,
     ):
-        super(GPT2ForSeqClassification,self).__init__()
+        super(GPT2ForSequenceClassification,self).__init__()
         
         # Load the pre-trained transformer
         self.gpt2model = GPT2Model.from_pretrained(
@@ -188,7 +188,7 @@ class GPT2ForSimilarityClassification(nn.Module):
             attention_mask = attention_mask2
         )[0]
         # Obtain the positions of the last tokens before pad token (which is 1)
-        sequence_lengths = torch.ne(input_ids, 1).sum(-1) - 1
+        sequence_lengths = torch.ne(input_ids1, 1).sum(-1) - 1
         # Extract hidden states of the last tokens for first sequence
         x1 = gpt_out_all1[torch.arange(gpt_out_all1.size(0)), sequence_lengths]
         # Extract hidden states of the last tokens for second sequence
