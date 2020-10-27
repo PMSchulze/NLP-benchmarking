@@ -16,7 +16,6 @@ import utils_gpt2_glue
 parser = argparse.ArgumentParser()
 parser.add_argument("--batch_size", type=int)
 parser.add_argument("--cache_dir")
-parser.add_argument("--hidden_size", type=int)
 parser.add_argument("--model_name_or_path")
 parser.add_argument("--num_train_epochs", type=int)
 parser.add_argument("--output_dir")
