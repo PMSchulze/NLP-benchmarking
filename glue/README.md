@@ -11,7 +11,7 @@ python /home/ubuntu/masters_thesis/glue/finetune_gpt2_glue.py \
   --hidden_size 128 \
   --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/128_2_2_512_10/ \
   --num_train_epochs 3 \
-  --output_dir /home/ubuntu/fine_tuned/gpt2 \
+  --output_dir /home/ubuntu/lrz_share/fine_tuned/gpt2/glue \
   --seed 2020 \
   --task 'SST-2' \
   --token_vocab /home/ubuntu/data/token_vocab/gpt2
