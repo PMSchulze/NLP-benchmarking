@@ -117,20 +117,15 @@ model = None
 ## per input
 if args.task in similarity:
     model = utils_gpt2_glue.GPT2ForSimilarityClassification(
-        hidden_size = args.hidden_size,
         n_classes = n_classes,
         gpt_model_name_or_path = args.model_name_or_path,
     )
 ## For all other tasks we choose model which processes a single sequence
 else: 
-    model = utils_gpt2_glue.GPT2ForSeqClassification.from_pretrained(
-        args.model_name_or_path
+    model = utils_gpt2_glue.GPT2ForSequenceClassification(
+        n_classes = n_classes,
+        gpt_model_name_or_path = args.model_name_or_path,
     )
-#    model = utils_gpt2_glue.GPT2ForSequenceClassification(
-#        hidden_size = args.hidden_size,
-#        n_classes = n_classes,
-#        gpt_model_name_or_path = args.model_name_or_path,
-#    )
 
 # Add new tokens (<start>, <end>) to the embedding matrix
 # Weights are randomly initialized, as in GPT paper

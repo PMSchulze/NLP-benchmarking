@@ -65,39 +65,42 @@ def encode(examples, task):
 # before fed into the linear layer.
 
 
-class GPT2Pooler(nn.Module):
-    def __init__(self, config):
-        super().__init__()
-        self.lin = nn.Linear(config.hidden_size, config.hidden_size)
-        self.activation = nn.Tanh()
-
-    def forward(self, hidden_states):
-        # We "pool" the model by simply taking the hidden state corresponding
-        # to the first token.
-        first_token_tensor = hidden_states[:, 0]
-        pooled_output = self.lin(first_token_tensor)
-        pooled_output = self.activation(pooled_output)
-        return pooled_output
-
-
 # This head takes a single sequence as input.
 # It is used for all GlUE tasks except for similarity/paraphrasing. 
 class GPT2ForSequenceClassification(nn.Module):
     def __init__(
         self,
-        hidden_size: int,
         n_classes:int ,
         gpt_model_name_or_path:str,
     ):
-        super(GPT2ForSequenceClassification,self).__init__()
+        super(GPT2ForSeqClassification,self).__init__()
         
         # Load the pre-trained transformer
         self.gpt2model = GPT2Model.from_pretrained(
             gpt_model_name_or_path
         )
-        # Define a linear layer which predicts scores from hidden states
-        self.lin = nn.Linear(hidden_size, n_classes)
+        # Load the hidden size from the config
+        hidden_size = self.gpt2model.config.hidden_size
+        # Store number of classes to predict
         self.n_classes = n_classes
+        # Define dense linear layer
+        self.dense = nn.Linear(hidden_size, hidden_size)
+        # Define dropout with p=0.1
+        self.dropout = nn.Dropout(0.1)
+        # Define a linear layer which predicts scores from hidden states
+        self.out_proj = nn.Linear(hidden_size, n_classes) 
+        # Initialize weights 
+        self.apply(self.init_weights)
+
+    # Define function to initialize weights as in other huggingface models
+    def init_weights(self, m):
+        if isinstance(m, (nn.Linear, nn.Embedding, Conv1D)):
+            m.weight.data.normal_(mean=0.0, std=0.02)
+            if isinstance(m, (nn.Linear, Conv1D)) and m.bias is not None:
+                m.bias.data.zero_()
+        elif isinstance(m, nn.LayerNorm):
+            m.bias.data.zero_()
+            m.weight.data.fill_(1.0)
 
     def forward(self, attention_mask, input_ids, labels):
         
@@ -106,44 +109,72 @@ class GPT2ForSequenceClassification(nn.Module):
             input_ids, 
             attention_mask = attention_mask
         )[0]
-        # Extract the hidden states of the first token
-        gpt_out_first = gpt_out_all[:,0,:]
-        # Calculate logits for batch 
-        logits = self.lin(gpt_out_first)
+        # Obtain the positions of the last tokens before pad token (which is 1)
+        sequence_lengths = torch.ne(input_ids, 1).sum(-1) - 1
+        # Extract the hidden states of the last token for each sequence
+        x = gpt_out_all[torch.arange(gpt_out_all.size(0)), sequence_lengths]
+        # Apply dropout
+        x = self.dropout(x)
+        # Apply dense layer
+        x = self.dense(x)
+        # Apply tanh activation
+        x = torch.tanh(x)
+        # Apply dropout
+        x = self.dropout(x)
+        # Compute logits
+        logits = self.out_proj(x)
         
         loss = None
-        # Use MSE loss for regression tasks (SST-2) 
+        # Use MSE loss for regression tasks (STS-B) 
         if self.n_classes == 1:
             loss_fct = nn.MSELoss()
             loss = loss_fct(logits.view(-1), labels.view(-1))
-        # Use cross entropy for classification tasks (all but SST-2)
+        # Use cross entropy for classification tasks (all but STS-B)
         else:
             loss_fct = nn.CrossEntropyLoss()
             loss = loss_fct(logits.view(-1, self.n_classes), labels.view(-1))
 
         # Return loss and logits for each forward pass
         return loss, logits
-    
+
 
 # This head takes two sequences as input, each processed by an individual
 # transformers. It is used for all similarity/paraphrasing tasks.
 class GPT2ForSimilarityClassification(nn.Module):
     def __init__(
         self,
-        hidden_size: int,
         n_classes:int ,
         gpt_model_name_or_path:str,
     ):
 
-        # Load the pre-trained transformer
         super(GPT2ForSimilarityClassification,self).__init__()
+        # Load the pre-trained transformer
         self.gpt2model = GPT2Model.from_pretrained(
             gpt_model_name_or_path
         )
-        # Define a linear layer which predicts scores from hidden states
-        self.lin = nn.Linear(hidden_size, n_classes)
+        # Load the hidden size from the config
+        hidden_size = self.gpt2model.config.hidden_size
+        # Store number of classes to predict
         self.n_classes = n_classes
+        # Define dense linear layer
+        self.dense = nn.Linear(hidden_size, hidden_size)
+        # Define dropout with p=0.1
+        self.dropout = nn.Dropout(0.1)
+        # Define a linear layer which predicts scores from hidden states
+        self.out_proj = nn.Linear(hidden_size, n_classes) 
+        # Initialize weights 
+        self.apply(self.init_weights)
 
+    # Define function to initialize weights as in other huggingface models
+    def init_weights(self, m):
+        if isinstance(m, (nn.Linear, nn.Embedding, Conv1D)):
+            m.weight.data.normal_(mean=0.0, std=0.02)
+            if isinstance(m, (nn.Linear, Conv1D)) and m.bias is not None:
+                m.bias.data.zero_()
+        elif isinstance(m, nn.LayerNorm):
+            m.bias.data.zero_()
+            m.weight.data.fill_(1.0)
+    
     def forward(self, attention_mask1, attention_mask2, input_ids1, input_ids2, labels):
         
         # Calculate hidden states of all tokens for the first sequence
@@ -156,55 +187,24 @@ class GPT2ForSimilarityClassification(nn.Module):
             input_ids2, 
             attention_mask = attention_mask2
         )[0]
-        # Extract hidden states of the first token for first sequence
-        gpt_out_first1 = gpt_out_all1[:,0,:]
-        # Extract hidden states of the first token for second sequence
-        gpt_out_first2 = gpt_out_all2[:,0,:]
+        # Obtain the positions of the last tokens before pad token (which is 1)
+        sequence_lengths = torch.ne(input_ids, 1).sum(-1) - 1
+        # Extract hidden states of the last tokens for first sequence
+        x1 = gpt_out_all1[torch.arange(gpt_out_all1.size(0)), sequence_lengths]
+        # Extract hidden states of the last tokens for second sequence
+        x2 = gpt_out_all2[torch.arange(gpt_out_all2.size(0)), sequence_lengths]
         # Add the two hidden states element-wise
-        gpt_out_first = gpt_out_first1 + gpt_out_first2
-        # Calculate logits for batch
-        logits = self.lin(gpt_out_first)
-
-        loss = None
-        # Use MSE loss for regression tasks (SST-2) 
-        if self.n_classes == 1:
-            loss_fct = nn.MSELoss()
-            loss = loss_fct(logits.view(-1), labels.view(-1))
-        # Use cross entropy for classification tasks (all but SST-2)
-        else:
-            loss_fct = nn.CrossEntropyLoss()
-            loss = loss_fct(logits.view(-1, self.n_classes), labels.view(-1))
-        
-        # Return loss and logits for each forward pass
-        return loss, logits
-
-
-class GPT2ForSeqClassification(GPT2PreTrainedModel):
-    authorized_missing_keys = [r"h\.\d+\.attn\.masked_bias", r"lm_head\.weight"]
-
-    def __init__(self, config):
-        super().__init__(config)
-        config.num_labels = 2
-        # Load number of classes to predict
-        self.n_classes = config.num_labels
-        # Load the pre-trained transformer
-        self.gpt2model = GPT2Model(config)
-        # Define a linear layer which predicts scores from hidden states
-        self.lin = nn.Linear(config.n_embd, self.n_classes, bias=False)
-        # Initialize the weights
-        self.init_weights()
-
-    def forward(self, attention_mask, input_ids, labels):
-
-        # Compute the hidden states of all tokens for pre-trained model
-        gpt_out_all = self.gpt2model(
-            input_ids, 
-            attention_mask = attention_mask
-        )[0]
-        # Extract the hidden states of the first token
-        gpt_out_first = gpt_out_all[:,0,:]
-        # Calculate logits for batch 
-        logits = self.lin(gpt_out_first)
+        x = x1 + x2
+        # Apply dropout
+        x = self.dropout(x)
+        # Apply dense layer
+        x = self.dense(x)
+        # Apply tanh activation
+        x = torch.tanh(x)
+        # Apply dropout
+        x = self.dropout(x)
+        # Compute logits
+        logits = self.out_proj(x)
         
         loss = None
         # Use MSE loss for regression tasks (SST-2) 
@@ -215,6 +215,6 @@ class GPT2ForSeqClassification(GPT2PreTrainedModel):
         else:
             loss_fct = nn.CrossEntropyLoss()
             loss = loss_fct(logits.view(-1, self.n_classes), labels.view(-1))
-
+        
         # Return loss and logits for each forward pass
         return loss, logits
