@@ -232,8 +232,8 @@ metric = load_metric(
 
 # Concatenate batches of logits and true labels of last epoch
 batchsize_last_epoch = len(batches_eval)
-logits = np.concatenate(logits, axis = 0)[-batchsize_last_epoch:]
-true_labels = np.concatenate(true_labels, axis = 0)[-batchsize_last_epoch:]
+logits = np.concatenate(logits[-batchsize_last_epoch:], axis = 0)
+true_labels = np.concatenate(true_labels[-batchsize_last_epoch:], axis = 0)
 
 # If not regression task, then prediction is argmax of logits
 preds = np.argmax(logits, axis = 1) if n_classes>1 else logits.flatten()
