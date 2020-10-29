@@ -60,5 +60,5 @@ trainer = Trainer(
 
 trainer.train()
 
-trainer.save_model("args.output_dir")
+trainer.save_model(args.output_dir)
 
