@@ -18,7 +18,7 @@ prepare_linebyline(
 
 ### Prepare for TextDatasetForNextSentencePrediction
 
-Generate train and test data, where each sentence is on a single line and documents are separated with a blank line:
+We generate train and test data, where each sentence is on a single line and text documents are separated with a blank line:
 ```
 from utils_data_preparation import prepare_nextsentence
 
