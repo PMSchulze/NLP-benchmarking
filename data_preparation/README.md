@@ -1,5 +1,7 @@
 ## Prepare data for huggingface's text processing classes
 
+See https://github.com/huggingface/transformers/blob/master/src/transformers/data/datasets/language_modeling.py
+
 ### Prepare for LineByLineTextDataset
 
 We generate train and test data, where each text document is on a single line:
