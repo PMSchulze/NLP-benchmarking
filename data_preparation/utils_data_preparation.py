@@ -20,7 +20,7 @@ def prepare_linebyline(input_file, output_file):
                     doc.append('')
     with open(output_file, 'w') as text_file:
         for i, line in enumerate(doc):
-            if doc[i+1] not None:
+            if doc[i+1] is not None:
                 print(line, file = text_file)
 
 # Write function to prepare data for usage 
