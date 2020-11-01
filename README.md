@@ -8,6 +8,8 @@ pip install .
 pip install -r ./examples/requirements.txt
 ```
 
+Version: 3.4.0
+
 ## 1. Generation of Token Vocabulary
 
 ### 1.1. BERT
