@@ -18,10 +18,48 @@ def prepare_linebyline(input_file, output_file):
             else:
                 if doc[-1] != '':
                     doc.append('')
+    doc.pop()
     with open(output_file, 'w') as text_file:
-        for i, line in enumerate(doc):
-            if doc[i+1] is not None:
-                print(line, file = text_file)
+        for line in doc:
+            print(line, file = text_file)
+
+# Write function to prepare data for usage 
+# with transformers.LineByLineTextDataset with block_size=n.
+# That is, we concatenate and use a separate line for the text 
+# of each document AND jump to new line if line_length>n after the end of the
+# last sentence.
+def prepare_linebyline_n(input_file, output_file, n):
+    docs = []
+    with open(input_file, encoding="utf-8") as f :
+        while True:
+            line=f.readline()
+            if not line:
+                break
+            line_split = re.split("\s+\.|\!|\?", line)
+            line_split = [l.strip()+' . ' for l in line_split if l!='\n']
+            l = len(line_split)
+            i = 0
+            truncated_lines = []
+            while i<l:
+                truncated_line = line_split[i]
+                if i == l-1:
+                    truncated_lines.append(truncated_line)
+                    break
+                for _ in range(i,l-1):
+                    if len(truncated_line)<n:
+                        i += 1
+                        truncated_line += line_split[i]        
+                    else:
+                        break
+                truncated_lines.append(truncated_line)
+                i += 1
+            if truncated_lines!=['']:
+                docs.extend(truncated_lines)
+    docs = list(filter(None,docs))
+    with open(output_file, 'w') as text_file:
+        for line in docs:
+            print(line, file = text_file)
+
 
 # Write function to prepare data for usage 
 # with transformers.TextDatasetForNextSentencePrediction.
@@ -37,6 +75,7 @@ def prepare_nextsentence(input_file, output_file):
             line = re.split("\s+\.|\!|\?", line)
             doc[-1] = [l.strip()+' .' if l!='\n' else '' for l in line]
             doc.append('')
+    del(doc[-1]); del(doc[-1][-1])
     with open(output_file, 'w') as text_file:
         for item in doc:
             for i in item:
