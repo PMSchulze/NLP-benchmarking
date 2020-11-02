@@ -36,12 +36,12 @@ prepare_linebyline_n(
 
 prepare_linebyline_n(
     input_file = '/home/ubuntu/data/pretrain_data/wiki_train_linebyline.txt', 
-    output_file = '/home/ubuntu/data/pretrain_data/wiki_train_linebyline_128.txt',
+    output_file = '/home/ubuntu/data/pretrain_data/wiki_train_linebyline_256.txt',
     n = 256
 )
 prepare_linebyline_n(
     input_file = '/home/ubuntu/data/pretrain_data/wiki_test_linebyline.txt', 
-    output_file = '/home/ubuntu/data/pretrain_data/wiki_test_linebyline_128.txt',
+    output_file = '/home/ubuntu/data/pretrain_data/wiki_test_linebyline_256.txt',
     n = 256
 )
 ```
