@@ -17,14 +17,14 @@ datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
 # We first put each document (i.e., each wikipedia section) on a single line:
 # Furthermore, we drop all documents with less than 20 characters.
 prepare_linebyline(
-    input_file = os.path.join(datadir, 'source/wiki_train.txt'), 
-    output_file = os.path.join(datadir, 'general/wiki_train_linebyline.txt')
+    input_file_path = os.path.join(datadir, 'source/wiki_train.txt'), 
+    output_file_path = os.path.join(datadir, 'general/wiki_train_linebyline.txt')
 )
 
 # We then split the data into the p=0.9 shortest documents and the 1-p 
 # longest documents.
 wiki_train_linebyline_short, wiki_train_linebyline_long = split_documents_by_len(
-    input_file = os.path.join(datadir, 'general/wiki_train_linebyline.txt'),
+    input_file_path = os.path.join(datadir, 'general/wiki_train_linebyline.txt'),
     p = 0.9
 )
 
@@ -36,14 +36,14 @@ wiki_train_linebyline_short, wiki_train_linebyline_long = split_documents_by_len
 # Prepare for usage with LineByLineTextDataset with block_size 128 and BPE tokenizer
 prepare_linebyline_n(
     input_file = wiki_train_linebyline_short, 
-    output_file = os.path.join(datadir, 'general/wiki_train_linebyline_128.txt'),
+    output_file_path = os.path.join(datadir, 'general/wiki_train_linebyline_128.txt'),
     n = 128*5
 )
 
 # Prepare for usage with LineByLineTextDataset with block_size 512 and BPE tokenizer
 prepare_linebyline_n(
     input_file = wiki_train_linebyline_long, 
-    output_file = os.path.join(datadir, 'general/wiki_train_linebyline_512.txt'),
+    output_file_path = os.path.join(datadir, 'general/wiki_train_linebyline_512.txt'),
     n = 512*5
 )
 
