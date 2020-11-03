@@ -31,22 +31,27 @@ wiki_train_linebyline_short, wiki_train_linebyline_long = split_documents_by_len
 # Finally, we further divide each document into chunks of sentences.
 # On each line, we iteratively add consecutive sentences from a respective document
 # and stop after the total line length (i.e., number of characters) exceeds n. 
+# We also drop chunks with length<20 characters. For details, please check
+# the function divide_into_chunks in [this](https://github.com/PMSchulze/masters_thesis/blob/master/data_preparation/utils_data_preparation.py) script.
 # We find that, on average, one BPE token corresponds to approximately 5 characters. 
 
-# Prepare for usage with LineByLineTextDataset with block_size 128 and BPE tokenizer
-prepare_linebyline_n(
-    input_file = wiki_train_linebyline_short, 
-    output_file_path = os.path.join(datadir, 'general/wiki_train_linebyline_128.txt'),
-    n = 128*5
+wiki_train_linebyline_128, wiki_train_linebyline_512 =  divide_into_chunks(
+    input_file_short = wiki_train_linebyline_short,
+    input_file_long = wiki_train_linebyline_long,
+    len_short = 128*5,
+    len_long = 512*5
 )
 
-# Prepare for usage with LineByLineTextDataset with block_size 512 and BPE tokenizer
-prepare_linebyline_n(
-    input_file = wiki_train_linebyline_long, 
-    output_file_path = os.path.join(datadir, 'general/wiki_train_linebyline_512.txt'),
-    n = 512*5
-)
+len(wiki_train_linebyline_128), len(wiki_train_linebyline_512)
+# (638590, 60850)
 
+with open(os.path.join(datadir, 'general/wiki_train_linebyline_512.txt'), 'w') as text_file:
+    for line in wiki_train_linebyline_512:
+        print(line, file = text_file)
+
+with open(os.path.join(datadir, 'general/wiki_train_linebyline_128.txt'), 'w') as text_file:
+    for line in wiki_train_linebyline_128:
+        print(line, file = text_file)
 ```
 
 ### Prepare for TextDatasetForNextSentencePrediction
