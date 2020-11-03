@@ -6,7 +6,11 @@ See https://github.com/huggingface/transformers/blob/master/src/transformers/dat
 
 We generate train and test data, where each text document is on a single line:
 ```
-from utils_data_preparation import prepare_linebyline, prepare_linebyline_n
+from utils_data_preparation import (
+    prepare_linebyline, 
+    prepare_linebyline_n, 
+    split_documents_by_len
+)
 import os.path
 
 datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
