@@ -9,7 +9,7 @@ We generate train and test data, where each text document is on a single line:
 from utils_data_preparation import prepare_linebyline, prepare_linebyline_n
 import os.path
 
-datadir = 'home/ubuntu/lrz_share/data/pretrain_data'
+datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
 
 # We first put each document (i.e., each wikipedia section) on a single line: 
 
