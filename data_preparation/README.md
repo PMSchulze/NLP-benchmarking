@@ -2,8 +2,6 @@
 
 See https://github.com/huggingface/transformers/blob/master/src/transformers/data/datasets/language_modeling.py
 
-### Prepare for LineByLineTextDataset
-
 ```
 from utils_data_preparation import (
     prepare_linebyline, 
@@ -33,6 +31,8 @@ wiki_train_linebyline_short, wiki_train_linebyline_long = split_documents_by_len
 )
 ```
 
+### 1. Prepare for LineByLineTextDataset
+
 Finally, we further divide each document into chunks of sentences.
 On each line, we iteratively add consecutive sentences from a respective document
 and stop after the total line length (i.e., number of characters) exceeds n. 
@@ -59,7 +59,7 @@ with open(os.path.join(datadir, 'general/wiki_train_linebyline_128.txt'), 'w') a
         print(line, file = text_file)
 ```
 
-### Prepare for TextDatasetForNextSentencePrediction
+### 2. Prepare for TextDatasetForNextSentencePrediction
 
 ```
 from utils_data_preparation import prepare_nextsentence
