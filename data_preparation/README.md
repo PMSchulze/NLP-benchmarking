@@ -37,7 +37,7 @@ Finally, we further divide each document into chunks of sentences.
 On each line, we iteratively add consecutive sentences from a respective document
 and stop after the total line length (i.e., number of characters) exceeds n. 
 We also drop chunks with length<20 characters. For details, please check
-the function divide_into_chunks in [this](https://github.com/PMSchulze/masters_thesis/blob/master/data_preparation/utils_data_preparation.py) script.
+the function 'divide_into_chunks' in [this](https://github.com/PMSchulze/masters_thesis/blob/master/data_preparation/utils_data_preparation.py) script.
 We find that, on average, one BPE token corresponds to approximately 5 characters.
 ```
 wiki_train_linebyline_128, wiki_train_linebyline_512 =  divide_into_chunks(
