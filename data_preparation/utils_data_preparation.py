@@ -93,7 +93,7 @@ def prepare_nextsentence(input_file, output_file_path):
 # smaller chunks by iteratively adding sentences until the chunk length exceeds 
 # len_short and len_long, respectively. Furthermore, drop chunks with length<20 characters, 
 # and finally transfer all short chunks to short file (these are leftovers from the long cunks 
-# and only amount to 92 chunks out of 699440 total chunks).
+# and only amount to 3687 chunks out of 699440 total chunks, i.e., about 0.5%).
 def divide_into_chunks(
     input_file_short, input_file_long, len_short, len_long
 ):
