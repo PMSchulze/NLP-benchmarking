@@ -90,3 +90,36 @@ def prepare_nextsentence(input_file, output_file):
         for item in doc:
             for i in item:
                 print(i, file = text_file)
+
+
+# Take two textfiles as input, one with short documents on each line, and
+# another one with long documents on each line. Then, split each document into
+# smaller chunks (of length len_short and len_long, respectively), drop chunks
+# with length<20 characters, and finally transfer all short chunks to short
+# file (these are leftovers from the long cunks).  
+def divide_into_chunks(
+    input_file_short, input_file_long, len_short, len_long
+):
+
+    docs_short = prepare_linebyline_n(
+        input_file = input_file_short,
+        n = len_short
+    )
+    docs_long = prepare_linebyline_n(
+        input_file = input_file_long,
+        n = len_long
+    )
+
+    docs_short_tmp, docs_long_tmp = [], []
+    docs_short_tmp = [doc for doc in docs_short if len(doc)>=20]
+    docs_long_tmp = [doc for doc in docs_long if len(doc)>=20]
+
+    docs_short_out, docs_long_out = docs_short_tmp, []
+    for doc in docs_long_tmp:
+        if len(doc)<len_short:
+            docs_short_out.append(doc)
+        else:
+            docs_long_out.append(doc)
+
+    return docs_short_out, docs_long_out
+
