@@ -61,9 +61,9 @@ def prepare_linebyline_n(input_file, output_file_path, n):
 # Write function to split a textfile into two part: one which contains the p
 # shortest documents, and another one which ontains the remaining 1-p largest
 # documents.
-def split_documents_by_len(input_file,p):
+def split_documents_by_len(input_file_path,p):
     doc, docs_short, docs_long = [], [], []
-    with open(input_file, encoding='utf-8') as f:
+    with open(input_file_path, encoding='utf-8') as f:
         for i, l in enumerate(f):
             doc.append(l)
         doc.sort(key=len)
