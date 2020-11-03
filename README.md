@@ -26,7 +26,7 @@ tokenizer = BertWordPieceTokenizer()
 tokenizer.train(vocab_path)
 
 # Save the vocabulary
-tokenizer.save_model("/home/ubuntu/data/lrz_share/token_vocab/bert/")
+tokenizer.save_model("/home/ubuntu/lrz_share/data/token_vocab/bert/")
 ```
 
 ### 1.2. GPT-2
@@ -48,7 +48,7 @@ tokenizer.train(
 )
 
 # Save the vocabulary
-tokenizer.save_model("/home/ubuntu/data/lrz_share/token_vocab/gpt2/")
+tokenizer.save_model("/home/ubuntu/lrz_share/data/token_vocab/gpt2/")
 
 ```
 
