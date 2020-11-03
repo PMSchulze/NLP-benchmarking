@@ -4,9 +4,9 @@ import re
 # with transformers.LineByLineTextDataset.
 # That is, we concatenate and use a separate line for the text 
 # of each document.
-def prepare_linebyline(input_file, output_file):
+def prepare_linebyline(input_file_path, output_file_path):
     doc = ['']
-    with open(input_file, encoding="utf-8") as f:
+    with open(input_file_path, encoding="utf-8") as f:
         while True:
             line = f.readline()
             if not line:
@@ -19,7 +19,7 @@ def prepare_linebyline(input_file, output_file):
                 if doc[-1] != '':
                     doc.append('')
     doc.pop()
-    with open(output_file, 'w') as text_file:
+    with open(output_file_path, 'w') as text_file:
         for line in doc:
             if len(line)>=20:
                 print(line, file = text_file)
@@ -29,9 +29,7 @@ def prepare_linebyline(input_file, output_file):
 # That is, we concatenate and use a separate line for the text 
 # of each document AND jump to new line if line_length>n after the end of the
 # last sentence.
-def prepare_linebyline_n(input_file, output_file, n):
-    docs = []
-with open(input_file, encoding="utf-8") as f :
+def prepare_linebyline_n(input_file, output_file_path, n):
     docs = []
     for line in input_file:
         line_split = re.split("\s+\.|\!|\?", line)
@@ -55,7 +53,7 @@ with open(input_file, encoding="utf-8") as f :
         if truncated_lines!=['']:
             docs.extend(truncated_lines)
     docs = list(filter(None,docs))
-    with open(output_file, 'w') as text_file:
+    with open(output_file_path, 'w') as text_file:
         for line in docs:
             print(line, file = text_file)
 
