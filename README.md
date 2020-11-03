@@ -17,7 +17,7 @@ Version: 3.4.0
 from tokenizers import BertWordPieceTokenizer
 
 # Specify path of pre-training data
-vocab_path = "/home/ubuntu/data/pretrain_data/wiki_train.txt"
+vocab_path = "/home/ubuntu/data/pretrain_data/lrz_share/wiki_train.txt"
 
 # Initialize BERT's WordPiece tokenizer 
 tokenizer = BertWordPieceTokenizer()
@@ -26,7 +26,7 @@ tokenizer = BertWordPieceTokenizer()
 tokenizer.train(vocab_path)
 
 # Save the vocabulary
-tokenizer.save_model("/home/ubuntu/data/token_vocab/bert/")
+tokenizer.save_model("/home/ubuntu/data/lrz_share/token_vocab/bert/")
 ```
 
 ### 1.2. GPT-2
@@ -34,7 +34,7 @@ tokenizer.save_model("/home/ubuntu/data/token_vocab/bert/")
 from tokenizers import ByteLevelBPETokenizer
 
 # Specify path of pre-training data
-vocab_path = "/home/ubuntu/data/pretrain_data/wiki_train.txt"
+vocab_path = "/home/ubuntu/data/pretrain_data/lrz_share/wiki_train.txt"
 
 # Initialize GPT's BPE tokenizer 
 tokenizer = ByteLevelBPETokenizer()
@@ -48,7 +48,7 @@ tokenizer.train(
 )
 
 # Save the vocabulary
-tokenizer.save_model("/home/ubuntu/data/token_vocab/gpt2/")
+tokenizer.save_model("/home/ubuntu/data/lrz_share/token_vocab/gpt2/")
 
 ```
 
@@ -57,7 +57,7 @@ tokenizer.save_model("/home/ubuntu/data/token_vocab/gpt2/")
 from tokenizers import ByteLevelBPETokenizer
 
 # Specify path of pre-training data
-vocab_path = "/home/ubuntu/data/pretrain_data/wiki_train.txt"
+vocab_path = "/home/ubuntu/data/pretrain_data/lrz_share/wiki_train.txt"
 
 # Initialize RoBERTa's BPE tokenizer 
 tokenizer = ByteLevelBPETokenizer()
@@ -71,7 +71,7 @@ tokenizer.train(
 )
 
 # Save the vocabulary
-tokenizer.save_model("/home/ubuntu/data/token_vocab/roberta/")
+tokenizer.save_model("/home/ubuntu/lrz_share/data/token_vocab/roberta/")
 ```
 ## 2. Pre-training
 
