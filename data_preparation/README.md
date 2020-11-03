@@ -64,12 +64,12 @@ with open(os.path.join(datadir, 'general/wiki_train_linebyline_128.txt'), 'w') a
 ```
 from utils_data_preparation import prepare_nextsentence
 
-prepare_nextsentence(
-    input_file = '/home/ubuntu/data/pretrain_data/wiki_train_linebyline.txt',
-    output_file = '/home/ubuntu/data/pretrain_data/wiki_train_nextsentence.txt'
+wiki_train_linebyline_long = prepare_nextsentence(
+    input_file = wiki_train_linebyline_long,
+    output_file_path = os.path.join(datadir, 'general/wiki_train_nextsentence_long.txt')
 )
-prepare_nextsentence(
-    input_file = '/home/ubuntu/data/pretrain_data/wiki_test_linebyline.txt', 
-    output_file = '/home/ubuntu/data/pretrain_data/wiki_test_nextsentence.txt'
+wiki_train_linebyline_short = prepare_nextsentence(
+    input_file = wiki_train_linebyline_short,
+    output_file_path = os.path.join(datadir, 'general/wiki_train_nextsentence_short.txt')
 )
 ```
