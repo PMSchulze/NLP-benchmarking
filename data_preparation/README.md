@@ -37,7 +37,7 @@ Finally, we further divide each document into chunks of sentences.
 On each line, we iteratively add consecutive sentences from a respective document
 and stop after the total line length (i.e., number of characters) exceeds n. 
 We also drop chunks with length<20 characters. For details, please check
-the function 'divide_into_chunks' in [this](https://github.com/PMSchulze/masters_thesis/blob/master/data_preparation/utils_data_preparation.py) script.
+the function *divide_into_chunks* [in this script](https://github.com/PMSchulze/masters_thesis/blob/master/data_preparation/utils_data_preparation.py).
 We find that, on average, one BPE token corresponds to approximately 5 characters.
 ```
 wiki_train_linebyline_128, wiki_train_linebyline_512 =  divide_into_chunks(
@@ -68,7 +68,7 @@ Therefore, we do not have to divide the text into smaller chunks manually.
 In order to ensure that training of *BERT* (for which we use *TextDatasetForNextSentencePrediction*) is similar to training of *RoBERTa*
 and *GPT-2*, we use the same portions of the data for short- and long-range dependencies (corresponding to the previously generated  *wiki_train_linebyline_short* and *wiki_train_linebyline_long*, respectively).
 
-The only step that we perform in the following is to put each sentence of a document on a separate line and separate documents with a blank line; this is the expected format of TextDatasetForNextSentencePrediction. For *wiki_train_nextsentence_long.txt* we will then specify *block_size=512* and for *wiki_train_nextsentence_short.txt* we set *block_size=512* when instantiating the object of type *TextDatasetForNextSentencePrediction* (this occurs directly before we start pretraining *BERT*, i.e., in the pretraining script).
+The only step that we perform in the following is to put each sentence of a document on a separate line and separate documents with a blank line; this is the expected format of *TextDatasetForNextSentencePrediction*. For *wiki_train_nextsentence_long.txt* we will then specify *block_size=512* and for *wiki_train_nextsentence_short.txt* we set *block_size=512* when instantiating the object of type *TextDatasetForNextSentencePrediction* (this occurs directly before we start pretraining *BERT*, i.e., in the pretraining script).
 
 ```
 from utils_data_preparation import prepare_nextsentence
