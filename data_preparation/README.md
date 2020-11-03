@@ -15,8 +15,8 @@ import os.path
 datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
 ```
 
-We first put each document (i.e., each wikipedia section) on a single line:
-Furthermore, we drop all documents with less than 20 characters.
+We first put each document (i.e., each wikipedia section) on a single line 
+and furthermore drop all documents with less than 20 characters:
 ```
 prepare_linebyline(
     input_file_path = os.path.join(datadir, 'source/wiki_train.txt'), 
@@ -25,7 +25,7 @@ prepare_linebyline(
 ```
 
 We then split the data into the p=0.9 shortest documents and the 1-p 
-longest documents.
+longest documents:
 ```
 wiki_train_linebyline_short, wiki_train_linebyline_long = split_documents_by_len(
     input_file_path = os.path.join(datadir, 'general/wiki_train_linebyline.txt'),
