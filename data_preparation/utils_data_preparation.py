@@ -21,7 +21,8 @@ def prepare_linebyline(input_file, output_file):
     doc.pop()
     with open(output_file, 'w') as text_file:
         for line in doc:
-            print(line, file = text_file)
+            if len(line)>=20:
+                print(line, file = text_file)
 
 # Write function to prepare data for usage 
 # with transformers.LineByLineTextDataset with block_size=n.
@@ -30,35 +31,48 @@ def prepare_linebyline(input_file, output_file):
 # last sentence.
 def prepare_linebyline_n(input_file, output_file, n):
     docs = []
-    with open(input_file, encoding="utf-8") as f :
-        while True:
-            line=f.readline()
-            if not line:
-                break
-            line_split = re.split("\s+\.|\!|\?", line)
-            line_split = [l.strip()+' . ' for l in line_split if l!='\n']
-            l = len(line_split)
-            i = 0
-            truncated_lines = []
-            while i<l:
-                truncated_line = line_split[i]
-                if i == l-1:
-                    truncated_lines.append(truncated_line)
-                    break
-                for _ in range(i,l-1):
-                    if len(truncated_line)<n:
-                        i += 1
-                        truncated_line += line_split[i]        
-                    else:
-                        break
+with open(input_file, encoding="utf-8") as f :
+    docs = []
+    for line in input_file:
+        line_split = re.split("\s+\.|\!|\?", line)
+        line_split = [l.strip()+' . ' for l in line_split if l!='\n']
+        l = len(line_split)
+        i = 0
+        truncated_lines = []
+        while i<l:
+            truncated_line = line_split[i]
+            if i == l-1:
                 truncated_lines.append(truncated_line)
-                i += 1
-            if truncated_lines!=['']:
-                docs.extend(truncated_lines)
+                break
+            for _ in range(i,l-1):
+                if len(truncated_line)<n:
+                    i += 1
+                    truncated_line += line_split[i]        
+                else:
+                    break
+            truncated_lines.append(truncated_line)
+            i += 1
+        if truncated_lines!=['']:
+            docs.extend(truncated_lines)
     docs = list(filter(None,docs))
     with open(output_file, 'w') as text_file:
         for line in docs:
             print(line, file = text_file)
+
+
+# Write function to split a textfile into two part: one which contains the p
+# shortest documents, and another one which ontains the remaining 1-p largest
+# documents.
+def split_documents_by_len(input_file,p):
+    doc, docs_short, docs_long = [], [], []
+    with open(input_file, encoding='utf-8') as f:
+        for i, l in enumerate(f):
+            doc.append(l)
+        doc.sort(key=len)
+        split_line = round((i+1)*p)
+        docs_short = doc[:split_line]
+        docs_long = doc[split_line:]
+    return docs_short, docs_long
 
 
 # Write function to prepare data for usage 
