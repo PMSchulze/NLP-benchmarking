@@ -85,7 +85,8 @@ def prepare_nextsentence(input_file, output_file_path):
     with open(output_file_path, 'w') as text_file:
         for item in doc:
             for i in item:
-                print(i, file = text_file)
+                if len(line)>=20:
+                    print(i, file = text_file)
 
 
 # Take two textfiles as input, one with short documents on each line, and
