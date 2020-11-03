@@ -33,8 +33,9 @@ wiki_train_linebyline_short, wiki_train_linebyline_long = split_documents_by_len
 
 ### 1. Prepare for LineByLineTextDataset
 
-Finally, we further divide each document into chunks of sentences.
-On each line, we iteratively add consecutive sentences from a respective document
+In order to prepare the data for the class *LineByLineTextDataset*, we further divide each document into chunks of sentences, because *LineByLineTextDataset* simply cuts off after the specified length (which is set with the block_size argument). 
+
+On each line, we therefore iteratively add consecutive sentences from a respective document
 and stop after the total line length (i.e., number of characters) exceeds n. 
 We also drop chunks with length<20 characters. For details, please check
 the function *divide_into_chunks* [in this script](https://github.com/PMSchulze/masters_thesis/blob/master/data_preparation/utils_data_preparation.py).
@@ -62,8 +63,7 @@ with open(os.path.join(datadir, 'general/wiki_train_linebyline_128.txt'), 'w') a
 ### 2. Prepare for TextDatasetForNextSentencePrediction
 
 Apart from sampling random sentences for the NSP task, in contrast to *LineByLineTextDataset*, the class *TextDatasetForNextSentencePrediction* 
-already fills the text chunks to the desired length (*LineByLineTextDataset* simply cuts off after the specified block_size). 
-Therefore, we do not have to divide the text into smaller chunks manually.
+already fills the text chunks to the desired length. Therefore, we do not have to divide the text into smaller chunks manually.
 
 In order to ensure that training of *BERT* (for which we use *TextDatasetForNextSentencePrediction*) is similar to training of *RoBERTa*
 and *GPT-2*, we use the same portions of the data for short- and long-range dependencies (corresponding to the previously generated  *wiki_train_linebyline_short* and *wiki_train_linebyline_long*, respectively).
