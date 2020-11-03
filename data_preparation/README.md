@@ -33,7 +33,7 @@ wiki_train_linebyline_short, wiki_train_linebyline_long = split_documents_by_len
 
 ### 1. Prepare for LineByLineTextDataset
 
-In order to prepare the data for the class *LineByLineTextDataset*, we further divide each document into chunks of sentences, because *LineByLineTextDataset* simply cuts off after the specified length (which is set with the block_size argument). 
+In order to prepare the data for the class *LineByLineTextDataset*, we further divide each document into chunks of sentences, because *LineByLineTextDataset* simply cuts off after the specified length (which is set with the *block_size* argument). 
 
 On each line, we therefore iteratively add consecutive sentences from a respective document
 and stop after the total line length (i.e., number of characters) exceeds n. 
