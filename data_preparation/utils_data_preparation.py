@@ -5,7 +5,7 @@ import re
 # That is, we concatenate and use a separate line for the text 
 # of each document.
 def prepare_linebyline(input_file_path, output_file_path):
-    doc = ['']
+    docs = ['']
     with open(input_file_path, encoding="utf-8") as f:
         while True:
             line = f.readline()
@@ -14,13 +14,13 @@ def prepare_linebyline(input_file_path, output_file_path):
             line = line.strip()
             if len(line) != 0:
                 if line[0] != '=':
-                    doc[-1] += line
+                    docs[-1] += line
             else:
-                if doc[-1] != '':
-                    doc.append('')
-    doc.pop()
+                if docs[-1] != '':
+                    docs.append('')
+    docs.pop()
     with open(output_file_path, 'w') as text_file:
-        for line in doc:
+        for line in docs:
             if len(line)>=20:
                 print(line, file = text_file)
 
