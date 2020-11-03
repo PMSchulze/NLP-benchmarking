@@ -76,8 +76,9 @@ def split_documents_by_len(input_file_path,p):
 # That is, we place each sentence on a separate line and add blank lines 
 # between documents.
 def prepare_nextsentence(input_file, output_file_path):
-    docs = ['']
+    docs = []
     for line in input_file:
+        docs.append('')
         line = re.split("\s+\.|\!|\?", line)
         docs[-1] = [l.strip()+' .' if l!='\n' else '' for l in line]
         docs.append('')
