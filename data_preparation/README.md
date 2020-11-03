@@ -4,7 +4,6 @@ See https://github.com/huggingface/transformers/blob/master/src/transformers/dat
 
 ### Prepare for LineByLineTextDataset
 
-We generate train and test data, where each text document is on a single line:
 ```
 from utils_data_preparation import (
     prepare_linebyline, 
@@ -52,7 +51,6 @@ prepare_linebyline_n(
 
 ### Prepare for TextDatasetForNextSentencePrediction
 
-We generate train and test data, where each sentence is on a single line and text documents are separated with a blank line:
 ```
 from utils_data_preparation import prepare_nextsentence
 
