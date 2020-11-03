@@ -60,14 +60,14 @@ def prepare_linebyline_n(input_file, n):
 # shortest documents, and another one which ontains the remaining 1-p largest
 # documents.
 def split_documents_by_len(input_file_path,p):
-    doc, docs_short, docs_long = [], [], []
+    docs, docs_short, docs_long = [], [], []
     with open(input_file_path, encoding='utf-8') as f:
         for i, l in enumerate(f):
-            doc.append(l)
-        doc.sort(key=len)
+            docs.append(l)
+        docs.sort(key=len)
         split_line = round((i+1)*p)
-        docs_short = doc[:split_line]
-        docs_long = doc[split_line:]
+        docs_short = docs[:split_line]
+        docs_long = docs[split_line:]
     return docs_short, docs_long
 
 
@@ -76,17 +76,17 @@ def split_documents_by_len(input_file_path,p):
 # That is, we place each sentence on a separate line and add blank lines 
 # between documents.
 def prepare_nextsentence(input_file, output_file_path):
-    doc = ['']
+    docs = ['']
     for line in input_file:
         line = re.split("\s+\.|\!|\?", line)
-        doc[-1] = [l.strip()+' .' if l!='\n' else '' for l in line]
-        doc.append('')
-    del(doc[-1]); del(doc[-1][-1])
+        docs[-1] = [l.strip()+' .' if l!='\n' else '' for l in line]
+        docs.append('')
+    del(docs[-1]); del(docs[-1][-1])
     with open(output_file_path, 'w') as text_file:
-        for item in doc:
-            for i in item:
-                if len(line)>=20:
-                    print(i, file = text_file)
+        for doc in docs:
+            for sentence in doc:
+                if len(sentence)>=20:
+                    print(sentence, file = text_file)
 
 
 # Take two textfiles as input, one with short documents on each line, and
