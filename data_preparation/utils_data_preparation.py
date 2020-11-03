@@ -29,7 +29,7 @@ def prepare_linebyline(input_file_path, output_file_path):
 # That is, we concatenate and use a separate line for the text 
 # of each document AND jump to new line if line_length>n after the end of the
 # last sentence.
-def prepare_linebyline_n(input_file, output_file_path, n):
+def prepare_linebyline_n(input_file, n):
     docs = []
     for line in input_file:
         line_split = re.split("\s+\.|\!|\?", line)
@@ -53,9 +53,7 @@ def prepare_linebyline_n(input_file, output_file_path, n):
         if truncated_lines!=['']:
             docs.extend(truncated_lines)
     docs = list(filter(None,docs))
-    with open(output_file_path, 'w') as text_file:
-        for line in docs:
-            print(line, file = text_file)
+    return docs
 
 
 # Write function to split a textfile into two part: one which contains the p
