@@ -75,18 +75,14 @@ def split_documents_by_len(input_file_path,p):
 # with transformers.TextDatasetForNextSentencePrediction.
 # That is, we place each sentence on a separate line and add blank lines 
 # between documents.
-def prepare_nextsentence(input_file, output_file):
+def prepare_nextsentence(input_file, output_file_path):
     doc = ['']
-    with open(input_file, encoding="utf-8") as f:
-        while True:
-            line = f.readline()
-            if not line:
-                break
-            line = re.split("\s+\.|\!|\?", line)
-            doc[-1] = [l.strip()+' .' if l!='\n' else '' for l in line]
-            doc.append('')
+    for line in input_file:
+        line = re.split("\s+\.|\!|\?", line)
+        doc[-1] = [l.strip()+' .' if l!='\n' else '' for l in line]
+        doc.append('')
     del(doc[-1]); del(doc[-1][-1])
-    with open(output_file, 'w') as text_file:
+    with open(output_file_path, 'w') as text_file:
         for item in doc:
             for i in item:
                 print(i, file = text_file)
