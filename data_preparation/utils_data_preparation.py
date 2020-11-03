@@ -100,7 +100,6 @@ def prepare_nextsentence(input_file, output_file):
 def divide_into_chunks(
     input_file_short, input_file_long, len_short, len_long
 ):
-
     docs_short = prepare_linebyline_n(
         input_file = input_file_short,
         n = len_short
@@ -109,17 +108,14 @@ def divide_into_chunks(
         input_file = input_file_long,
         n = len_long
     )
-
     docs_short_tmp, docs_long_tmp = [], []
     docs_short_tmp = [doc for doc in docs_short if len(doc)>=20]
     docs_long_tmp = [doc for doc in docs_long if len(doc)>=20]
-
     docs_short_out, docs_long_out = docs_short_tmp, []
     for doc in docs_long_tmp:
         if len(doc)<len_short:
             docs_short_out.append(doc)
         else:
             docs_long_out.append(doc)
-
     return docs_short_out, docs_long_out
 
