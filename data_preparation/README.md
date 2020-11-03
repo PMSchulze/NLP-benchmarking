@@ -61,14 +61,14 @@ with open(os.path.join(datadir, 'general/wiki_train_linebyline_128.txt'), 'w') a
 
 ### 2. Prepare for TextDatasetForNextSentencePrediction
 
-Apart from sampling random sentences for the NSP task, in contrast to LineByLineTextDataset, the class TextDatasetForNextSentencePrediction 
-already fills the text chunks to the desired length (LineByLineTextDataset simply cuts off after the specified block_size). 
+Apart from sampling random sentences for the NSP task, in contrast to *LineByLineTextDataset*, the class *TextDatasetForNextSentencePrediction* 
+already fills the text chunks to the desired length (*LineByLineTextDataset* simply cuts off after the specified block_size). 
 Therefore, we do not have to divide the text into smaller chunks manually.
 
-In order to ensure that training of BERT (for which we use TextDatasetForNextSentencePrediction) is similar to training of RoBERTa
-and GPT-2, we use the same portions of the data for short- and long-range dependencies ('wiki_train_linebyline_short' and 'wiki_train_linebyline_long', respectively).
+In order to ensure that training of *BERT* (for which we use *TextDatasetForNextSentencePrediction*) is similar to training of *RoBERTa*
+and *GPT-2*, we use the same portions of the data for short- and long-range dependencies (corresponding to the previously generated  *wiki_train_linebyline_short* and *wiki_train_linebyline_long*, respectively).
 
-The only step that we perform in the following is to put each sentence of a document on a separate line and separate documents with a blank line; this is the expected format of TextDatasetForNextSentencePrediction. For $wiki_train_nextsentence_long.txt$ we will then specify block_size=512 and for wiki_train_nextsentence_short we set block_size=512 when instantiating the object of type TextDatasetForNextSentencePrediction (this occurs directly before pretraining starts).
+The only step that we perform in the following is to put each sentence of a document on a separate line and separate documents with a blank line; this is the expected format of TextDatasetForNextSentencePrediction. For *wiki_train_nextsentence_long.txt* we will then specify *block_size=512* and for *wiki_train_nextsentence_short.txt* we set *block_size=512* when instantiating the object of type *TextDatasetForNextSentencePrediction* (this occurs directly before we start pretraining *BERT*, i.e., in the pretraining script).
 
 ```
 from utils_data_preparation import prepare_nextsentence
