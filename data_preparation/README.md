@@ -2,12 +2,9 @@
 
 See https://github.com/huggingface/transformers/blob/master/src/transformers/data/datasets/language_modeling.py
 
+Load utility functions and specify directory of pretraining data.
 ```
-from utils_data_preparation import (
-    prepare_linebyline, 
-    prepare_nextsentence,
-    split_documents_by_len,
-)
+from utils_data_preparation import prepare_linebyline, split_documents_by_len
 import os.path
 
 datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
@@ -41,6 +38,8 @@ We also drop chunks with length<20 characters. For details, please check
 the function *divide_into_chunks* [in this script](https://github.com/PMSchulze/masters_thesis/blob/master/data_preparation/utils_data_preparation.py).
 We find that, on average, one BPE token corresponds to approximately 5 characters.
 ```
+from utils_data_preparation import divide_into_chunks
+
 wiki_train_linebyline_128, wiki_train_linebyline_512 =  divide_into_chunks(
     input_file_short = wiki_train_linebyline_short,
     input_file_long = wiki_train_linebyline_long,
