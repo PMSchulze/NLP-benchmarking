@@ -5,8 +5,8 @@ See https://github.com/huggingface/transformers/blob/master/src/transformers/dat
 ```
 from utils_data_preparation import (
     prepare_linebyline, 
-    prepare_linebyline_n, 
-    split_documents_by_len
+    prepare_nextsentence,
+    split_documents_by_len,
 )
 import os.path
 
