@@ -11,8 +11,8 @@ import os.path
 
 datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
 
-# We first put each document (i.e., each wikipedia section) on a single line: 
-
+# We first put each document (i.e., each wikipedia section) on a single line:
+# Furthermore, we drop all documents with less than 20 characters.
 prepare_linebyline(
     input_file = os.path.join(datadir, 'source/wiki_train.txt'), 
     output_file = os.path.join(datadir, 'general/wiki_train_linebyline.txt')
