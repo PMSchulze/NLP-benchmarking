@@ -104,9 +104,9 @@ def prepare_nextsentence(input_file, output_file_path):
 # Take two textfiles as input, one with short documents on each line, and
 # another one with long documents on each line. Then, split each document into
 # smaller chunks by iteratively adding sentences until the chunk length exceeds 
-# len_short and len_long, respectively. Furthermore, drop chunks with length<20 characters, 
-# and finally transfer all short chunks to short file (these are leftovers from the long cunks 
-# and only amount to 3687 chunks out of 699440 total chunks, i.e., about 0.5%).
+# len_short and len_long, respectively. Furthermore, we transfer all short chunks 
+# to short file (these are leftovers from the long cunks and only amount to 3687 
+# chunks out of 699440 total chunks, i.e., about 0.5%).
 def divide_into_chunks(
     input_file_path_short, input_file_path_long, len_short, len_long
 ):
@@ -118,11 +118,8 @@ def divide_into_chunks(
         input_file_path = input_file_path_long,
         n = len_long
     )
-    docs_short_tmp, docs_long_tmp = [], []
-    docs_short_tmp = [doc for doc in docs_short if len(doc)>=20]
-    docs_long_tmp = [doc for doc in docs_long if len(doc)>=20]
-    docs_short_out, docs_long_out = docs_short_tmp, []
-    for doc in docs_long_tmp:
+    docs_short_out, docs_long_out = docs_short, []
+    for doc in docs_long:
         if len(doc)<len_short:
             docs_short_out.append(doc)
         else:
