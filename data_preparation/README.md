@@ -72,14 +72,14 @@ We find that, on average, one BPE token corresponds to approximately 5 character
 from utils_data_preparation import divide_into_chunks
 
 wiki_train_linebyline_128, wiki_train_linebyline_512 =  divide_into_chunks(
-    input_file_short = os.path.join(datadir, 'general/wiki_train_nextsentence_short.txt'),
-    input_file_long = os.path.join(datadir, 'general/wiki_train_nextsentence_long.txt'),
+    input_file_path_short = os.path.join(datadir, 'general/wiki_train_nextsentence_short.txt'),
+    input_file_path_long = os.path.join(datadir, 'general/wiki_train_nextsentence_long.txt'),
     len_short = 128*5,
     len_long = 512*5
 )
 
 len(wiki_train_linebyline_128), len(wiki_train_linebyline_512)
-# (638590, 60850)
+# (634802, 60591)
 
 with open(os.path.join(datadir, 'general/wiki_train_linebyline_long.txt'), 'w') as text_file:
     for line in wiki_train_linebyline_512:
