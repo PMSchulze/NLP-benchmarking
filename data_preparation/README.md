@@ -31,6 +31,9 @@ wiki_train_linebyline_short, wiki_train_linebyline_long = split_documents_by_len
     input_file_path = os.path.join(datadir, 'general/wiki_train_linebyline.txt'),
     p = 0.9
 )
+
+len(wiki_train_linebyline_short), len(wiki_train_linebyline_long)
+# (240327, 26703)
 ```
 
 ### 1. Prepare for TextDatasetForNextSentencePrediction
@@ -39,7 +42,7 @@ Apart from sampling random sentences for the NSP task, in contrast to *LineByLin
 already fills the text chunks to the desired length. Therefore, we do not have to divide the text into smaller chunks manually.
 
 In order to ensure that training of *BERT* (for which we use *TextDatasetForNextSentencePrediction*) is similar to training of *RoBERTa*
-and *GPT-2*, we use the same portions of the data for short- and long-range dependencies (corresponding to the previously generated  *wiki_train_linebyline_short* and *wiki_train_linebyline_long*, respectively).
+and *GPT-2*, for all models, we use the same portions of the data for learning short- and long-range dependencies during pretraining (corresponding to the previously generated  *wiki_train_linebyline_short* and *wiki_train_linebyline_long*, respectively).
 
 The only step that we perform in the following is to put each sentence of a document on a separate line and separate documents with a blank line (we also, as above, drop sentences with length<20 characters); this is the expected format of *TextDatasetForNextSentencePrediction*. For *wiki_train_nextsentence_long.txt* we will then specify *block_size=512* and for *wiki_train_nextsentence_short.txt* we set *block_size=128* when instantiating the object of type *TextDatasetForNextSentencePrediction* (this occurs directly before we start pretraining *BERT*, i.e., in the pretraining script).
 
