@@ -29,31 +29,40 @@ def prepare_linebyline(input_file_path, output_file_path):
 # That is, we concatenate and use a separate line for the text 
 # of each document AND jump to new line if line_length>n after the end of the
 # last sentence.
-def prepare_linebyline_n(input_file, n):
-    docs = []
-    for line in input_file:
-        line_split = re.split("\s+\.|\!|\?", line)
-        line_split = [l.strip()+' . ' for l in line_split if l!='\n']
-        l = len(line_split)
+def prepare_linebyline_n(input_file_path, n):
+    docs = [[]]
+    with open(input_file_path) as f:
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            elif line=='\n':
+                docs.append([])
+            else:
+                docs[-1].append(line)
+    docs_out = []
+    for doc in docs:
+        lines = [l[:-1] for l in doc]
+        l = len(lines)
         i = 0
         truncated_lines = []
         while i<l:
-            truncated_line = line_split[i]
+            truncated_line = lines[i]
             if i == l-1:
                 truncated_lines.append(truncated_line)
                 break
             for _ in range(i,l-1):
                 if len(truncated_line)<n:
                     i += 1
-                    truncated_line += line_split[i]        
+                    truncated_line += lines[i]        
                 else:
                     break
             truncated_lines.append(truncated_line)
             i += 1
         if truncated_lines!=['']:
-            docs.extend(truncated_lines)
-    docs = list(filter(None,docs))
-    return docs
+            docs_out.extend(truncated_lines)
+    docs_out = list(filter(None,docs_out))
+    return docs_out
 
 
 # Write function to split a textfile into two part: one which contains the p
@@ -88,8 +97,8 @@ def prepare_nextsentence(input_file, output_file_path):
             for sentence in doc:
                 if len(sentence)>=20:
                     print(sentence, file = text_file)
-                if i<docs_len-1:
-                    print('', file = text_file)
+            if i<docs_len-1:
+                print('', file = text_file)
 
 
 # Take two textfiles as input, one with short documents on each line, and
@@ -99,14 +108,14 @@ def prepare_nextsentence(input_file, output_file_path):
 # and finally transfer all short chunks to short file (these are leftovers from the long cunks 
 # and only amount to 3687 chunks out of 699440 total chunks, i.e., about 0.5%).
 def divide_into_chunks(
-    input_file_short, input_file_long, len_short, len_long
+    input_file_path_short, input_file_path_long, len_short, len_long
 ):
     docs_short = prepare_linebyline_n(
-        input_file = input_file_short,
+        input_file_path = input_file_path_short,
         n = len_short
     )
     docs_long = prepare_linebyline_n(
-        input_file = input_file_long,
+        input_file_path = input_file_path_long,
         n = len_long
     )
     docs_short_tmp, docs_long_tmp = [], []
