@@ -37,7 +37,7 @@ do
         --intermediate_size 1536 \
         --num_train_epochs 10 \
         --block_size 128 \
-        --batch_size 64 \
+        --batch_size 32 \
         --warmup_steps 1000 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_nextsentence_short.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_nextsentence.txt \
