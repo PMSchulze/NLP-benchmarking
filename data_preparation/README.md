@@ -7,7 +7,12 @@ Load utility functions and specify directory of pretraining data.
 from utils_data_preparation import prepare_linebyline, split_documents_by_len
 import os.path
 
+# Original file wiki_train.txt should be in datadir/source/
 datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
+
+# Files generated in this section are store in datadir/general/
+if not os.path.exists('/home/ubuntu/lrz_share/data/pretrain_data/general'):
+    os.makedirs('/home/ubuntu/lrz_share/data/pretrain_data/general')
 ```
 
 We first put each document (i.e., each wikipedia section) on a single line 
