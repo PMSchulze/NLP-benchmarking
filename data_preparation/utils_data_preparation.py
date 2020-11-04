@@ -80,14 +80,16 @@ def prepare_nextsentence(input_file, output_file_path):
     for line in input_file:
         docs.append('')
         line = re.split("\s+\.|\!|\?", line)
-        docs[-1] = [l.strip()+' .' if l!='\n' else '' for l in line]
-        docs.append('')
-    del(docs[-1]); del(docs[-1][-1])
+        line_tmp = [l.strip()+' .' for l in line if l!='\n' ]
+    # del(docs[-1]); del(docs[-1][-1])
+    docs_len = len(docs)
     with open(output_file_path, 'w') as text_file:
-        for doc in docs:
+        for i, doc in enumerate(docs):
             for sentence in doc:
                 if len(sentence)>=20:
                     print(sentence, file = text_file)
+                if i<docs_len-1:
+                    print('', file = text_file)
 
 
 # Take two textfiles as input, one with short documents on each line, and
