@@ -106,7 +106,9 @@ def prepare_nextsentence(input_file, output_file_path):
 # smaller chunks by iteratively adding sentences until the chunk length exceeds 
 # len_short and len_long, respectively. Furthermore, we transfer all short chunks 
 # to short file (these are leftovers from the long cunks and only amount to 3687 
-# chunks out of 699440 total chunks, i.e., about 0.5%).
+# chunks out of 699440 total chunks, i.e., about 0.5%). 
+# Note that LineByLineTextDataset also produces leftovers, so this should not be 
+# a big advantage/disadvantage for any model. 
 def divide_into_chunks(
     input_file_path_short, input_file_path_long, len_short, len_long
 ):
