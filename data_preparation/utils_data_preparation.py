@@ -80,7 +80,7 @@ def prepare_nextsentence(input_file, output_file_path):
     for line in input_file:
         docs.append('')
         line = re.split("\s+\.|\!|\?", line)
-        line_tmp = [l.strip()+' .' for l in line if l!='\n' ]
+        docs[-1] = [l.strip()+' .' for l in line if l!='\n' ]
     # del(docs[-1]); del(docs[-1][-1])
     docs_len = len(docs)
     with open(output_file_path, 'w') as text_file:
