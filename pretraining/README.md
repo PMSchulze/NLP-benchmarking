@@ -4,16 +4,16 @@
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 384_6_6_1536_10
+for VARIANT in 128_36_2_512_5 128_18_2_512_5
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_roberta.py \
-        --hidden_size 384 \
-        --num_hidden_layers 6 \
-        --num_attention_heads 6 \
-        --intermediate_size 1536 \
-        --num_train_epochs 10 \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
         --block_size 128 \
-        --batch_size 64 \
+        --batch_size 16 \
         --warmup_steps 1000 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_short.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
