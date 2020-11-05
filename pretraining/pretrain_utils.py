@@ -6,10 +6,15 @@ from transformers.tokenization_utils import PreTrainedTokenizer
 from typing import Dict, List, Optional
 import time
 
-def timer(start,end):
+def write_time(start,end, output_dir):
     hours, rem = divmod(end-start, 3600)
     minutes, seconds = divmod(rem, 60)
-    print("{:0>2}:{:0>2}:{:05.2f}".format(int(hours),int(minutes),seconds))
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    with open(os.path.join(output_dir, 'time.txt'), 'w') as f:
+        print(
+            "Elapsed time: {:0>2}:{:0>2}:{:05.2f}".format(int(hours),int(minutes),seconds),
+             file = f)
 
 class LineByLineTextDatasetCached(Dataset):
 

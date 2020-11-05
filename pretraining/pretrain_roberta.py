@@ -1,7 +1,6 @@
 import argparse
-import os.path
 import pickle
-from pretrain_utils import LineByLineTextDatasetCached, timer
+from pretrain_utils import LineByLineTextDatasetCached, write_time
 import time
 import torch
 from transformers import (
@@ -40,6 +39,7 @@ parser.add_argument("--weight_decay", type = float, default = 0.01)
 
 args = parser.parse_args()
 
+start = time.time()
 tokenizer = RobertaTokenizerFast.from_pretrained(
     args.token_vocab,
 )
@@ -74,6 +74,9 @@ data_collator = DataCollatorForLanguageModeling(
     mlm_probability = 0.15
 )
 
+end = time.time()
+write_time(start, end, args.output_dir)
+
 training_args = TrainingArguments(
     output_dir = args.output_dir, 
     overwrite_output_dir = True,
@@ -105,7 +108,7 @@ start = time.time()
 trainer.train()
 
 end = time.time()
-with open(os.path.join('time.txt'),'w') as f:
+with open(os.path.join(args.output_dir, 'time.txt'),'w') as f:
     print('Training time: {}'.format(timer(start, end)), file = f)
 
 trainer.save_model(args.output_dir)
