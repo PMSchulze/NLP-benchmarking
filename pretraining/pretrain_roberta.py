@@ -67,7 +67,7 @@ config = RobertaConfig(
     hidden_dropout_prob = args.hidden_dropout_prob,
 )
 
-if args.long_range==True:
+if args.long_range:
     model = RobertaForMaskedLM.from_pretrained(
         os.path.split(args.output_dir)[0])
 else:
