@@ -36,6 +36,7 @@ parser.add_argument("--adam_epsilon", type = float, default = 1e-06)
 parser.add_argument("--adam_beta1", type = float, default = 0.9) 
 parser.add_argument("--adam_beta2", type = float, default = 0.999) 
 parser.add_argument("--weight_decay", type = float, default = 0.01) 
+parser.add_argument("--long_range", type = bool, default = False) 
 
 args = parser.parse_args()
 
@@ -66,7 +67,11 @@ config = RobertaConfig(
     hidden_dropout_prob = args.hidden_dropout_prob,
 )
 
-model = RobertaForMaskedLM(config = config)
+if args.long_range==True:
+    model = RobertaForMaskedLM.from_pretrained(
+        os.path.split(args.output_dir)[0])
+else:
+    model = RobertaForMaskedLM(config = config)
 
 data_collator = DataCollatorForLanguageModeling(
     tokenizer = tokenizer, 
