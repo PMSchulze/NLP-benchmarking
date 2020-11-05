@@ -38,7 +38,7 @@ do
         --block_size 512 \
         --batch_size 16 \
         --warmup_steps 0 \
-        --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_short.txt \
+        --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_long.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
         --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/long_range/ \
         --token_vocab ${DATA_DIR}token_vocab/roberta/ \
