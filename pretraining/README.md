@@ -17,7 +17,7 @@ do
         --warmup_steps 1000 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_short.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
-        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/short_range/ \
+        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/ \
         --token_vocab ${DATA_DIR}token_vocab/roberta/ \
         --seed 17
 done
@@ -40,7 +40,7 @@ do
         --warmup_steps 0 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_long.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
-        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/long_range/ \
+        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/ \
         --token_vocab ${DATA_DIR}token_vocab/roberta/ \
         --seed 17 \
         --long_range True
