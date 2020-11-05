@@ -36,8 +36,9 @@ class LineByLineTextDatasetCached(Dataset):
         else:
             with open(file_path, encoding="utf-8") as f:
                 lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
-
-            batch_encoding = tokenizer(lines, add_special_tokens=True, truncation=True, max_length=block_size)
+            
+            max_len = block_size - tokenizer.num_special_tokens_to_add(pair = False)
+            batch_encoding = tokenizer(lines, add_special_tokens=True, truncation=True, max_length=max_len)
             self.examples = batch_encoding["input_ids"]
             self.examples = [{"input_ids": torch.tensor(e, dtype=torch.long)} for e in self.examples]
             with open(cached_features_file, "wb") as handle:
