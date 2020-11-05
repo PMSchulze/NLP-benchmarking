@@ -1,4 +1,5 @@
 import argparse
+import os.path
 import pickle
 from pretrain_utils import LineByLineTextDatasetCached, write_time
 import time
@@ -40,7 +41,6 @@ parser.add_argument("--long_range", type = bool, default = False)
 
 args = parser.parse_args()
 
-start = time.time()
 tokenizer = RobertaTokenizerFast.from_pretrained(
     args.token_vocab,
 )
@@ -69,9 +69,12 @@ config = RobertaConfig(
 
 if args.long_range:
     model = RobertaForMaskedLM.from_pretrained(
-        os.path.split(args.output_dir)[0])
+        os.path.join(args.output_dir, 'short_range/')
+    )
+    output_directory = os.path.join(args.output_dir,'long_range/') 
 else:
     model = RobertaForMaskedLM(config = config)
+    output_directory = os.path.join(args.output_dir,'short_range/')
 
 data_collator = DataCollatorForLanguageModeling(
     tokenizer = tokenizer, 
@@ -79,11 +82,8 @@ data_collator = DataCollatorForLanguageModeling(
     mlm_probability = 0.15
 )
 
-end = time.time()
-write_time(start, end, args.output_dir)
-
 training_args = TrainingArguments(
-    output_dir = args.output_dir, 
+    output_dir = output_directory, 
     overwrite_output_dir = True,
     learning_rate = args.learning_rate,
     adam_epsilon = args.adam_epsilon,
@@ -113,7 +113,6 @@ start = time.time()
 trainer.train()
 
 end = time.time()
-with open(os.path.join(args.output_dir, 'time.txt'),'w') as f:
-    print('Training time: {}'.format(timer(start, end)), file = f)
+write_time(start, end, output_directory)
 
-trainer.save_model(args.output_dir)
+trainer.save_model(output_directory)
