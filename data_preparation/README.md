@@ -1,6 +1,8 @@
-## Prepare data for huggingface's text processing classes
+# Prepare data for huggingface's text processing classes
 
 See https://github.com/huggingface/transformers/blob/master/src/transformers/data/datasets/language_modeling.py
+
+## Prepare training data
 
 Load utility functions and specify directory of pretraining data.
 ```
@@ -90,8 +92,39 @@ with open(os.path.join(datadir, 'general/wiki_train_linebyline_short.txt'), 'w')
         print(line, file = text_file)
 ```
 
+## Prepare eval data
 
-## Count length of corpusses to set training steps of BERT accordingly
+```
+from utils_data_preparation import prepare_linebyline, split_documents_by_len
+import os.path
+
+# Original file wiki_train.txt should be in datadir/source/
+datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
+
+# Files generated in this section are store in datadir/general/
+if not os.path.exists('/home/ubuntu/lrz_share/data/pretrain_data/general'):
+    os.makedirs('/home/ubuntu/lrz_share/data/pretrain_data/general')
+
+prepare_linebyline(
+    input_file_path = os.path.join(datadir, 'source/wiki_eval.txt'), 
+    output_file_path = os.path.join(datadir, 'general/wiki_eval_linebyline.txt')
+)
+
+wiki_eval_linebyline, empty_dataset = split_documents_by_len(
+    input_file_path = os.path.join(datadir, 'general/wiki_eval_linebyline.txt'),
+    p = 1
+)
+len(wiki_eval_linebyline), len(empty_dataset)
+#(540, 0)
+
+from utils_data_preparation import prepare_nextsentence
+prepare_nextsentence(
+    input_file = wiki_eval_linebyline,
+    output_file_path = os.path.join(datadir, 'general/wiki_eval_nextsentence.txt')
+)
+```
+
+# Count length of corpusses to set training steps of BERT accordingly
 
 ### Short range 
 ```
