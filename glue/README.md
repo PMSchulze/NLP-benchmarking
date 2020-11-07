@@ -12,18 +12,18 @@ export SEED=2020
 
 for VARIANT in 128_5_2_512_10
 do
-    cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/vocab.txt
+    cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/short_range/vocab.txt
 
-    for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
+    for TASK in SST2 QNLI RTE CoLA WNLI QQP MRPC STSB MNLI
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
-            --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT} \
+            --model_name_or_path /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/short_range/ \
             --task_name ${TASK} \
             --save_total_limit 1\
             --do_train \
             --do_eval \
-            --max_seq_length 128 \
-            --per_device_train_batch_size=32   \
+            --max_seq_length 512 \
+            --per_device_train_batch_size=8   \
             --learning_rate 2e-5 \
             --num_train_epochs 3.0 \
             --output_dir /home/ubuntu/lrz_share/fine_tuned/$MODEL/${VARIANT}/glue/${TASK}/ \
@@ -39,25 +39,23 @@ done
 Again, the shell script has to be run from the transformers repository.
 
 ```
-export GLUE_DIR=/home/ubuntu/lrz_share/data/glue
 export MODEL=roberta
 export SEED=2020
 
 for VARIANT in 128_5_2_512_10
 do
-    cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/* /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/
+    cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/* /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/short_range
 
     for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
-            --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT} \
+            --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT}/short_range/ \
             --task_name ${TASK} \
             --save_total_limit 1\
             --do_train \
             --do_eval \
-            --data_dir $GLUE_DIR/${TASK} \
-            --max_seq_length 128 \
-            --per_device_train_batch_size=32   \
+            --max_seq_length 512 \
+            --per_device_train_batch_size=8   \
             --learning_rate 2e-5 \
             --num_train_epochs 3.0 \
             --output_dir /home/ubuntu/lrz_share/fine_tuned/$MODEL/glue/${VARIANT}/${TASK}/ \
