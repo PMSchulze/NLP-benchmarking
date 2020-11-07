@@ -3,7 +3,10 @@ We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and 
 ## Fine-tuning BERT on GLUE
 
 For BERT and RoBERTa we can use the script [run_glue.py](https://github.com/huggingface/transformers/blob/master/examples/text-classification/run_glue.py) from the transformers library. This script assumes that the GLUE data has been downloaded and stored:
-```python utils/download_glue_data.py --data_dir ~/lrz_share/data/glue --tasks all```
+
+```
+python utils/download_glue_data.py --data_dir ~/lrz_share/data/glue --tasks all
+```
 
 ```
 export GLUE_DIR=/home/ubuntu/lrz_share/data/glue
