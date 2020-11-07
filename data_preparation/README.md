@@ -89,3 +89,79 @@ with open(os.path.join(datadir, 'general/wiki_train_linebyline_short.txt'), 'w')
     for line in wiki_train_linebyline_128:
         print(line, file = text_file)
 ```
+
+
+## Count length of corpusses to set training steps of BERT accordingly
+
+### Short range 
+```
+import pickle
+from transformers import RobertaTokenizerFast, BertTokenizerFast
+
+with open('cached_lbl_RobertaTokenizerFast_128_wiki_train_linebyline_short.txt', 'rb') as f:
+    data_roberta = pickle.load(f)
+
+with open('cached_nsp_BertTokenizerFast_128_wiki_train_nextsentence_short.txt', 'rb') as f:
+    data_bert = pickle.load(f)
+
+tokenizer_roberta = RobertaTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/roberta/')
+tokenizer_bert = BertTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/bert/')
+
+
+len_roberta = 0
+
+# for RoBERTa, we have to cut off the added start and end tokens
+for i in range(len(data_roberta)):
+    len_roberta += len(tokenizer_roberta.decode(data_roberta[i]['input_ids'][1:-1]))
+
+
+len_bert = 0
+
+for i in range(len(data_bert)):
+    len_bert += len(tokenizer_bert.decode(data_bert[i]['tokens_a'])) + len(tokenizer_bert.decode(data_bert[i]['tokens_b']))
+
+len_roberta, len_bert
+# (308129512, 560497217)
+
+factor_reduce_steps = len_roberta/len_bert
+
+factor_reduce_steps
+# 0.5497431613474005
+```
+
+### Long range 
+```
+import pickle
+from transformers import RobertaTokenizerFast, BertTokenizerFast
+
+with open('cached_lbl_RobertaTokenizerFast_512_wiki_train_linebyline_long.txt', 'rb') as f:
+    data_roberta = pickle.load(f)
+
+with open('cached_nsp_BertTokenizerFast_512_wiki_train_nextsentence_long.txt', 'rb') as f:
+    data_bert = pickle.load(f)
+
+tokenizer_roberta = RobertaTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/roberta/')
+tokenizer_bert = BertTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/bert/')
+
+
+len_roberta = 0
+
+# for RoBERTa, we have to cut off the added start and end tokens
+for i in range(len(data_roberta)):
+    len_roberta += len(tokenizer_roberta.decode(data_roberta[i]['input_ids'][1:-1]))
+
+
+len_bert = 0
+
+for i in range(len(data_bert)):
+    len_bert += len(tokenizer_bert.decode(data_bert[i]['tokens_a'])) + len(tokenizer_bert.decode(data_bert[i]['tokens_b']))
+
+len_roberta, len_bert
+#(124774651, 208814615)
+
+factor_reduce_steps = len_roberta/len_bert
+
+factor_reduce_steps
+# 0.5975379213758577
+```
+
