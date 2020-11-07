@@ -2,16 +2,11 @@ We report accuracy for all tasks execpt for CoLA (MCC), QQP (F1), MRPC (F1) and 
 
 ## Fine-tuning BERT on GLUE
 
-For BERT and RoBERTa we can use the script [run_glue.py](https://github.com/huggingface/transformers/blob/master/examples/text-classification/run_glue.py) from the transformers library. This script assumes that the GLUE data has been downloaded and stored:
-
-```
-python utils/download_glue_data.py --data_dir ~/lrz_share/data/glue --tasks all
-```
+For BERT and RoBERTa we can use the script [run_glue.py](https://github.com/huggingface/transformers/blob/master/examples/text-classification/run_glue.py) from the transformers library. 
 
 Note that the shell script has to be run from the transformers repository.
 
 ```
-export GLUE_DIR=/home/ubuntu/lrz_share/data/glue
 export MODEL=bert
 export SEED=2020
 
@@ -19,7 +14,7 @@ for VARIANT in 128_5_2_512_10
 do
     cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/vocab.txt
 
-    for TASK in sst2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
+    for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
             --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT} \
@@ -27,7 +22,6 @@ do
             --save_total_limit 1\
             --do_train \
             --do_eval \
-            --data_dir $GLUE_DIR/${TASK} \
             --max_seq_length 128 \
             --per_device_train_batch_size=32   \
             --learning_rate 2e-5 \
