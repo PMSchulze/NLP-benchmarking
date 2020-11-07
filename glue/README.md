@@ -11,7 +11,7 @@ python utils/download_glue_data.py --data_dir ~/lrz_share/data/glue --tasks all
 Note that the shell script has to be run from the transformers repository.
 
 ```
-export GLUE_DIR=~/lrz_share/data/glue
+export GLUE_DIR=/home/ubuntu/lrz_share/data/glue
 export MODEL=bert
 export SEED=2020
 
