@@ -19,7 +19,7 @@ for VARIANT in 128_5_2_512_10
 do
     cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/vocab.txt
 
-    for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
+    for TASK in sst2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
             --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT} \
