@@ -8,6 +8,8 @@ For BERT and RoBERTa we can use the script [run_glue.py](https://github.com/hugg
 python utils/download_glue_data.py --data_dir ~/lrz_share/data/glue --tasks all
 ```
 
+Note that the shell script has to be run from the transformers repository.
+
 ```
 export GLUE_DIR=~/lrz_share/data/glue
 export MODEL=bert
@@ -39,6 +41,8 @@ done
 
 
 ## Fine-tuning RoBERTa on GLUE
+
+Again, the shell script has to be run from the transformers repository.
 
 ```
 export GLUE_DIR=/home/ubuntu/lrz_share/data/glue
