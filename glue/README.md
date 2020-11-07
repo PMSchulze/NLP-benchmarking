@@ -68,7 +68,7 @@ done
 
 ## Fine-tuning GPT-2 on GLUE
 
-For GPT-2 we have to write our own training script. We also have to define classification heads and data preprocessing steps. The data itself can be conveniently loaded using the [datasets library](https://huggingface.co/docs/datasets/).
+For GPT-2 we have to write [our own training script](https://github.com/PMSchulze/masters_thesis/blob/master/glue/finetune_gpt2_glue.py). We also have to [define classification heads and data preprocessing steps](https://github.com/PMSchulze/masters_thesis/blob/master/glue/utils_gpt2_glue.py). The data itself can be conveniently loaded using the [datasets library](https://huggingface.co/docs/datasets/).
 
 ```
 pip install datasets
