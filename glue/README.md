@@ -20,7 +20,7 @@ do
     for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
-            --model_name_or_path /home/ubuntu/lrz_share/models/$MODEL/${VARIANT} \
+            --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT} \
             --task_name ${TASK} \
             --save_total_limit 1\
             --do_train \
@@ -52,7 +52,7 @@ do
     for TASK in SST-2 QNLI RTE CoLA WNLI QQP MRPC STS-B MNLI
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
-            --model_name_or_path /home/ubuntu/lrz_share/models/$MODEL/${VARIANT} \
+            --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT} \
             --task_name ${TASK} \
             --save_total_limit 1\
             --do_train \
