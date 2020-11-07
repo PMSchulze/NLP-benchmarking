@@ -124,7 +124,7 @@ prepare_nextsentence(
 )
 ```
 
-# Count length of corpusses to set training steps of BERT accordingly
+# Count corpus lengths to set training steps of BERT
 
 ### Short range 
 ```
