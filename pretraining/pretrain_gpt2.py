@@ -79,7 +79,7 @@ config = GPT2Config(
 )
 
 if args.long_range:
-    moddel= GPT2LMHeadModel.from_pretrained(
+    model= GPT2LMHeadModel.from_pretrained(
         os.path.join(args.output_dir, 'short_range/')
     )
     output_directory = os.path.join(args.output_dir,'long_range/') 
