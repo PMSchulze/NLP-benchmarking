@@ -12,7 +12,7 @@ export SEED=2020
 
 for VARIANT in 128_36_2_512_10
 do
-    cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/short_range/vocab.txt
+    cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range/vocab.txt
 
     for TASK in MNLI SST2 QNLI RTE CoLA WNLI QQP MRPC STSB
     do
@@ -44,12 +44,12 @@ export SEED=2020
 
 for VARIANT in 128_5_2_512_10
 do
-    cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/* /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/short_range
+    cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/* /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range
 
     for TASK in SST2 QNLI RTE CoLA WNLI QQP MRPC STSB MNLI
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
-            --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT}/short_range/ \
+            --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT}/long_range/ \
             --task_name ${TASK} \
             --save_total_limit 1\
             --do_train \
