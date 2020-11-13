@@ -16,7 +16,7 @@ def encode_single(examples):
         modified_input, 
         truncation = True, 
         padding = 'max_length',
-        max_length = 1024
+        max_length = 512
     )
 
 def encode_nli(examples, task):
@@ -35,7 +35,7 @@ def encode_nli(examples, task):
         modified_input, 
         truncation = True, 
         padding = 'max_length',
-        max_length = 1024
+        max_length = 512
     )
     return tok
 
@@ -56,13 +56,13 @@ def encode_similarity(examples, task):
         modified_input1, 
         truncation = True, 
         padding ='max_length', 
-        max_length = 1024
+        max_length = 512
     )
     tok2 = tokenizer(
         modified_input2, 
         truncation = True, 
         padding = 'max_length', 
-        max_length = 1024
+        max_length = 512
     )
     out = {
         'attention_mask1': tok1['attention_mask'],
