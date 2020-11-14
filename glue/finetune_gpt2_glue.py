@@ -83,10 +83,12 @@ elif args.task in single:
 # used in the original GPT
 data_train = data_train.map(lambda x: utils_gpt2_glue.encode(x, args.task), 
                             batched = True, remove_columns = remove_cols, 
-                            keep_in_memory = True)
+                            cache_file_name = args.cache_dir + 
+                                args.task.lower().replace('-', '') + '_train')
 data_eval = data_eval.map(lambda x: utils_gpt2_glue.encode(x, args.task), 
                           batched = True, remove_columns = remove_cols, 
-                          keep_in_memory = True)
+                          cache_file_name = args.cache_dir +
+                              args.task.lower().replace('-', '') + '_eval')
 
 # Convert data to torch.tensor
 data_train.set_format(type = 'torch')
