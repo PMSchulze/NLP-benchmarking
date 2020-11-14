@@ -14,7 +14,7 @@ for VARIANT in 128_36_2_512_6
 do
     cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range/vocab.txt
 
-    for TASK in QQP
+    for TASK in MNLI QQP QNLI RTE WNLI CoLA SST-2 MRPC STS-B
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
             --model_name_or_path /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range/ \
@@ -23,7 +23,7 @@ do
             --do_train \
             --do_eval \
             --max_seq_length 512 \
-            --per_device_train_batch_size=32   \
+            --per_device_train_batch_size 16   \
             --learning_rate 2e-5 \
             --num_train_epochs 3.0 \
             --output_dir /home/ubuntu/lrz_share/fine_tuned/$MODEL/${VARIANT}/glue/${TASK}/ \
@@ -98,7 +98,7 @@ done
 ```
 export SEED=2020
 
-for VARIANT in 128_36_2_512_10
+for VARIANT in 544_2_2_2176_10
 do
     python /home/ubuntu/masters_thesis/glue/finetune_gpt2_mnli.py \
         --batch_size 16 \
