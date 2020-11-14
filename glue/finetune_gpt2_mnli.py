@@ -109,7 +109,7 @@ data_eval_mismatched.cleanup_cache_files()
 
 # Instatiate the model:
 model = utils_gpt2_glue.GPT2ForSequenceClassification(
-    n_classes = 2,
+    n_classes = 3,
     gpt_model_name_or_path = args.model_name_or_path,
 )
 
