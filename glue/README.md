@@ -49,7 +49,7 @@ do
     for TASK in MNLI QQP QNLI RTE WNLI CoLA SST2 MRPC STSB
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
-            --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT}/long_range/ \
+            --model_name_or_path /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range/ \
             --task_name ${TASK} \
             --save_total_limit 1\
             --do_train \
