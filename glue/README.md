@@ -100,17 +100,13 @@ export SEED=2020
 
 for VARIANT in 128_36_2_512_10
 do
-    for TASK in QQP
-    do
-        python /home/ubuntu/masters_thesis/glue/finetune_gpt2_mnli.py \
-            --batch_size 16 \
-            --cache_dir /home/ubuntu/lrz_share/huggingface_datasets/ \
-            --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/${VARIANT}/long_range/ \
-            --num_train_epochs 3 \
-            --output_dir /home/ubuntu/lrz_share/fine_tuned/gpt2/glue/${VARIANT}/ \
-            --seed $SEED \
-            --task ${TASK} \
-            --token_vocab /home/ubuntu/lrz_share/data/token_vocab/gpt2
-    done
+    python /home/ubuntu/masters_thesis/glue/finetune_gpt2_mnli.py \
+        --batch_size 16 \
+        --cache_dir /home/ubuntu/lrz_share/huggingface_datasets/ \
+        --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/${VARIANT}/long_range/ \
+        --num_train_epochs 3 \
+        --output_dir /home/ubuntu/lrz_share/fine_tuned/gpt2/glue/${VARIANT}/ \
+        --seed $SEED \
+        --token_vocab /home/ubuntu/lrz_share/data/token_vocab/gpt2
 done
 ```
