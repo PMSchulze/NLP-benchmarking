@@ -83,7 +83,7 @@ do
     for TASK in QQP
     do
         python /home/ubuntu/masters_thesis/glue/finetune_gpt2_glue.py \
-            --batch_size 32 \
+            --batch_size 16 \
             --cache_dir /home/ubuntu/lrz_share/huggingface_datasets/ \
             --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/${VARIANT}/long_range/ \
             --num_train_epochs 3 \
