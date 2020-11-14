@@ -14,7 +14,7 @@ for VARIANT in 128_36_2_512_6
 do
     cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range/vocab.txt
 
-    for TASK in MNLI QQP QNLI RTE WNLI CoLA SST-2 MRPC STS-B
+    for TASK in MNLI QQP QNLI RTE WNLI CoLA SST2 MRPC STSB
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
             --model_name_or_path /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range/ \
@@ -42,11 +42,11 @@ Again, the shell script has to be run from the transformers repository.
 export MODEL=roberta
 export SEED=2020
 
-for VARIANT in 128_5_2_512_10
+for VARIANT in 128_36_2_512_10
 do
     cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/* /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range
 
-    for TASK in SST2 QNLI RTE CoLA WNLI QQP MRPC STSB MNLI
+    for TASK in MNLI QQP QNLI RTE WNLI CoLA SST2 MRPC STSB
     do
         python /home/ubuntu/transformers/examples/text-classification/run_glue.py \
             --model_name_or_path /home/ubuntu/lrz_share/models/short_range/$MODEL/${VARIANT}/long_range/ \
@@ -55,7 +55,7 @@ do
             --do_train \
             --do_eval \
             --max_seq_length 512 \
-            --per_device_train_batch_size=8   \
+            --per_device_train_batch_size 16   \
             --learning_rate 2e-5 \
             --num_train_epochs 3.0 \
             --output_dir /home/ubuntu/lrz_share/fine_tuned/$MODEL/glue/${VARIANT}/${TASK}/ \
