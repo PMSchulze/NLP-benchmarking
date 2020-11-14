@@ -75,13 +75,13 @@ remove_cols = ['idx', 'premise', 'hypothesis']
 # used in the original GPT
 data_train = data_train.map(lambda x: utils_gpt2_glue.encode(x, 'MNLI'), 
                             batched = True, remove_columns = remove_cols, 
-                            cache_file_name = args.cache_dir + 'mnli_train')
+                            cache_file_name = os.path.join(args.cache_dir, 'glue', 'mnli_train'))
 data_eval_matched = data_eval_matched.map(lambda x: utils_gpt2_glue.encode(x, 'MNLI'), 
                           batched = True, remove_columns = remove_cols, 
-                          cache_file_name = args.cache_dir + 'mnli_eval_matched')
+                          os.path.join(args.cache_dir, 'glue', 'mnli_eval_matched'))
 data_eval_mismatched = data_eval_mismatched.map(lambda x: utils_gpt2_glue.encode(x, 'MNLI'), 
                           batched = True, remove_columns = remove_cols, 
-                          cache_file_name = args.cache_dir + 'mnli_eval_mismatched')
+                          cache_file_name = os.path.join(args.cache_dir, 'glue', 'mnli_eval_mismatched'))
 
 # Convert data to torch.tensor
 data_train.set_format(type = 'torch')
