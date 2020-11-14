@@ -85,7 +85,7 @@ do
         python /home/ubuntu/masters_thesis/glue/finetune_gpt2_glue.py \
             --batch_size 32 \
             --cache_dir /home/ubuntu/lrz_share/huggingface_datasets/ \
-            --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/${VARIANT}/long_range \
+            --model_name_or_path /home/ubuntu/lrz_share/models/gpt2/${VARIANT}/long_range/ \
             --num_train_epochs 3 \
             --output_dir /home/ubuntu/lrz_share/fine_tuned/gpt2/glue/${VARIANT}/ \
             --seed $SEED \
