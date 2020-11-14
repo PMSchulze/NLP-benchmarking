@@ -78,7 +78,7 @@ data_train = data_train.map(lambda x: utils_gpt2_glue.encode(x, 'MNLI'),
                             cache_file_name = os.path.join(args.cache_dir, 'glue', 'mnli_train'))
 data_eval_matched = data_eval_matched.map(lambda x: utils_gpt2_glue.encode(x, 'MNLI'), 
                           batched = True, remove_columns = remove_cols, 
-                          os.path.join(args.cache_dir, 'glue', 'mnli_eval_matched'))
+                          cache_file_name = os.path.join(args.cache_dir, 'glue', 'mnli_eval_matched'))
 data_eval_mismatched = data_eval_mismatched.map(lambda x: utils_gpt2_glue.encode(x, 'MNLI'), 
                           batched = True, remove_columns = remove_cols, 
                           cache_file_name = os.path.join(args.cache_dir, 'glue', 'mnli_eval_mismatched'))
