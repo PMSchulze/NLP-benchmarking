@@ -54,9 +54,9 @@ utils_gpt2_glue.tokenizer = GPT2Tokenizer.from_pretrained(
 )
 
 # Add special tokens to tokenizer
-single = {'CoLA', 'SST-2'}
+single = {'CoLA', 'SST2'}
 NLI = {'QNLI', 'RTE', 'WNLI', 'MNLI'}
-similarity = {'MRPC', 'STS-B', 'QQP'}
+similarity = {'MRPC', 'STSB', 'QQP'}
 if args.task in NLI or args.task in similarity:
     utils_gpt2_glue.tokenizer.add_tokens(["<$>"])
 
@@ -68,7 +68,7 @@ data_eval.rename_column_('label', 'labels')
 # Specify columns that do not contain of input for the model and can thus be
 # dropped.  
 remove_cols = ['idx']
-if args.task in {'MRPC', 'STS-B', 'RTE', 'WNLI'}:
+if args.task in {'MRPC', 'STSB', 'RTE', 'WNLI'}:
     remove_cols += ['sentence1', 'sentence2']
 elif args.task == 'QQP':
     remove_cols  += ['question1', 'question2']
@@ -111,7 +111,7 @@ data_train.cleanup_cache_files()
 data_eval.cleanup_cache_files()
 
 # Specify number of classes
-n_classes = 1 if args.task == 'STS-B' else 2
+n_classes = 1 if args.task == 'STSB' else 2
 
 # Instatiate the model:
 model = None
