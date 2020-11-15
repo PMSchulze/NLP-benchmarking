@@ -73,9 +73,9 @@ def encode_similarity(examples, task):
     return out
     
 def encode(examples, task):
-    single = {'CoLA', 'SST-2'}
+    single = {'CoLA', 'SST2'}
     nli = {'QNLI', 'RTE', 'WNLI', 'MNLI'}
-    similarity = {'MRPC', 'STS-B', 'QQP'}
+    similarity = {'MRPC', 'STSB', 'QQP'}
     if task in single:
         return encode_single(examples)
     elif task in similarity:
@@ -157,11 +157,11 @@ class GPT2ForSequenceClassification(nn.Module):
         logits = self.out_proj(x)
         
         loss = None
-        # Use MSE loss for regression tasks (STS-B) 
+        # Use MSE loss for regression tasks (STSB) 
         if self.n_classes == 1:
             loss_fct = nn.MSELoss()
             loss = loss_fct(logits.view(-1), labels.view(-1))
-        # Use cross entropy for classification tasks (all but STS-B)
+        # Use cross entropy for classification tasks (all but STSB)
         else:
             loss_fct = nn.CrossEntropyLoss()
             loss = loss_fct(logits.view(-1, self.n_classes), labels.view(-1))
@@ -246,11 +246,11 @@ class GPT2ForSimilarityClassification(nn.Module):
         logits = self.out_proj(x)
         
         loss = None
-        # Use MSE loss for regression tasks (SST-2) 
+        # Use MSE loss for regression tasks (STSB) 
         if self.n_classes == 1:
             loss_fct = nn.MSELoss()
             loss = loss_fct(logits.view(-1), labels.view(-1))
-        # Use cross entropy for classification tasks (all but SST-2)
+        # Use cross entropy for classification tasks (all but STSB)
         else:
             loss_fct = nn.CrossEntropyLoss()
             loss = loss_fct(logits.view(-1, self.n_classes), labels.view(-1))
