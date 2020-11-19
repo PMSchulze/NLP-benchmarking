@@ -98,7 +98,7 @@ done
 ```
 export SEED=2020
 
-for VARIANT in 544_2_2_2176_10
+for VARIANT in 128_2_2_512_10 128_5_2_512_10 128_10_2_512_10 128_18_2_512_10 128_36_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10 
 do
     python /home/ubuntu/masters_thesis/glue/finetune_gpt2_mnli.py \
         --batch_size 16 \
