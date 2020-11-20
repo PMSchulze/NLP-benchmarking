@@ -311,11 +311,11 @@ filepath_out_log = os.path.join(
 
 # Save evaluation results
 with open(filepath_out_eval_matched, 'w') as text_file:
-    for k,v in final_score.items():
+    for k,v in final_score_matched.items():
              print(f'{k} = {v}', file = text_file)
 
 with open(filepath_out_eval_mismatched, 'w') as text_file:
-    for k,v in final_score.items():
+    for k,v in final_score_mismatched.items():
              print(f'{k} = {v}', file = text_file)
 
 # Save log history
