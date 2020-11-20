@@ -267,11 +267,9 @@ true_labels_mismatched = np.concatenate(
     axis = 0
 )[-batchsize_last_epoch_mismatched:]
 
-# If not regression task, then prediction is argmax of logits
-preds_matched = np.argmax(logits_matched, axis = 1) if n_classes>1 \
-    else logits_matched.flatten()
-preds_mismatched = np.argmax(logits_mismatched, axis = 1) if n_classes>1 \
-    else logits_mismatched.flatten()
+# Prediction is argmax of logits
+preds_matched = np.argmax(logits_matched, axis = 1)
+preds_mismatched = np.argmax(logits_mismatched, axis = 1)
 
 # Specify predictions and true labels to calculate the scores
 metric_matched.add_batch(
