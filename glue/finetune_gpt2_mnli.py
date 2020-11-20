@@ -238,12 +238,12 @@ for epoch in range(0, args.num_train_epochs):
 # Load task-specific metrics from huggingface hub 
 metric_matched = load_metric(
     'glue', 
-    args.task.lower().replace('-', ''), 
+    'mnli_matched', 
     cache_dir = args.cache_dir
 )
 metric_mismatched = load_metric(
     'glue', 
-    args.task.lower().replace('-', ''), 
+    'mnli_mismatched', 
     cache_dir = args.cache_dir
 )
 
@@ -288,7 +288,7 @@ final_score_matched = metric_matched.compute()
 final_score_mismatched = metric_mismatched.compute()
 
 # Create name of task-specific output directory
-output_dir_task = os.path.join(args.output_dir, args.task)
+output_dir_task = os.path.join(args.output_dir, 'mnli')
 
 # Create the task-specific output directory if not existing already
 if not os.path.exists(output_dir_task):
@@ -297,12 +297,12 @@ if not os.path.exists(output_dir_task):
 # Specify path for text file with evaluation results
 filepath_out_eval_matched = os.path.join(
     output_dir_task, 
-    'eval_results_' + args.task.lower() + '_matched.txt',
+    'eval_results_' + 'mnli_matched.txt',
 )
 # Specify path for text file with evaluation results
 filepath_out_eval_mismatched = os.path.join(
     output_dir_task, 
-    'eval_results_' + args.task.lower() + '_mismatched.txt',
+    'eval_results_' + 'mnli_mismatched.txt',
 )
 
 # Specify path for log file with train/testloss history
