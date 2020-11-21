@@ -251,21 +251,21 @@ metric_mismatched = load_metric(
 batchsize_last_epoch_matched = len(batches_eval_matched)
 batchsize_last_epoch_mismatched = len(batches_eval_mismatched)
 logits_matched = np.concatenate(
-    logits_matched, 
+    logits_matched[-batchsize_last_epoch_matched:], 
     axis = 0
-)[-batchsize_last_epoch_matched:]
+)
 true_labels_matched = np.concatenate(
-    true_labels_matched, 
+    true_labels_matched[-batchsize_last_epoch_matched:], 
     axis = 0
-)[-batchsize_last_epoch_matched:]
+)
 logits_mismatched = np.concatenate(
-    logits_mismatched, 
+    logits_mismatched[-batchsize_last_epoch_mismatched:], 
     axis = 0
-)[-batchsize_last_epoch_mismatched:]
+)
 true_labels_mismatched = np.concatenate(
-    true_labels_mismatched, 
+    true_labels_mismatched[-batchsize_last_epoch_mismatched:], 
     axis = 0
-)[-batchsize_last_epoch_mismatched:]
+)
 
 # Prediction is argmax of logits
 preds_matched = np.argmax(logits_matched, axis = 1)
@@ -286,7 +286,7 @@ final_score_matched = metric_matched.compute()
 final_score_mismatched = metric_mismatched.compute()
 
 # Create name of task-specific output directory
-output_dir_task = os.path.join(args.output_dir, 'mnli')
+output_dir_task = os.path.join(args.output_dir, 'MNLI')
 
 # Create the task-specific output directory if not existing already
 if not os.path.exists(output_dir_task):
