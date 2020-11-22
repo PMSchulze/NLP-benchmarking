@@ -142,19 +142,23 @@ class GPT2ForSequenceClassification(nn.Module):
             attention_mask = attention_mask
         )[0]
         # Obtain the positions of the last tokens before pad token (which is 1)
-        sequence_lengths = torch.ne(input_ids, 1).sum(-1) - 1
+        #sequence_lengths = torch.ne(input_ids, 1).sum(-1) - 1
         # Extract the hidden states of the last token for each sequence
-        x = gpt_out_all[torch.arange(gpt_out_all.size(0)), sequence_lengths]
+        #x = gpt_out_all[torch.arange(gpt_out_all.size(0)), sequence_lengths]
         # Apply dropout
-        x = self.dropout(x)
+        #x = self.dropout(x)
         # Apply dense layer
-        x = self.dense(x)
+        #x = self.dense(x)
         # Apply tanh activation
-        x = torch.tanh(x)
+        #x = torch.tanh(x)
         # Apply dropout
-        x = self.dropout(x)
+        #x = self.dropout(x)
         # Compute logits
-        logits = self.out_proj(x)
+        #logits = self.out_proj(x)
+        
+        logits = self.out_proj(gpt_out_all)
+        sequence_lengths = torch.ne(input_ids, 1).sum(-1) - 1
+        logits = logits[gpt_out_all.size(0), sequence_lengths]
         
         loss = None
         # Use MSE loss for regression tasks (STSB) 
