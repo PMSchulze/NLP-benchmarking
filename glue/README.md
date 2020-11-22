@@ -54,7 +54,7 @@ do
             --save_total_limit 1\
             --do_train \
             --do_eval \
-            --max_seq_length 512 \
+            --max_seq_length 510 \
             --per_device_train_batch_size 16   \
             --learning_rate 2e-5 \
             --num_train_epochs 3.0 \
