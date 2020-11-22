@@ -122,17 +122,17 @@ class GPT2ForSequenceClassification(nn.Module):
         # Define a linear layer which predicts scores from hidden states
         self.out_proj = nn.Linear(hidden_size, n_classes) 
         # Initialize weights 
-        self.apply(self.init_weights)
+        # self.apply(self.init_weights)
 
     # Define function to initialize weights as in other huggingface models
-    def init_weights(self, m):
-        if isinstance(m, (nn.Linear, nn.Embedding, Conv1D)):
-            m.weight.data.normal_(mean=0.0, std=0.02)
-            if isinstance(m, (nn.Linear, Conv1D)) and m.bias is not None:
-                m.bias.data.zero_()
-        elif isinstance(m, nn.LayerNorm):
-            m.bias.data.zero_()
-            m.weight.data.fill_(1.0)
+    #def init_weights(self, m):
+    #    if isinstance(m, (nn.Linear, nn.Embedding, Conv1D)):
+    #        m.weight.data.normal_(mean=0.0, std=0.02)
+    #        if isinstance(m, (nn.Linear, Conv1D)) and m.bias is not None:
+    #            m.bias.data.zero_()
+    #    elif isinstance(m, nn.LayerNorm):
+    #        m.bias.data.zero_()
+    #        m.weight.data.fill_(1.0)
 
     def forward(self, attention_mask, input_ids, labels):
         
