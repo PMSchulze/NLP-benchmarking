@@ -122,17 +122,17 @@ class GPT2ForSequenceClassification(nn.Module):
         # Define a linear layer which predicts scores from hidden states
         self.out_proj = nn.Linear(hidden_size, n_classes) 
         # Initialize weights 
-        # self.apply(self.init_weights)
+        self.apply(self.init_weights)
 
     # Define function to initialize weights as in other huggingface models
-    #def init_weights(self, m):
-    #    if isinstance(m, (nn.Linear, nn.Embedding, Conv1D)):
-    #        m.weight.data.normal_(mean=0.0, std=0.02)
-    #        if isinstance(m, (nn.Linear, Conv1D)) and m.bias is not None:
-    #            m.bias.data.zero_()
-    #    elif isinstance(m, nn.LayerNorm):
-    #        m.bias.data.zero_()
-    #        m.weight.data.fill_(1.0)
+    def init_weights(self, m):
+        if isinstance(m, (nn.Linear, nn.Embedding, Conv1D)):
+            m.weight.data.normal_(mean=0.0, std=0.02)
+            if isinstance(m, (nn.Linear, Conv1D)) and m.bias is not None:
+                m.bias.data.zero_()
+        elif isinstance(m, nn.LayerNorm):
+            m.bias.data.zero_()
+            m.weight.data.fill_(1.0)
 
     def forward(self, attention_mask, input_ids, labels):
         
@@ -142,23 +142,19 @@ class GPT2ForSequenceClassification(nn.Module):
             attention_mask = attention_mask
         )[0]
         # Obtain the positions of the last tokens before pad token (which is 1)
-        #sequence_lengths = torch.ne(input_ids, 1).sum(-1) - 1
-        # Extract the hidden states of the last token for each sequence
-        #x = gpt_out_all[torch.arange(gpt_out_all.size(0)), sequence_lengths]
-        # Apply dropout
-        #x = self.dropout(x)
-        # Apply dense layer
-        #x = self.dense(x)
-        # Apply tanh activation
-        #x = torch.tanh(x)
-        # Apply dropout
-        #x = self.dropout(x)
-        # Compute logits
-        #logits = self.out_proj(x)
-        
-        logits = self.out_proj(gpt_out_all)
         sequence_lengths = torch.ne(input_ids, 1).sum(-1) - 1
-        logits = logits[range(gpt_out_all.size(0)), sequence_lengths]
+        # Extract the hidden states of the last token for each sequence
+        x = gpt_out_all[torch.arange(gpt_out_all.size(0)), sequence_lengths]
+        # Apply dropout
+        x = self.dropout(x)
+        # Apply dense layer
+        x = self.dense(x)
+        # Apply tanh activation
+        x = torch.tanh(x)
+        # Apply dropout
+        x = self.dropout(x)
+        # Compute logits
+        logits = self.out_proj(x)
         
         loss = None
         # Use MSE loss for regression tasks (STSB) 
