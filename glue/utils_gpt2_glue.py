@@ -158,7 +158,7 @@ class GPT2ForSequenceClassification(nn.Module):
         
         logits = self.out_proj(gpt_out_all)
         sequence_lengths = torch.ne(input_ids, 1).sum(-1) - 1
-        logits = logits[gpt_out_all.size(0), sequence_lengths]
+        logits = logits[range(gpt_out_all.size(0)), sequence_lengths]
         
         loss = None
         # Use MSE loss for regression tasks (STSB) 
