@@ -1,4 +1,4 @@
-## RoBERTa
+## 1 RoBERTa
 
 ```
 export DATA_DIR=/home/ubuntu/lrz_share/data/
@@ -47,11 +47,11 @@ do
 done
 ```
 
-## BERT
+## 2 BERT
 
-### Scaling Width
+### 2.1 Scaling Width
 
-Short sequences
+Short sequences:
 ```
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
@@ -75,7 +75,7 @@ do
 done
 ```
 
-Long sequences
+Long sequences:
 ```
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
@@ -100,9 +100,9 @@ do
 done
 ```
 
-### Scaling Height
+### 2.2 Scaling Height
 
-Short sequences
+Short sequences:
 ```
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
@@ -126,7 +126,7 @@ do
 done
 ```
 
-Long sequences
+Long sequences:
 ```
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
@@ -151,9 +151,9 @@ do
 done
 ```
 
-### Scaling Width & Height
+### 2.3 Scaling Width & Height
 
-Short sequences
+Short sequences:
 ```
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
@@ -177,7 +177,7 @@ do
 done
 ```
 
-Long sequences
+Long sequences:
 ```
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
@@ -202,7 +202,7 @@ do
 done
 ```
 
-## GPT2
+## 3. GPT2
 
 ```
 export DATA_DIR=/home/ubuntu/lrz_share/data/
