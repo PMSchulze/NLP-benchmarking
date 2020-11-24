@@ -100,7 +100,7 @@ do
 done
 ```
 
-### 1.2 Scaling Widht & Height
+### 1.3 Scaling Widht & Height
 
 Short sequences:
 ```
