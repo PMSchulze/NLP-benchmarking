@@ -107,7 +107,7 @@ Short sequences:
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 204_7_2_816_6 256_9_2_1024_6
+for VARIANT in 204_7_2_816_10 256_9_2_1024_10
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_roberta.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
@@ -130,7 +130,7 @@ Long sequences:
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 204_7_2_816_6 256_9_2_1024_6
+for VARIANT in 204_7_2_816_10 256_9_2_1024_10
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_roberta.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
