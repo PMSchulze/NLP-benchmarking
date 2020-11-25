@@ -7,7 +7,7 @@ Short sequences:
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10
+for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_roberta.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
@@ -30,7 +30,7 @@ Long sequences:
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10
+for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_roberta.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
@@ -159,7 +159,7 @@ Short sequences:
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 128_2_2_512_6 192_2_2_768_6 288_2_2_1152_6 384_2_2_1536_6
+for VARIANT in 128_2_2_512_6 192_2_2_768_6 288_2_2_1152_6 384_2_2_1536_6 544_2_2_2176_10
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_bert.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
@@ -183,7 +183,7 @@ Long sequences:
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 128_2_2_512_6 192_2_2_768_6 288_2_2_1152_6 384_2_2_1536_6
+for VARIANT in 128_2_2_512_6 192_2_2_768_6 288_2_2_1152_6 384_2_2_1536_6 544_2_2_2176_10
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_bert.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
@@ -313,7 +313,7 @@ Short sequences:
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10
+for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_gpt2.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
@@ -337,7 +337,7 @@ Long sequences:
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 128_2_2_512_10 128_5_2_512_10 128_10_2_512_10
+for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_gpt2.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
