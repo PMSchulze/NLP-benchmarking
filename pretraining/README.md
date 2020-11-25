@@ -304,6 +304,59 @@ do
 done
 ```
 
+### 2.4 Batchsize vs. Training Steps
+
+Short sequences:
+```
+export DATA_DIR=/home/ubuntu/lrz_share/data/
+export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
+export VARIANT=256_9_2_1024_3
+
+for BATCHSIZE in 32 64
+do
+    python /home/ubuntu/masters_thesis/pretraining/pretrain_bert.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
+        --block_size 128 \
+        --batch_size ${BATCHSIZE} \
+        --warmup_steps 1000 \
+        --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_nextsentence_short.txt \
+        --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_nextsentence.txt \
+        --output_dir ${OUTPUT_DIR}bert/${VARIANT}/ \
+        --token_vocab ${DATA_DIR}token_vocab/bert/ \
+        --seed 17
+done
+```
+
+Long sequences:
+```
+export DATA_DIR=/home/ubuntu/lrz_share/data/
+export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
+export VARIANT=256_9_2_1024_3
+
+for BATCHSIZE in 32 64
+do
+    python /home/ubuntu/masters_thesis/pretraining/pretrain_bert.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
+        --block_size 512 \
+        --batch_size 16 \
+        --warmup_steps 0 \
+        --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_nextsentence_long.txt \
+        --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_nextsentence.txt \
+        --output_dir ${OUTPUT_DIR}bert/${VARIANT}/ \
+        --token_vocab ${DATA_DIR}token_vocab/bert/ \
+        --seed 17 \
+        --long_range True
+done
+```
+
 ## 3. GPT2
 
 ### 3.1 Scaling Width
