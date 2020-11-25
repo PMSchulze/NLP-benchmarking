@@ -10,7 +10,7 @@ Note that the shell script has to be run from the transformers repository.
 export MODEL=bert
 export SEED=2020
 
-for VARIANT in 128_2_2_512_6 128_5_2_512_6 128_10_2_512_6 128_18_2_512_6 192_2_2_768_6 288_2_2_1152_6 384_2_2_1536_6 544_2_2_2176_6
+for VARIANT in 204_7_2_816_6 256_9_2_1024_6
 do
     cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/vocab.txt /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range/vocab.txt
 
@@ -42,7 +42,7 @@ Again, the shell script has to be run from the transformers repository.
 export MODEL=roberta
 export SEED=2020
 
-for VARIANT in 128_2_2_512_10 128_5_2_512_10 128_10_2_512_10 128_18_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10
+for VARIANT in 204_7_2_816_10 256_9_2_1024_10
 do
     cp /home/ubuntu/lrz_share/data/token_vocab/$MODEL/* /home/ubuntu/lrz_share/models/$MODEL/${VARIANT}/long_range
 
