@@ -73,12 +73,10 @@ For GPT-2 we have to write [our own training script](https://github.com/PMSchulz
 pip install datasets
 ```
 
-Run this script from masters_thesis/glue/ in this repository.
-
 ```
 export SEED=2020
 
-for VARIANT in 128_36_2_512_10
+for VARIANT in 204_7_2_816_10 256_9_2_1024_10
 do
     for TASK in QQP QNLI RTE WNLI CoLA SST2 MRPC STSB
     do
@@ -98,7 +96,7 @@ done
 ```
 export SEED=2020
 
-for VARIANT in 128_2_2_512_10 128_5_2_512_10 128_10_2_512_10 128_18_2_512_10 128_36_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10 
+for VARIANT in 204_7_2_816_10 256_9_2_1024_10
 do
     python /home/ubuntu/masters_thesis/glue/finetune_gpt2_mnli.py \
         --batch_size 16 \
