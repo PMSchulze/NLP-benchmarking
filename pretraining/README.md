@@ -150,6 +150,58 @@ do
 done
 ```
 
+### 1.4 Batch Size
+
+Short sequences:
+```
+export DATA_DIR=/home/ubuntu/lrz_share/data/
+export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
+export VARIANT=256_9_2_1024_5
+
+for BATCHSIZE in 32 64
+do
+    python /home/ubuntu/masters_thesis/pretraining/pretrain_roberta.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
+        --block_size 128 \
+        --batch_size 64 \
+        --warmup_steps 1000 \
+        --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_short.txt \
+        --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
+        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/ \
+        --token_vocab ${DATA_DIR}token_vocab/roberta/ \
+        --seed 17
+done
+```
+Long sequences:
+```
+export DATA_DIR=/home/ubuntu/lrz_share/data/
+export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
+export VARIANT=256_9_2_1024_5
+
+for BATCHSIZE in 32 64
+do
+    python /home/ubuntu/masters_thesis/pretraining/pretrain_roberta.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
+        --block_size 512 \
+        --batch_size 16 \
+        --warmup_steps 0 \
+        --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_long.txt \
+        --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
+        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/ \
+        --token_vocab ${DATA_DIR}token_vocab/roberta/ \
+        --seed 17 \
+        --long_range True
+done
+```
+
 ## 2 BERT
 
 ### 2.1 Scaling Width
@@ -304,7 +356,7 @@ do
 done
 ```
 
-### 2.4 Batchsize vs. Training Steps
+### 2.4 Batchsize
 
 Short sequences:
 ```
@@ -494,6 +546,60 @@ export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
 for VARIANT in 204_7_2_816_10 256_9_2_1024_10
+do
+    python /home/ubuntu/masters_thesis/pretraining/pretrain_gpt2.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
+        --block_size 512 \
+        --batch_size 16 \
+        --warmup_steps 0 \
+        --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_long.txt \
+        --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
+        --output_dir ${OUTPUT_DIR}gpt2/${VARIANT}/ \
+        --token_vocab ${DATA_DIR}token_vocab/gpt2/ \
+        --seed 17 \
+        --long_range True
+done
+```
+
+### 3.3 Batchs Size
+
+Short sequences:
+
+```
+export DATA_DIR=/home/ubuntu/lrz_share/data/
+export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
+export VARIANT=256_9_2_1024_5
+
+for BATCHSIZE in 32 64
+do
+    python /home/ubuntu/masters_thesis/pretraining/pretrain_gpt2.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
+        --block_size 128 \
+        --batch_size 64 \
+        --warmup_steps 1000 \
+        --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_short.txt \
+        --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
+        --output_dir ${OUTPUT_DIR}gpt2/${VARIANT}/ \
+        --token_vocab ${DATA_DIR}token_vocab/gpt2/ \
+        --seed 17
+done
+```
+
+Short sequences:
+```
+export DATA_DIR=/home/ubuntu/lrz_share/data/
+export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
+export VARIANT=256_9_2_1024_5
+
+for BATCHSIZE in 32 64
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_gpt2.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
