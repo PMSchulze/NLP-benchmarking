@@ -565,7 +565,7 @@ do
 done
 ```
 
-### 3.3 Batch Size
+### 3.4 Batch Size
 
 Short sequences:
 
@@ -593,7 +593,7 @@ do
 done
 ```
 
-Short sequences:
+Long sequences:
 ```
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
@@ -612,7 +612,7 @@ do
         --warmup_steps 0 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_long.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
-        --output_dir ${OUTPUT_DIR}gpt2/${VARIANT}/{$BATCHSIZE}/ \
+        --output_dir ${OUTPUT_DIR}gpt2/${VARIANT}/${BATCHSIZE}/ \
         --token_vocab ${DATA_DIR}token_vocab/gpt2/ \
         --seed 17 \
         --long_range True
