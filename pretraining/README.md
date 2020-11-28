@@ -184,6 +184,7 @@ export VARIANT=256_9_2_1024_5
 
 for BATCHSIZE in 32 64
 do
+    BATCHSIZE_LONG=$(($BATCHSIZE/4))
     python /home/ubuntu/masters_thesis/pretraining/pretrain_roberta.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
         --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
@@ -191,7 +192,7 @@ do
         --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
         --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
         --block_size 512 \
-        --batch_size 16 \
+        --batch_size $BATCHSIZE_LONG \
         --warmup_steps 0 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_long.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
@@ -391,6 +392,7 @@ export VARIANT=256_9_2_1024_3
 
 for BATCHSIZE in 32 64
 do
+    BATCHSIZE_LONG=$(($BATCHSIZE/4))
     python /home/ubuntu/masters_thesis/pretraining/pretrain_bert.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
         --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
@@ -398,7 +400,7 @@ do
         --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
         --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
         --block_size 512 \
-        --batch_size 16 \
+        --batch_size $BATCHSIZE_LONG \
         --warmup_steps 0 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_nextsentence_long.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_nextsentence.txt \
@@ -601,6 +603,7 @@ export VARIANT=256_9_2_1024_5
 
 for BATCHSIZE in 32 64
 do
+    BATCHSIZE_LONG=$(($BATCHSIZE/4))
     python /home/ubuntu/masters_thesis/pretraining/pretrain_gpt2.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
         --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
@@ -608,7 +611,7 @@ do
         --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
         --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
         --block_size 512 \
-        --batch_size 16 \
+        --batch_size $BATCHSIZE_LONG \
         --warmup_steps 0 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_long.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
