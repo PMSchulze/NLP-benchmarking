@@ -167,11 +167,11 @@ do
         --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
         --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
         --block_size 128 \
-        --batch_size 64 \
+        --batch_size ${BATCHSIZE} \
         --warmup_steps 1000 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_short.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
-        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/{$BATCHSIZE}/ \
+        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/${BATCHSIZE}/ \
         --token_vocab ${DATA_DIR}token_vocab/roberta/ \
         --seed 17
 done
@@ -195,7 +195,7 @@ do
         --warmup_steps 0 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_long.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
-        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/{$BATCHSIZE}/ \
+        --output_dir ${OUTPUT_DIR}roberta/${VARIANT}/${BATCHSIZE}/ \
         --token_vocab ${DATA_DIR}token_vocab/roberta/ \
         --seed 17 \
         --long_range True
@@ -377,7 +377,7 @@ do
         --warmup_steps 1000 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_nextsentence_short.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_nextsentence.txt \
-        --output_dir ${OUTPUT_DIR}bert/${VARIANT}/{$BATCHSIZE}/ \
+        --output_dir ${OUTPUT_DIR}bert/${VARIANT}/${BATCHSIZE}/ \
         --token_vocab ${DATA_DIR}token_vocab/bert/ \
         --seed 17
 done
@@ -583,11 +583,11 @@ do
         --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
         --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
         --block_size 128 \
-        --batch_size 64 \
+        --batch_size ${BATCHSIZE} \
         --warmup_steps 1000 \
         --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_linebyline_short.txt \
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_linebyline.txt \
-        --output_dir ${OUTPUT_DIR}gpt2/${VARIANT}/{$BATCHSIZE}/ \
+        --output_dir ${OUTPUT_DIR}gpt2/${VARIANT}/${BATCHSIZE}/ \
         --token_vocab ${DATA_DIR}token_vocab/gpt2/ \
         --seed 17
 done
