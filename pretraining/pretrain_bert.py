@@ -32,6 +32,8 @@ parser.add_argument("--seed", type = int)
 parser.add_argument(
     "--attention_probs_dropout_prob", type = float, default = 0.1
 )
+parser.add_argument("--evaluation_strategy", default = 'epoch') 
+parser.add_argument("--eval_steps", type = float, default = None) 
 parser.add_argument("--hidden_dropout_prob", type = float, default = 0.1) 
 parser.add_argument("--learning_rate", type = float, default = 1e-4) 
 parser.add_argument("--adam_epsilon", type = float, default = 1e-06) 
@@ -99,7 +101,8 @@ training_args = TrainingArguments(
     save_steps = 500,
     save_total_limit = 1,
     do_eval = True,
-    evaluation_strategy = 'epoch',
+    evaluation_strategy = args.evaluation_strategy,
+    eval_steps = args.eval_steps,
     seed = args.seed,
 )
 trainer = Trainer(
