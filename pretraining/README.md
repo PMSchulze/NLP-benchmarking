@@ -100,7 +100,7 @@ do
 done
 ```
 
-### 1.3 Scaling Widht & Depth
+### 1.3 Scaling Width & Depth
 
 Short sequences:
 ```
@@ -408,6 +408,31 @@ do
         --token_vocab ${DATA_DIR}token_vocab/bert/ \
         --seed 17 \
         --long_range True
+done
+```
+
+### 2.5 Grid Search
+
+```
+export DATA_DIR=/home/ubuntu/lrz_share/data/
+export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
+
+for VARIANT in 128_2_2_512_6 105_3_2_420_6 91_4_2_364_6 74_6_2_296_6 64_8_2_256_6 57_10_2_228_6 52_12_2_208_6 48_14_2_192_6 45_16_2_180_6
+do
+    python /home/ubuntu/masters_thesis/pretraining/pretrain_bert.py \
+        --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
+        --num_hidden_layers $(echo $VARIANT| cut -d'_' -f 2) \
+        --num_attention_heads $(echo $VARIANT| cut -d'_' -f 3) \
+        --intermediate_size $(echo $VARIANT| cut -d'_' -f 4) \
+        --num_train_epochs $(echo $VARIANT | cut -d'_' -f 5) \
+        --block_size 128 \
+        --batch_size 64 \
+        --warmup_steps 1000 \
+        --corpus_train ${DATA_DIR}pretrain_data/general/wiki_train_nextsentence_short.txt \
+        --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_nextsentence.txt \
+        --output_dir ${OUTPUT_DIR}bert/grid_search/${VARIANT}/ \
+        --token_vocab ${DATA_DIR}token_vocab/bert/ \
+        --seed 17
 done
 ```
 
