@@ -1,7 +1,7 @@
 import argparse
 import os
 import torch
-from ../pretraining/pretrain_utils import LineByLineTextDatasetCached
+from pretrain_utils import LineByLineTextDatasetCached
 from transformers import (
      RobertaTokenizerFast,
      DataCollatorForLanguageModeling,

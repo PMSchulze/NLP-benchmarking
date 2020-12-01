@@ -82,13 +82,9 @@ elif args.task in single:
 # Tokenize the sentences dependent on the task, using the same method that was 
 # used in the original GPT
 data_train = data_train.map(lambda x: utils_gpt2_glue.encode(x, args.task), 
-                            batched = True, remove_columns = remove_cols, 
-                            cache_file_name = os.path.join(args.cache_dir, 'glue',
-                                args.task.lower().replace('-', '') + '_train'))
+                            batched = True, remove_columns = remove_cols) 
 data_eval = data_eval.map(lambda x: utils_gpt2_glue.encode(x, args.task), 
-                          batched = True, remove_columns = remove_cols, 
-                          cache_file_name = os.path.join(args.cache_dir, 'glue',
-                              args.task.lower().replace('-', '') + '_eval'))
+                          batched = True, remove_columns = remove_cols) 
 
 # Convert data to torch.tensor
 data_train.set_format(type = 'torch')
