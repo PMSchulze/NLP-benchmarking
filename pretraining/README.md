@@ -432,7 +432,9 @@ do
         --corpus_eval ${DATA_DIR}pretrain_data/general/wiki_eval_nextsentence.txt \
         --output_dir ${OUTPUT_DIR}bert/grid_search/${VARIANT}/ \
         --token_vocab ${DATA_DIR}token_vocab/bert/ \
-        --seed 17
+        --seed 17 \
+        --evaluation_strategy steps \
+        --eval_steps 94000
 done
 ```
 
