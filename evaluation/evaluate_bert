@@ -1,3 +1,14 @@
+import argparse
+import os
+import torch
+from transformers import (
+     BertTokenizerFast,
+     DataCollatorForNextSentencePrediction,
+     TextDatasetForNextSentencePrediction,
+     BertForPreTraining,
+     Trainer
+)
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--corpus_eval")
 parser.add_argument("--block_size", type = int)
@@ -6,21 +17,16 @@ parser.add_argument("--output_dir")
 parser.add_argument("--token_vocab", default = '/home/ubuntu/lrz_share/data/token_vocab/bert/')
 args = parser.parse_args()
 
-import torch
-from transformers import BertTokenizerFast
 tokenizer = BertTokenizerFast.from_pretrained(args.token_vocab)
 
-from transformers import BertForPreTraining
 model = BertForPreTraining.from_pretrained(args.model_name_or_path)
 
-from transformers import TextDatasetForNextSentencePrediction
 data_eval = TextDatasetForNextSentencePrediction(
     tokenizer = tokenizer,
     file_path = args.corpus_eval, 
     block_size = args.block_size,
 )
 
-from transformers import DataCollatorForNextSentencePrediction
 data_collator = DataCollatorForNextSentencePrediction(
     tokenizer = tokenizer, 
     mlm = True, 
@@ -28,7 +34,6 @@ data_collator = DataCollatorForNextSentencePrediction(
     block_size = args.block_size
 )
 
-from transformers import Trainer
 trainer = Trainer(
     model=model,
     data_collator=data_collator,
@@ -38,5 +43,5 @@ trainer = Trainer(
 
 eval_loss = trainer.evaluate().get('eval_loss')
 
-with open(os.path.join(args.output_dir, 'eval_score.txt'), 'w') as f:
-    print("eval_loss_final: {}".format(eval_loss), file = f)
+with open(os.path.join(args.output_dir, 'eval_loss_final.txt'), 'w') as f:
+    print("eval_loss: {}".format(eval_loss), file = f)
