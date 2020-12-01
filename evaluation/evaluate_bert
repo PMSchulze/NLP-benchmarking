@@ -2,6 +2,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--corpus_eval")
 parser.add_argument("--block_size", type = int)
 parser.add_argument("--model_name_or_path")
+parser.add_argument("--output_dir")
 parser.add_argument("--token_vocab", default = '/home/ubuntu/lrz_share/data/token_vocab/bert/')
 args = parser.parse_args()
 
@@ -36,3 +37,6 @@ trainer = Trainer(
 )
 
 eval_loss = trainer.evaluate().get('eval_loss')
+
+with open(os.path.join(args.output_dir, 'eval_score.txt'), 'w') as f:
+    print("eval_loss_final: {}".format(eval_loss), file = f)
