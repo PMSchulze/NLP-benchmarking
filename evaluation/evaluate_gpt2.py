@@ -34,8 +34,7 @@ data_eval = LineByLineTextDatasetCached(
 from transformers import DataCollatorForLanguageModeling
 data_collator = DataCollatorForLanguageModeling(
     tokenizer = tokenizer, 
-    mlm = True, 
-    mlm_probability = 0.15
+    mlm = False, 
 )
 
 trainer = Trainer(
