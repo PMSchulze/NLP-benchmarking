@@ -417,7 +417,7 @@ done
 export DATA_DIR=/home/ubuntu/lrz_share/data/
 export OUTPUT_DIR=/home/ubuntu/lrz_share/models/
 
-for VARIANT in 128_2_2_512_6 105_3_2_420_6 91_4_2_364_6 74_6_2_296_6 64_8_2_256_6 57_10_2_228_6 52_12_2_208_6 48_14_2_192_6 45_16_2_180_6
+for VARIANT in 128_2_2_512_6 104_3_2_416_6 90_4_2_360_6 74_6_2_296_6 64_8_2_256_6 58_10_2_232_6 52_12_2_208_6 48_14_2_192_6 46_16_2_184_6
 do
     python /home/ubuntu/masters_thesis/pretraining/pretrain_bert.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
