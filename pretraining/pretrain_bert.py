@@ -40,7 +40,8 @@ parser.add_argument("--adam_epsilon", type = float, default = 1e-06)
 parser.add_argument("--adam_beta1", type = float, default = 0.9) 
 parser.add_argument("--adam_beta2", type = float, default = 0.999) 
 parser.add_argument("--weight_decay", type = float, default = 0.01) 
-parser.add_argument("--long_range", type = bool, default = False) 
+parser.add_argument("--long_range", type = bool, default = False)
+parser.add_argument("--gradient_accumulation_steps", type = int, default = 1)
 
 args = parser.parse_args()
 
@@ -104,6 +105,7 @@ training_args = TrainingArguments(
     evaluation_strategy = args.evaluation_strategy,
     eval_steps = args.eval_steps,
     seed = args.seed,
+    gradient_accumulation_steps = args.gradient_accumulation_steps,
 )
 trainer = Trainer(
     model = model,
