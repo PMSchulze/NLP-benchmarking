@@ -73,3 +73,11 @@ tokenizer.train(
 # Save the vocabulary
 tokenizer.save_model("/home/ubuntu/lrz_share/data/token_vocab/roberta/")
 ```
+
+## 2. Data Preparation
+
+## 3. Pre-Training
+
+## 4. Fine-Tuning on GLUE
+
+## 5. Obtain Validation Loss
