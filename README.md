@@ -95,3 +95,5 @@ How fine-tuning on GLUE can be performed is explained [here](https://github.com/
 Finally, [here](https://github.com/PMSchulze/masters_thesis/tree/master/evaluation) we have written scripts to conveniently calculate the validation losses for the different systems.
 
 ## 6. Gather Results
+
+If you have access to our results data, [these](https://github.com/PMSchulze/masters_thesis/tree/master/results) R files can be used to gather all results conveniently. 
