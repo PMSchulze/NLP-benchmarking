@@ -124,77 +124,121 @@ prepare_nextsentence(
 )
 ```
 
-# Count corpus lengths to set training steps of BERT
+# Count corpus lengths
+
+Here we calculate the corpus statistics given in Chapter 7, section 2
 
 ### Short range 
 ```
 import pickle
-from transformers import RobertaTokenizerFast, BertTokenizerFast
+from transformers import RobertaTokenizerFast, BertTokenizerFast, GPT2TokenizerFast
 
-with open('cached_lbl_RobertaTokenizerFast_128_wiki_train_linebyline_short.txt', 'rb') as f:
-    data_roberta = pickle.load(f)
-
-with open('cached_nsp_BertTokenizerFast_128_wiki_train_nextsentence_short.txt', 'rb') as f:
-    data_bert = pickle.load(f)
+nextsentence_input_128 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_nsp_BertTokenizerFast_128_wiki_train_nextsentence_short.txt'
+mlm_input_128 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_lbl_RobertaTokenizerFast_128_wiki_train_linebyline_short.txt'
+lm_input_128 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_lbl_GPT2TokenizerFast_128_wiki_train_linebyline_short.txt'
 
 tokenizer_roberta = RobertaTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/roberta/')
 tokenizer_bert = BertTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/bert/')
+tokenizer_gpt2 = GPT2TokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/gpt2/')
 
+with open(nextsentence_input_128, 'rb') as f:
+    docs_nextsentence_128 = pickle.load(f)
 
-len_roberta = 0
+with open(mlm_input_128, 'rb') as f:
+    docs_mlm_128 = pickle.load(f)
 
-# for RoBERTa, we have to cut off the added start and end tokens
-for i in range(len(data_roberta)):
-    len_roberta += len(tokenizer_roberta.decode(data_roberta[i]['input_ids'][1:-1]))
+with open(lm_input_128, 'rb') as f:
+    docs_lm_128 = pickle.load(f)
 
+len_token_total_nsp_128 = 0
+for i in range(len(docs_nextsentence_128)):
+    len_token_pre_128 = len(docs_nextsentence_128[i]['tokens_a']) + len(docs_nextsentence_128[i]['tokens_b'])
+    if len_token_pre_128>126:
+        len_token_total_nsp_128 += 126
+    else:
+        len_token_total_nsp_128 += len_token_pre_128
 
-len_bert = 0
+len_token_total_mlm_128 = 0
+for i in range(len(docs_mlm_128)):
+    len_token_total_mlm_128 += len(docs_mlm_128[i]['input_ids'])
 
-for i in range(len(data_bert)):
-    len_bert += len(tokenizer_bert.decode(data_bert[i]['tokens_a'])) + len(tokenizer_bert.decode(data_bert[i]['tokens_b']))
+len_token_avg_mlm_128 = len_token_total_mlm_128/len(docs_mlm_128)
 
-len_roberta, len_bert
-# (308129512, 560497217)
+len_token_total_lm_128 = 0
+for i in range(len(docs_lm_128)):
+    len_token_total_lm_128 += len(docs_lm_128[i]['input_ids'])
 
-factor_reduce_steps = len_roberta/len_bert
+len_token_avg_lm_128 = len_token_total_lm_128/len(docs_lm_128)
 
-factor_reduce_steps
-# 0.5497431613474005
+# get average sequence lengths
+(len_token_avg_lm_128, len_token_avg_mlm_128, len_token_avg_nsp_128)
+# (111.15923705344343, 110.31110330465248, 110.0377045812912)
+
+# get total sequence lengths
+(len_token_total_lm_128, len_token_total_mlm_128, len_token_total_nsp_128)
+# (70564106, 70025709, 110888186)
+
+# get fraction of roberta/bert data 
+len_token_total_mlm_128/len_token_total_nsp_128
+# 0.6376972721922756
 ```
 
-### Long range 
+### Long range
 ```
 import pickle
-from transformers import RobertaTokenizerFast, BertTokenizerFast
+from transformers import RobertaTokenizerFast, BertTokenizerFast, GPT2TokenizerFast
 
-with open('cached_lbl_RobertaTokenizerFast_512_wiki_train_linebyline_long.txt', 'rb') as f:
-    data_roberta = pickle.load(f)
-
-with open('cached_nsp_BertTokenizerFast_512_wiki_train_nextsentence_long.txt', 'rb') as f:
-    data_bert = pickle.load(f)
+nextsentence_input_512 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_nsp_BertTokenizerFast_512_wiki_train_nextsentence_long.txt'
+mlm_input_512 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_lbl_RobertaTokenizerFast_512_wiki_train_linebyline_long.txt'
+lm_input_512 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_lbl_GPT2TokenizerFast_512_wiki_train_linebyline_long.txt'
 
 tokenizer_roberta = RobertaTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/roberta/')
 tokenizer_bert = BertTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/bert/')
+tokenizer_gpt2 = GPT2TokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/gpt2/')
 
+with open(nextsentence_input_512, 'rb') as f:
+    docs_nextsentence_512 = pickle.load(f)
 
-len_roberta = 0
+with open(mlm_input_512, 'rb') as f:
+    docs_mlm_512 = pickle.load(f)
 
-# for RoBERTa, we have to cut off the added start and end tokens
-for i in range(len(data_roberta)):
-    len_roberta += len(tokenizer_roberta.decode(data_roberta[i]['input_ids'][1:-1]))
+with open(lm_input_512, 'rb') as f:
+    docs_lm_512 = pickle.load(f)
 
+len_token_total_nsp_512 = 0
+for i in range(len(docs_nextsentence_512)):
+    len_token_pre_512 = len(docs_nextsentence_512[i]['tokens_a']) + len(docs_nextsentence_512[i]['tokens_b'])
+    if len_token_pre_512>510:
+        len_token_total_nsp_512 += 510
+    else:
+        len_token_total_nsp_512 += len_token_pre_512
 
-len_bert = 0
+len_token_avg_nsp_512 = len_token_total_nsp_512/len(docs_nextsentence_512)
 
-for i in range(len(data_bert)):
-    len_bert += len(tokenizer_bert.decode(data_bert[i]['tokens_a'])) + len(tokenizer_bert.decode(data_bert[i]['tokens_b']))
+len_token_total_mlm_512 = 0
+for i in range(len(docs_mlm_512)):
+    len_token_total_mlm_512 += len(docs_mlm_512[i]['input_ids'])
 
-len_roberta, len_bert
-#(124774651, 208814615)
+len_token_avg_mlm_512 = len_token_total_mlm_512/len(docs_mlm_512)
 
-factor_reduce_steps = len_roberta/len_bert
+len_token_total_lm_512 = 0
+for i in range(len(docs_lm_512)):
+    len_token_total_lm_512 += len(docs_lm_512[i]['input_ids'])
 
-factor_reduce_steps
-# 0.5975379213758577
+len_token_avg_lm_512 = len_token_total_lm_512/len(docs_lm_512)
+
+# get average sequence lengths
+(len_token_avg_lm_512, len_token_avg_mlm_512, len_token_avg_nsp_512)
+# (457.65131785248633, 457.0373652852734, 375.5161444277644)
+
+# get total sequence lengths
+(len_token_total_lm_512, len_token_total_mlm_512, len_token_total_nsp_512)
+# (27729551, 27692351, 43274856)
+
+# get fraction of roberta/bert data 
+len_token_total_mlm_512/len_token_total_nsp_512
+# 0.639917808160933
 ```
+
+
 
