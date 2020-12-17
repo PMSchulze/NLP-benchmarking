@@ -1,7 +1,7 @@
 
 ## 0. Installation
 
-Before we start, we have to install the transformers library form source.
+Before we start, we have to install the transformers library from source.
 
 ```
 git clone https://github.com/huggingface/transformers
