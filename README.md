@@ -96,4 +96,4 @@ Finally, [here](https://github.com/PMSchulze/masters_thesis/tree/master/evaluati
 
 ## 6. Gather Results
 
-If you have access to our results data, [these](https://github.com/PMSchulze/masters_thesis/tree/master/results) R files can be used to gather all results conveniently. 
+If you have access to our results, [these](https://github.com/PMSchulze/masters_thesis/tree/master/results) R files can be used to gather all results conveniently. 
