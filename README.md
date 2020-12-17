@@ -1,6 +1,8 @@
 
 ## 0. Installation
 
+First, we have to install the transformers library form source.
+
 ```
 git clone https://github.com/huggingface/transformers
 cd transformers
