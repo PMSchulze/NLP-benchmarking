@@ -21,7 +21,7 @@ First, we create the token vocabulary from WikiText-103. Please adjust the paths
 from tokenizers import BertWordPieceTokenizer
 
 # Specify path of pre-training data
-vocab_path = "/home/ubuntu/lrz_share/data/pretrain_data/source/wiki_train.txt"
+vocab_path = "./data/pretrain_data/source/wiki_train.txt"
 
 # Initialize BERT's WordPiece tokenizer 
 tokenizer = BertWordPieceTokenizer()
@@ -30,7 +30,7 @@ tokenizer = BertWordPieceTokenizer()
 tokenizer.train(vocab_path)
 
 # Save the vocabulary
-tokenizer.save_model("/home/ubuntu/lrz_share/data/token_vocab/bert/")
+tokenizer.save_model("./data/token_vocab/bert/")
 ```
 
 ### 1.2. GPT-2
@@ -38,7 +38,7 @@ tokenizer.save_model("/home/ubuntu/lrz_share/data/token_vocab/bert/")
 from tokenizers import ByteLevelBPETokenizer
 
 # Specify path of pre-training data
-vocab_path = "/home/ubuntu/lrz_share/data/pretrain_data/source/wiki_train.txt"
+vocab_path = "./data/pretrain_data/source/wiki_train.txt"
 
 # Initialize GPT's BPE tokenizer 
 tokenizer = ByteLevelBPETokenizer()
@@ -52,7 +52,7 @@ tokenizer.train(
 )
 
 # Save the vocabulary
-tokenizer.save_model("/home/ubuntu/lrz_share/data/token_vocab/gpt2/")
+tokenizer.save_model("./data/token_vocab/gpt2/")
 
 ```
 
@@ -61,7 +61,7 @@ tokenizer.save_model("/home/ubuntu/lrz_share/data/token_vocab/gpt2/")
 from tokenizers import ByteLevelBPETokenizer
 
 # Specify path of pre-training data
-vocab_path = "/home/ubuntu/lrz_share/data/pretrain_data/source/wiki_train.txt"
+vocab_path = "./data/pretrain_data/source/wiki_train.txt"
 
 # Initialize RoBERTa's BPE tokenizer 
 tokenizer = ByteLevelBPETokenizer()
@@ -75,27 +75,27 @@ tokenizer.train(
 )
 
 # Save the vocabulary
-tokenizer.save_model("/home/ubuntu/lrz_share/data/token_vocab/roberta/")
+tokenizer.save_model("./data/token_vocab/roberta/")
 ```
 
 ## 2. Data Preparation
 
-Next, we prepare the data, such that it can be processed by the different systems. This is done [here](https://github.com/PMSchulze/masters_thesis/tree/master/data_preparation).
+Next, we prepare the data, such that it can be processed by the different systems. This is done [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/data_preparation).
 
 ## 3. Pre-Training
 
 For pre-training, we have written a training script for each system. 
 
-To reproduce our experiments, run the scripts from the command line with the arguments specified [here](https://github.com/PMSchulze/masters_thesis/tree/master/pretraining).
+To reproduce our experiments, run the scripts from the command line with the arguments specified [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/pretraining).
 
 ## 4. Fine-Tuning on GLUE
 
-How fine-tuning on GLUE can be performed is explained [here](https://github.com/PMSchulze/masters_thesis/tree/master/glue).
+How fine-tuning on GLUE can be performed is explained [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/glue).
 
 ## 5. Obtain Validation Loss
 
-Finally, [here](https://github.com/PMSchulze/masters_thesis/tree/master/evaluation) we have written scripts to conveniently calculate the validation losses for the different systems.
+Finally, [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/evaluation) we have written scripts to conveniently calculate the validation losses for the different systems.
 
 ## 6. Gather Results
 
-If you have access to our results, [these](https://github.com/PMSchulze/masters_thesis/tree/master/results) R files can be used to gather all results conveniently. 
+If you have access to our results, [these](https://github.com/PMSchulze/NLP-benchmarking/tree/master/results) R files can be used to gather all results conveniently. 
