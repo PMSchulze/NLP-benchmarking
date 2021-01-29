@@ -21,7 +21,7 @@ First, we create the token vocabulary from WikiText-103, which can be downloaded
 from tokenizers import BertWordPieceTokenizer
 
 # Specify path of pre-training data
-vocab_path = "./data/pretrain_data/source/wiki_train.txt"
+vocab_path = "data/pretrain_data/source/wiki_train.txt"
 
 # Initialize BERT's WordPiece tokenizer 
 tokenizer = BertWordPieceTokenizer()
@@ -30,7 +30,7 @@ tokenizer = BertWordPieceTokenizer()
 tokenizer.train(vocab_path)
 
 # Save the vocabulary
-tokenizer.save_model("./data/token_vocab/bert/")
+tokenizer.save_model("data/token_vocab/bert/")
 ```
 
 ### 1.2. GPT-2
@@ -38,7 +38,7 @@ tokenizer.save_model("./data/token_vocab/bert/")
 from tokenizers import ByteLevelBPETokenizer
 
 # Specify path of pre-training data
-vocab_path = "./data/pretrain_data/source/wiki_train.txt"
+vocab_path = "data/pretrain_data/source/wiki_train.txt"
 
 # Initialize GPT's BPE tokenizer 
 tokenizer = ByteLevelBPETokenizer()
@@ -52,7 +52,7 @@ tokenizer.train(
 )
 
 # Save the vocabulary
-tokenizer.save_model("./data/token_vocab/gpt2/")
+tokenizer.save_model("data/token_vocab/gpt2/")
 
 ```
 
@@ -61,7 +61,7 @@ tokenizer.save_model("./data/token_vocab/gpt2/")
 from tokenizers import ByteLevelBPETokenizer
 
 # Specify path of pre-training data
-vocab_path = "./data/pretrain_data/source/wiki_train.txt"
+vocab_path = "data/pretrain_data/source/wiki_train.txt"
 
 # Initialize RoBERTa's BPE tokenizer 
 tokenizer = ByteLevelBPETokenizer()
@@ -75,7 +75,7 @@ tokenizer.train(
 )
 
 # Save the vocabulary
-tokenizer.save_model("./data/token_vocab/roberta/")
+tokenizer.save_model("data/token_vocab/roberta/")
 ```
 
 ## 2. Data Preparation
