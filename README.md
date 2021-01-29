@@ -14,7 +14,7 @@ Version: 3.4.0
 
 ## 1. Generation of Token Vocabulary
 
-First, we create the token vocabulary from WikiText-103, which can be downloaded from https://www.salesforce.com/products/einstein/ai-research/the-wikitext-dependency-language-modeling-dataset/ (Raw / character-level version). Please adjust the paths to your own folders.
+First, we create the token vocabulary from WikiText-103, which can be downloaded from [here](https://www.salesforce.com/products/einstein/ai-research/the-wikitext-dependency-language-modeling-dataset/) (raw / character-level version). Please adjust the paths to your own folders.
 
 ### 1.1. BERT
 ```
