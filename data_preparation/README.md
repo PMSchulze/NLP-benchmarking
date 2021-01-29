@@ -10,11 +10,11 @@ from utils_data_preparation import prepare_linebyline, split_documents_by_len
 import os.path
 
 # Original file wiki_train.txt should be in datadir/source/
-datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
+datadir = 'data/pretrain_data'
 
 # Files generated in this section are store in datadir/general/
-if not os.path.exists('/home/ubuntu/lrz_share/data/pretrain_data/general'):
-    os.makedirs('/home/ubuntu/lrz_share/data/pretrain_data/general')
+if not os.path.exists('data/pretrain_data/general'):
+    os.makedirs('data/pretrain_data/general')
 ```
 
 We first put each document (i.e., each wikipedia section) on a single line 
@@ -99,11 +99,11 @@ from utils_data_preparation import prepare_linebyline, split_documents_by_len
 import os.path
 
 # Original file wiki_train.txt should be in datadir/source/
-datadir = '/home/ubuntu/lrz_share/data/pretrain_data'
+datadir = 'data/pretrain_data'
 
 # Files generated in this section are store in datadir/general/
-if not os.path.exists('/home/ubuntu/lrz_share/data/pretrain_data/general'):
-    os.makedirs('/home/ubuntu/lrz_share/data/pretrain_data/general')
+if not os.path.exists('data/pretrain_data/general'):
+    os.makedirs('data/pretrain_data/general')
 
 prepare_linebyline(
     input_file_path = os.path.join(datadir, 'source/wiki_eval.txt'), 
@@ -133,13 +133,13 @@ Here we calculate the corpus statistics given in Chapter 7, section 2
 import pickle
 from transformers import RobertaTokenizerFast, BertTokenizerFast, GPT2TokenizerFast
 
-nextsentence_input_128 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_nsp_BertTokenizerFast_128_wiki_train_nextsentence_short.txt'
-mlm_input_128 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_lbl_RobertaTokenizerFast_128_wiki_train_linebyline_short.txt'
-lm_input_128 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_lbl_GPT2TokenizerFast_128_wiki_train_linebyline_short.txt'
+nextsentence_input_128 = 'data/pretrain_data/general/cached_nsp_BertTokenizerFast_128_wiki_train_nextsentence_short.txt'
+mlm_input_128 = 'data/pretrain_data/general/cached_lbl_RobertaTokenizerFast_128_wiki_train_linebyline_short.txt'
+lm_input_128 = 'data/pretrain_data/general/cached_lbl_GPT2TokenizerFast_128_wiki_train_linebyline_short.txt'
 
-tokenizer_roberta = RobertaTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/roberta/')
-tokenizer_bert = BertTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/bert/')
-tokenizer_gpt2 = GPT2TokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/gpt2/')
+tokenizer_roberta = RobertaTokenizerFast.from_pretrained('data/token_vocab/roberta/')
+tokenizer_bert = BertTokenizerFast.from_pretrained('data/token_vocab/bert/')
+tokenizer_gpt2 = GPT2TokenizerFast.from_pretrained('data/token_vocab/gpt2/')
 
 with open(nextsentence_input_128, 'rb') as f:
     docs_nextsentence_128 = pickle.load(f)
@@ -188,13 +188,13 @@ len_token_total_mlm_128/len_token_total_nsp_128
 import pickle
 from transformers import RobertaTokenizerFast, BertTokenizerFast, GPT2TokenizerFast
 
-nextsentence_input_512 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_nsp_BertTokenizerFast_512_wiki_train_nextsentence_long.txt'
-mlm_input_512 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_lbl_RobertaTokenizerFast_512_wiki_train_linebyline_long.txt'
-lm_input_512 = '/home/ubuntu/lrz_share/data/pretrain_data/general/cached_lbl_GPT2TokenizerFast_512_wiki_train_linebyline_long.txt'
+nextsentence_input_512 = 'data/pretrain_data/general/cached_nsp_BertTokenizerFast_512_wiki_train_nextsentence_long.txt'
+mlm_input_512 = 'data/pretrain_data/general/cached_lbl_RobertaTokenizerFast_512_wiki_train_linebyline_long.txt'
+lm_input_512 = 'data/pretrain_data/general/cached_lbl_GPT2TokenizerFast_512_wiki_train_linebyline_long.txt'
 
-tokenizer_roberta = RobertaTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/roberta/')
-tokenizer_bert = BertTokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/bert/')
-tokenizer_gpt2 = GPT2TokenizerFast.from_pretrained('/home/ubuntu/lrz_share/data/token_vocab/gpt2/')
+tokenizer_roberta = RobertaTokenizerFast.from_pretrained('data/token_vocab/roberta/')
+tokenizer_bert = BertTokenizerFast.from_pretrained('data/token_vocab/bert/')
+tokenizer_gpt2 = GPT2TokenizerFast.from_pretrained('data/token_vocab/gpt2/')
 
 with open(nextsentence_input_512, 'rb') as f:
     docs_nextsentence_512 = pickle.load(f)
