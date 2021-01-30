@@ -6,7 +6,7 @@ This is a benchmarking study, which aims to systematically  compare  the  pre-tr
 
 ### Installation
 
-Before we start, we have to install version 3.4.0 of huggingface's [transformers library](https://github.com/huggingface/transformers) ([Wolf et. al](https://arxiv.org/abs/1910.03771)) from source.
+Before we start, we have to install version 3.4.0 of huggingface's [transformers](https://github.com/huggingface/transformers) library ([Wolf et. al](https://arxiv.org/abs/1910.03771)) from source.
 
 Therefore, go to https://github.com/huggingface/transformers/releases and download the source code of v3.4.0 to the root directory of this project.
 
