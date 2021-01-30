@@ -1,16 +1,15 @@
 
 ## 0. Installation
 
-Before we start, we have to install the transformers library from source.
+Before we start, we have to install version 3.4.0 of huggingface's transformers library from source.
+
+Therefore, go to https://github.com/huggingface/transformers/releases and download the source code of v3.4.0.
+
+Then, go to the root directory of this project and run
 
 ```
-git clone https://github.com/huggingface/transformers
-cd transformers
-pip install .
-pip install -r ./examples/requirements.txt
+unzip transformers-3.4.0.zip -d transformers
 ```
-
-Version: 3.4.0
 
 ## 1. Generation of Token Vocabulary
 
