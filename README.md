@@ -1,6 +1,6 @@
 # Benchmarking down-scaled (not so large) pre-trained language models
 
-This is a benchmarking study, which aims to systematically  compare  the  pre-training  objectives of three popular NLP systems, BERT, RoBERTa and GPT-2, for different shape parameters and model sizes,  while  also  varying  the  number  of  pre-training steps and the batch size.
+This is a benchmarking study, which aims to systematically  compare  the  pre-training  objectives of three popular NLP systems, BERT ([Devlin et. al](https://arxiv.org/abs/1810.04805)), RoBERTa ([Liu et. al](https://arxiv.org/abs/1907.11692)) and GPT-2 ([Radford et. al](http://www.persagen.com/files/misc/radford2019language.pdf)), for different shape parameters and model sizes,  while  also  varying  the  number  of  pre-training steps and the batch size.
 
 ## Preliminaries
 
@@ -49,7 +49,7 @@ In order to rerun our experiments, the following steps have to be performed in t
 
 ### 1. Generation of Token Vocabulary
 
-First, we create the token vocabulary from WikiText-103, which can be downloaded from [here](https://www.salesforce.com/products/einstein/ai-research/the-wikitext-dependency-language-modeling-dataset/) (raw / character-level version). We store the data in data/pretrain_data/source/ with filenames wiki_train.txt, wiki_test.txt and wiki_eval.txt.
+First, we create the token vocabulary from WikiText-103 ([Merity et. al, 2016](https://arxiv.org/abs/1609.07843)), which can be downloaded from [here](https://www.salesforce.com/products/einstein/ai-research/the-wikitext-dependency-language-modeling-dataset/) (raw / character-level version). We store the data in data/pretrain_data/source/ with filenames wiki_train.txt, wiki_test.txt and wiki_eval.txt.
 
 #### 1.1. BERT
 ```
@@ -125,7 +125,7 @@ To reproduce our experiments, run the scripts from the command line with the arg
 
 ### 4. Fine-Tuning on GLUE
 
-How fine-tuning on GLUE can be performed is explained [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/glue).
+How fine-tuning on GLUE ([Wang et. al](https://arxiv.org/abs/1804.07461)) can be performed is explained [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/glue).
 
 ### 5. Obtain Validation Loss
 
