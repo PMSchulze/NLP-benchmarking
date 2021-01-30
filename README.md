@@ -5,7 +5,7 @@ Before we start, we have to install version 3.4.0 of huggingface's transformers 
 
 Therefore, go to https://github.com/huggingface/transformers/releases and download the source code of v3.4.0 to the root directory of this project.
 
-Then, go to the root directory and run
+Then, go to the root directory and run:
 
 ```
 unzip transformers-3.4.0.zip -d transformers
@@ -13,6 +13,7 @@ cd transformers
 pip install -e .
 ```
 
+We assume the following folder structure for this project:
 ```
     .
     ├── NLP-benchmarking        # Local copy of this GitHub repository
