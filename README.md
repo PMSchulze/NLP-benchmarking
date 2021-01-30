@@ -1,5 +1,12 @@
+# Benchmarking down-scaled (not so large) pre-trained language models
 
-## Installation
+## Description
+
+In this benchmarking study, we systematically  compare  the  pre-training  objectives of three popular NLP systems, BERT, RoBERTa and GPT-2, for different shape parameters and model sizes,  while  also  varying  the  number  of  pre-training steps and the batch size
+
+## Preliminaries
+
+### Installation
 
 Before we start, we have to install version 3.4.0 of huggingface's transformers library from source.
 
@@ -13,7 +20,7 @@ cd transformers
 pip install -e .
 ```
 
-## Folder Structure
+### Folder Structure
 
 We assume the following folder structure for this project:
 ```
