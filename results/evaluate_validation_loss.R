@@ -7,7 +7,7 @@ library("tidyverse")
 # ***********************************************************************************************
 
 # If plots should be saved, overwrite this variable with desired folder
-plot_outpath <- "/Users/patrickschulze/Desktop/Masterarbeit/latex/graphics/experiments/"
+plot_outpath <- ""
 
 # --------------------------------------------------------------------------------------------------
 # 1. define helper functions
