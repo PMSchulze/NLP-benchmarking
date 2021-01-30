@@ -4,8 +4,9 @@
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10
 do
@@ -27,8 +28,9 @@ done
 ```
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10
 do
@@ -54,8 +56,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_10 128_5_2_512_10 128_10_2_512_10 128_18_2_512_10 128_36_2_512_10
 do
@@ -77,8 +80,9 @@ done
 ```
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_10 128_5_2_512_10 128_10_2_512_10 128_18_2_512_10 128_36_2_512_10
 do
@@ -104,8 +108,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 204_7_2_816_10 256_9_2_1024_10
 do
@@ -127,8 +132,9 @@ done
 ```
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 204_7_2_816_10 256_9_2_1024_10
 do
@@ -154,8 +160,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 export VARIANT=256_9_2_1024_5
 
 for BATCHSIZE in 32 64
@@ -178,8 +185,9 @@ done
 ```
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 export VARIANT=256_9_2_1024_5
 
 for BATCHSIZE in 32 64
@@ -207,8 +215,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 544_2_8_2176_10
 do
@@ -230,8 +239,9 @@ done
 ```
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 544_2_8_2176_10
 do
@@ -259,8 +269,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_6 192_2_2_768_6 288_2_2_1152_6 384_2_2_1536_6 544_2_2_2176_10
 do
@@ -283,8 +294,9 @@ done
 
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_6 192_2_2_768_6 288_2_2_1152_6 384_2_2_1536_6 544_2_2_2176_10
 do
@@ -309,8 +321,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_6 128_5_2_512_6 128_10_2_512_6 128_18_2_512_6 128_36_2_512_6
 do
@@ -333,8 +346,9 @@ done
 
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_6 128_5_2_512_6 128_10_2_512_6 128_18_2_512_6 128_36_2_512_6
 do
@@ -360,10 +374,11 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
-for VARIANT in 204_7_2_816_6 256_9_2_1024_6
+for VARIANT in 204_7_2_816_6 256_9_2_1024_6 256_9_4_1024_6
 do
     python ./NLP-benchmarking/pretraining/pretrain_bert.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
@@ -384,10 +399,11 @@ done
 
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
-for VARIANT in 204_7_2_816_6 256_9_2_1024_6
+for VARIANT in 204_7_2_816_6 256_9_2_1024_6 256_9_4_1024_6
 do
     python ./NLP-benchmarking/pretraining/pretrain_bert.py \
         --hidden_size $(echo $VARIANT| cut -d'_' -f 1) \
@@ -411,8 +427,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 export VARIANT=256_9_2_1024_3
 
 for BATCHSIZE in 32 64
@@ -436,8 +453,9 @@ done
 
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 export VARIANT=256_9_2_1024_3
 
 for BATCHSIZE in 32 64
@@ -464,8 +482,9 @@ done
 ### 2.5 Grid Search
 
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_6 104_3_2_416_6 90_4_2_360_6 74_6_2_296_6 64_8_2_256_6 58_10_2_232_6 52_12_2_208_6 48_14_2_192_6 46_16_2_184_6
 do
@@ -492,8 +511,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 544_2_8_2176_6
 do
@@ -516,8 +536,9 @@ done
 
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 544_2_8_2176_6
 do
@@ -543,8 +564,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 469_4_7_1876_5
 do
@@ -567,8 +589,9 @@ done
 
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 469_4_7_1876_5
 do
@@ -596,8 +619,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10
 do
@@ -620,8 +644,9 @@ done
 
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_10 192_2_2_768_10 288_2_2_1152_10 384_2_2_1536_10 544_2_2_2176_10
 do
@@ -647,8 +672,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_10 128_5_2_512_10 128_10_2_512_10 128_18_2_512_10 128_36_2_512_10
 do
@@ -671,8 +697,9 @@ done
 
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 128_2_2_512_10 128_5_2_512_10 128_10_2_512_10 128_18_2_512_10 128_36_2_512_10
 do
@@ -699,8 +726,9 @@ done
 Short sequences:
 
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 204_7_2_816_10 256_9_2_1024_10
 do
@@ -723,8 +751,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 204_7_2_816_10 256_9_2_1024_10
 do
@@ -751,8 +780,9 @@ done
 Short sequences:
 
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 export VARIANT=256_9_2_1024_5
 
 for BATCHSIZE in 32 64
@@ -776,8 +806,9 @@ done
 
 Long sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 export VARIANT=256_9_2_1024_5
 
 for BATCHSIZE in 32 64
@@ -806,8 +837,9 @@ done
 Short sequences:
 
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 544_2_8_2176_10
 do
@@ -830,8 +862,9 @@ done
 
 Short sequences:
 ```
-export DATA_DIR=./data/
-export OUTPUT_DIR=./models/
+export ROOT_DIR=$(pwd)
+export DATA_DIR=$ROOT_DIR/data/
+export OUTPUT_DIR=$ROOT_DIR/models/
 
 for VARIANT in 544_2_8_2176_10
 do
