@@ -9,6 +9,8 @@ Then, go to the root directory of this project and run
 
 ```
 unzip transformers-3.4.0.zip -d transformers
+cd transformers
+pip install -e .
 ```
 
 ## 1. Generation of Token Vocabulary
