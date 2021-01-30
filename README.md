@@ -3,9 +3,9 @@
 
 Before we start, we have to install version 3.4.0 of huggingface's transformers library from source.
 
-Therefore, go to https://github.com/huggingface/transformers/releases and download the source code of v3.4.0.
+Therefore, go to https://github.com/huggingface/transformers/releases and download the source code of v3.4.0 to the root directory of this project.
 
-Then, go to the root directory of this project and run
+Then, go to the root directory and run
 
 ```
 unzip transformers-3.4.0.zip -d transformers
