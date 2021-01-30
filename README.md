@@ -1,5 +1,5 @@
 
-## 0. Preliminaries
+## Installation
 
 Before we start, we have to install version 3.4.0 of huggingface's transformers library from source.
 
@@ -12,6 +12,8 @@ unzip transformers-3.4.0.zip -d transformers
 cd transformers
 pip install -e .
 ```
+
+## Folder Structure
 
 We assume the following folder structure for this project:
 ```
@@ -36,11 +38,15 @@ We assume the following folder structure for this project:
         └── roberta             # 
 ```
 
-## 1. Generation of Token Vocabulary
+## Rerun Analysis
+
+In order to rerun our experiments, the following steps have to be performed in the order given.
+
+### 1. Generation of Token Vocabulary
 
 First, we create the token vocabulary from WikiText-103, which can be downloaded from [here](https://www.salesforce.com/products/einstein/ai-research/the-wikitext-dependency-language-modeling-dataset/) (raw / character-level version). Please adjust the paths to your own folders.
 
-### 1.1. BERT
+#### 1.1. BERT
 ```
 from tokenizers import BertWordPieceTokenizer
 
@@ -57,7 +63,7 @@ tokenizer.train(vocab_path)
 tokenizer.save_model("data/token_vocab/bert/")
 ```
 
-### 1.2. GPT-2
+#### 1.2. GPT-2
 ```
 from tokenizers import ByteLevelBPETokenizer
 
@@ -80,7 +86,7 @@ tokenizer.save_model("data/token_vocab/gpt2/")
 
 ```
 
-### 1.3. RoBERTa
+#### 1.3. RoBERTa
 ```
 from tokenizers import ByteLevelBPETokenizer
 
@@ -102,24 +108,24 @@ tokenizer.train(
 tokenizer.save_model("data/token_vocab/roberta/")
 ```
 
-## 2. Data Preparation
+### 2. Data Preparation
 
 Next, we prepare the data, such that it can be processed by the different systems. This is done [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/data_preparation).
 
-## 3. Pre-Training
+### 3. Pre-Training
 
 For pre-training, we have written a training script for each system. 
 
 To reproduce our experiments, run the scripts from the command line with the arguments specified [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/pretraining).
 
-## 4. Fine-Tuning on GLUE
+### 4. Fine-Tuning on GLUE
 
 How fine-tuning on GLUE can be performed is explained [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/glue).
 
-## 5. Obtain Validation Loss
+### 5. Obtain Validation Loss
 
 Finally, [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/evaluation) we have written scripts to conveniently calculate the validation losses for the different systems.
 
-## 6. Gather Results
+### 6. Gather Results
 
 If you have access to our results, [these](https://github.com/PMSchulze/NLP-benchmarking/tree/master/results) R files can be used to gather all results conveniently. 
