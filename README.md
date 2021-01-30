@@ -49,7 +49,7 @@ In order to rerun our experiments, the following steps have to be performed in t
 
 ### 1. Generation of Token Vocabulary
 
-First, we create the token vocabulary from WikiText-103, which can be downloaded from [here](https://www.salesforce.com/products/einstein/ai-research/the-wikitext-dependency-language-modeling-dataset/) (raw / character-level version). We store the data in data/pretrain_data/source/ and name the files as wiki_train.txt, wiki_test.txt and wiki_eval.txt.
+First, we create the token vocabulary from WikiText-103, which can be downloaded from [here](https://www.salesforce.com/products/einstein/ai-research/the-wikitext-dependency-language-modeling-dataset/) (raw / character-level version). We store the data in data/pretrain_data/source/ with filenames wiki_train.txt, wiki_test.txt and wiki_eval.txt.
 
 #### 1.1. BERT
 ```
