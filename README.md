@@ -1,6 +1,6 @@
 # Benchmarking down-scaled (not so large) pre-trained language models
 
-This is a benchmarking study, which aims to systematically  compare  the  pre-training  objectives of three popular NLP systems, BERT ([Devlin et. al, 2019](https://arxiv.org/abs/1810.04805)), RoBERTa ([Liu et. al, 2019](https://arxiv.org/abs/1907.11692)) and GPT-2 ([Radford et. al, 2018](http://www.persagen.com/files/misc/radford2019language.pdf)), for different shape parameters and model sizes,  while  also  varying  the  number  of  pre-training steps and the batch size.
+This is a benchmarking study, which aims to systematically  compare  the  pre-training  objectives of three popular NLP systems, BERT ([Devlin et. al, 2019](https://arxiv.org/abs/1810.04805)), RoBERTa ([Liu et. al, 2019](https://arxiv.org/abs/1907.11692)) and GPT-2 ([Radford et. al, 2018](https://d4mucfpksywv.cloudfront.net/better-language-models/language-models.pdf)), for different shape parameters and model sizes,  while  also  varying  the  number  of  pre-training steps and the batch size.
 
 ## Preliminaries
 
