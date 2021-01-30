@@ -1,5 +1,5 @@
 
-## 0. Installation
+## 0. Preliminaries
 
 Before we start, we have to install version 3.4.0 of huggingface's transformers library from source.
 
@@ -11,6 +11,28 @@ Then, go to the root directory and run
 unzip transformers-3.4.0.zip -d transformers
 cd transformers
 pip install -e .
+```
+
+```
+    .
+    ├── NLP-benchmarking        # Local copy of this GitHub repository
+    ├── transformers            # Local copy of huggingface/transformers repository
+    ├── data                    # Data directory
+    │   ├── pretrain_data       # Pre-training data
+    │   │   ├── general         # Prepared data that is used as input of models
+    │   │   └── source          # Unprepared source data 
+    │   └── token_vocab         # Token vocabularies of different models
+    │       ├── bert            #
+    │       ├── gpt2            #
+    │       └── roberta         #
+    ├── models                  # Pre-trained models
+    │   ├── bert                #
+    │   ├── gpt2                # 
+    │   └── roberta             # 
+    └── fine_tuned              # Fine-tuned models
+        ├── bert                # 
+        ├── gpt2                # 
+        └── roberta             # 
 ```
 
 ## 1. Generation of Token Vocabulary
