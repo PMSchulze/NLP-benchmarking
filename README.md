@@ -1,12 +1,12 @@
 # Benchmarking down-scaled (not so large) pre-trained language models
 
-This is a benchmarking study, which aims to systematically  compare  the  pre-training  objectives of three popular NLP systems, BERT ([Devlin et. al](https://arxiv.org/abs/1810.04805)), RoBERTa ([Liu et. al](https://arxiv.org/abs/1907.11692)) and GPT-2 ([Radford et. al](http://www.persagen.com/files/misc/radford2019language.pdf)), for different shape parameters and model sizes,  while  also  varying  the  number  of  pre-training steps and the batch size.
+This is a benchmarking study, which aims to systematically  compare  the  pre-training  objectives of three popular NLP systems, BERT ([Devlin et. al](https://arxiv.org/abs/1810.04805, 2019)), RoBERTa ([Liu et. al, 2019](https://arxiv.org/abs/1907.11692)) and GPT-2 ([Radford et. al, 2018](http://www.persagen.com/files/misc/radford2019language.pdf)), for different shape parameters and model sizes,  while  also  varying  the  number  of  pre-training steps and the batch size.
 
 ## Preliminaries
 
 ### Installation
 
-Before we start, we have to install version 3.4.0 of HuggingFace's [transformers](https://github.com/huggingface/transformers) library ([Wolf et. al](https://arxiv.org/abs/1910.03771)) from source.
+Before we start, we have to install version 3.4.0 of HuggingFace's [transformers](https://github.com/huggingface/transformers) library ([Wolf et. al, 2020](https://arxiv.org/abs/1910.03771)) from source.
 
 Therefore, go to https://github.com/huggingface/transformers/releases and download the source code of v3.4.0 to the root directory of this project.
 
@@ -125,7 +125,7 @@ To reproduce our experiments, run the scripts from the command line with the arg
 
 ### 4. Fine-Tuning on GLUE
 
-How fine-tuning on GLUE ([Wang et. al](https://arxiv.org/abs/1804.07461)) can be performed is explained [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/glue).
+How fine-tuning on GLUE ([Wang et. al, 2018](https://arxiv.org/abs/1804.07461)) can be performed is explained [here](https://github.com/PMSchulze/NLP-benchmarking/tree/master/glue).
 
 ### 5. Obtain Validation Loss
 
