@@ -9,7 +9,7 @@ do
     python ./NLP-benchmarking/evaluation/evaluate_bert.py \
         --corpus_eval ./data/pretrain_data/general/wiki_eval_nextsentence.txt \
         --block_size 128 \
-        --model_name_or_path /home/ubuntu/lrz_share/models/bert/${VARIANT}/short_range/
+        --model_name_or_path ./models/bert/${VARIANT}/short_range/
 done
 ```
 Long range:
@@ -20,7 +20,7 @@ do
     python ./NLP-benchmarking/evaluation/evaluate_bert.py \
         --corpus_eval ./data/pretrain_data/general/wiki_eval_nextsentence.txt \
         --block_size 512 \
-        --model_name_or_path /home/ubuntu/lrz_share/models/bert/${VARIANT}/long_range/
+        --model_name_or_path ./models/bert/${VARIANT}/long_range/
 done
 ```
 
