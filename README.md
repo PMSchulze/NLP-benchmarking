@@ -6,14 +6,12 @@ This is a benchmarking study, which aims to systematically  compare  the  pre-tr
 
 ### Installation
 
-Before we start, we have to install version 3.4.0 of HuggingFace's [transformers](https://github.com/huggingface/transformers) library ([Wolf et. al, 2020](https://arxiv.org/abs/1910.03771)) from source.
+As a first step, please install HuggingFace's [transformers](https://github.com/huggingface/transformers) library ([Wolf et. al, 2020](https://arxiv.org/abs/1910.03771)) from source. 
 
-Therefore, go to https://github.com/huggingface/transformers/releases and download the source code of v3.4.0 to the root directory of this project.
-
-Then, go to the root directory and run:
+You need to install the specific version that was used to run our experiments. Therefore, go to the root directory of this project and run:
 
 ```
-unzip transformers-3.4.0.zip -d transformers
+git clone https://github.com/PMSchulze/transformers.git
 cd transformers
 pip install -e .
 ```
