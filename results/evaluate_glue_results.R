@@ -128,6 +128,12 @@ glue_bert_gridsearch <- download_glue_table(
   version = c("grid_search/128_2_2_512_6", "grid_search/104_3_2_416_6", "grid_search/90_4_2_360_6")
 )
 
+# BERT: scaling embedding size H, number of layers L & number of attention heads A
+glue_bert_embedding_layer_heads <- download_glue_table(
+  model = "bert",
+  version = "256_9_4_1024_6"
+)
+                                             
 # BERT: strategic scaling
 glue_bert_strategic <- download_glue_table(
   model = "bert", 
