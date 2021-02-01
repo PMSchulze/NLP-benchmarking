@@ -8,11 +8,12 @@ This is a benchmarking study, which aims to systematically  compare  the  pre-tr
 
 As a first step, please install HuggingFace's [transformers](https://github.com/huggingface/transformers) library ([Wolf et. al, 2020](https://arxiv.org/abs/1910.03771)) from source. 
 
-You need to install the specific version that was used to run our experiments. Therefore, go to the root directory of this project and run:
+You need to install the specific version that was used to run our experiments. Therefore, fork the [transformers](https://github.com/huggingface/transformers) repository and create a local clone of the fork in the root directory of this project. Then run:
 
 ```
-git clone https://github.com/PMSchulze/transformers.git
-cd transformers
+cd ./transformers
+git reset --hard 47dfa65b0cba3d4fb3f24e52bc2299e261119276
+git push -f origin master
 pip install -e .
 ```
 
